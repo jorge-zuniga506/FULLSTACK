@@ -1,0 +1,75 @@
+body {
+  background-color: #0b0f1a !important;
+  color: #f8fafc;
+  min-height: 100vh;
+}
+
+/* Global Dark Theme Overrides for Bootstrap and Custom Components */
+
+/* Inputs & Form Controls */
+.form-control, .form-select, select {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.form-control:focus, .form-select:focus, select:focus {
+  background-color: #111a2e !important;
+  border-color: #0d59f2 !important;
+  box-shadow: 0 0 0 1px #0d59f2 !important;
+  color: #ffffff !important;
+  outline: none !important;
+}
+
+.form-control::placeholder {
+  color: #64748b !important;
+}
+
+/* Options Styling */
+option {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+/* Modals */
+.modal-content {
+  background-color: #111827 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 12px !important;
+  color: #f8fafc !important;
+}
+
+.modal-header, .modal-footer {
+  border-color: #334155 !important;
+}
+
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Custom classes compatibility */
+.form-input-custom, .custom-input, .login-input, .bg-darkBg {
+  background-color: #0b0f1a !important;
+  color: white !important;
+}
+
+/* Specific fix for PerfilPrivadoInversor and others using white inputs in modals */
+.modal-body input, .modal-body select {
+  background-color: #1e293b !important;
+  color: white !important;
+  border: 1px solid #334155 !important;
+}
+
+.modal-body input:focus, .modal-body select:focus {
+  border-color: #0d59f2 !important;
+  outline: none;
+}
+
+/* Messaging Selects Specific Fix */
+#startup, #entitySelect, #startupSelect {
+  background-color: #1e293b !important;
+  color: white !important;
+  border: 1px solid #334155 !important;
+}

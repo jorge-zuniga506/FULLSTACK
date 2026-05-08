@@ -1,0 +1,42 @@
+/* Importación de fuentes e iconos */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap');
+
+.startup-theme {
+  background-color: #0f172a;
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+}
+
+.form-input-custom {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 0%;
+  border-radius: 8px;
+  color: #f1f5f9; /* slate-100 */
+  background-color: #1e293b; /* slate-800 */
+  border: 1px solid #334155; /* darkBorder */
+  height: 3.5rem; /* h-14 */
+  padding: 15px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.form-input-custom:focus {
+  border-color: #0d59f2; /* primary */
+  box-shadow: 0 0 0 2px rgba(13, 89, 242, 0.5);
+}
+
+/* Personalización del scrollbar */
+.startup-theme ::-webkit-scrollbar {
+  width: 6px;
+}
+.startup-theme ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+.startup-theme ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}

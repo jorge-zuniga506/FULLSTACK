@@ -1,0 +1,36 @@
+/* PerfilPublico.css */
+
+:root {
+  --primary: #0d59f2;
+  --primary-dark: #0a46bd;
+  --dark-bg: #0f172a;
+}
+
+.perfil-container {
+  background-color: var(--dark-bg);
+  color: #f1f5f9;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.rounded-theme {
+  border-radius: 8px;
+}
+
+.glass-effect {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Helper para el botón primario si no tienes configurado el tema en tailwind.config.js */
+.btn-primary {
+  background-color: var(--primary);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.05);
+}
