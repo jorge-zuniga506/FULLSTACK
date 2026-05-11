@@ -39,11 +39,10 @@ function BuscadorDeAceleradoras() {
         <div className="dashboard-wrapper">
             <aside className="sidebar">
                 <div className="brand">
-                    <div className="d-flex align-items-center gap-2">
-                        <div className="logo-box">⚡</div>
-                        <span className="logo-text">
-                            Nexxus<span className="text-primary">Cobalt</span>
-                        </span>
+                    <div className="logo-box">⚡</div>
+                    <div>
+                        <span className="logo-text">Nexxus<span className="text-primary">Cobalt</span></span>
+                        <p className="brand-subtitle">Descubre aceleradoras</p>
                     </div>
                 </div>
 
@@ -52,15 +51,20 @@ function BuscadorDeAceleradoras() {
                         <span className="material-symbols-outlined">explore</span>
                         <span>Aceleradoras</span>
                     </div>
-                    <div className="nav-item">
+                    <div className="nav-item" onClick={irPerfil}>
                         <span className="material-symbols-outlined">dashboard</span>
-                        <span><button onClick={irPerfil}>Perfil</button></span>
+                        <span>Perfil</span>
                     </div>
                 </nav>
             </aside>
             <main className="main-content">
                 <header className="top-header">
-                    <h2 className="page-title">Aceleradoras</h2>
+                    <div className="header-copy">
+                        <span className="eyebrow">Explora</span>
+                        <h2 className="page-title">Aceleradoras</h2>
+                        <p>Filtra, compara y descubre programas que lleven tu startup a la siguiente etapa.</p>
+                    </div>
+
                     <div className="search-box">
                         <span className="material-symbols-outlined search-icon">search</span>
                         <input
@@ -74,12 +78,27 @@ function BuscadorDeAceleradoras() {
 
                 <div className="scrollable-area">
                     <section className="welcome-hero">
-                        <h1>Programas Destacados</h1>
-                        <p>Encuentra el impulso que tu startup necesita. Filtra entre las mejores aceleradoras globales.</p>
+                        <div className="hero-panel">
+                            <div>
+                                <p className="hero-label">Programas destacados</p>
+                                <h1>Impulsa tu startup con aceleradoras líderes</h1>
+                                <p>Encuentra el apoyo adecuado con las mejores opciones en financiamiento, alcance y etapa de crecimiento.</p>
+                            </div>
+                            <div className="hero-stats">
+                                <div>
+                                    <strong>{aceleradoras.length}</strong>
+                                    <span>Aceleradoras</span>
+                                </div>
+                                <div>
+                                    <strong>5</strong>
+                                    <span>Filtros rápidos</span>
+                                </div>
+                            </div>
+                        </div>
                     </section>
 
                     <div className="filters-bar">
-                        <button className="btn-all" onClick={limpiarFiltros}>Todos</button>
+                        <button className="btn-all" onClick={limpiarFiltros}>Mostrar todos</button>
 
                         <div className="select-wrapper">
                             <select value={sector} onChange={(e) => setSector(e.target.value)}>
@@ -106,29 +125,56 @@ function BuscadorDeAceleradoras() {
                                 <option value="8">Equity-Free</option>
                             </select>
                         </div>
+
+                        <div className="select-wrapper">
+                            <select value={alcance} onChange={(e) => setAlcance(e.target.value)}>
+                                <option value="">Alcance</option>
+                                <option value="local">Local</option>
+                                <option value="regional">Regional</option>
+                                <option value="global">Global</option>
+                            </select>
+                        </div>
+
+                        <div className="select-wrapper">
+                            <select value={etapa} onChange={(e) => setEtapa(e.target.value)}>
+                                <option value="">Etapa</option>
+                                <option value="semilla">Semilla</option>
+                                <option value="crecimiento">Crecimiento</option>
+                                <option value="expansion">Expansión</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div className="accelerators-grid">
                         {aceleradoras
-                            .filter(s => !buscador || s.nombre?.toLowerCase().includes(buscador.toLowerCase()))
-                            .filter(a => !sector || a.sector === sector)
-                            .filter(a => !organizacion || a.organizacion === organizacion)
-                            .filter(a => !financiacion || a.financiacion === financiacion)
-                            .filter(a => !alcance || a.alcance === alcance)
-                            .filter(a => !etapa || a.etapa === etapa)
+                            .filter((s) => !buscador || s.nombre?.toLowerCase().includes(buscador.toLowerCase()))
+                            .filter((a) => !sector || a.sector === sector)
+                            .filter((a) => !organizacion || a.organizacion === organizacion)
+                            .filter((a) => !financiacion || a.financiacion === financiacion)
+                            .filter((a) => !alcance || a.alcance === alcance)
+                            .filter((a) => !etapa || a.etapa === etapa)
                             .map((aceleradora) => (
                                 <div className="card" key={aceleradora.id}>
-                                    <div className="card-image" style={{ backgroundImage: `url(${aceleradora.logotipo})` }}>
-                                        <div className="card-overlay">
-                                            <button onClick={irPerfilAceleradora}>
-                                                <h3 className='text-white'>{aceleradora.nombre}</h3>
-                                            </button>
-                                            <p>{aceleradora.descripcion}</p>
+                                    <div
+                                        className="card-image"
+                                        style={{ backgroundImage: `url(${aceleradora.logotipo || ''})` }}
+                                    />
+                                    <div className="card-content">
+                                        <div className="card-head">
+                                            <span className="card-pill">{aceleradora.organizacion || 'Aceleradora'}</span>
+                                            <button className="card-action" onClick={irPerfilAceleradora}>Ver perfil</button>
+                                        </div>
+                                        <h3>{aceleradora.nombre}</h3>
+                                        <p>{aceleradora.descripcion?.slice(0, 110) || 'Sin descripción disponible.'}</p>
+                                        <div className="tag-list">
+                                            {aceleradora.sector && <span>{aceleradora.sector}</span>}
+                                            {aceleradora.financiacion && <span>{aceleradora.financiacion}</span>}
+                                            {aceleradora.alcance && <span>{aceleradora.alcance}</span>}
+                                            {aceleradora.etapa && <span>{aceleradora.etapa}</span>}
                                         </div>
                                     </div>
                                 </div>
-                            ))
-                        }
+                            ))}
                     </div>
                 </div>
             </main>
