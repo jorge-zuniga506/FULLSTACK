@@ -1,0 +1,17 @@
+﻿{
+  "name": "trello-backend",
+  "version": "1.0.0",
+  "description": "Backend básico para usar Trello con API key y token desde variables de entorno",
+  "main": "app.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  }
+}
