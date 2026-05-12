@@ -18,20 +18,20 @@ function LandPageHero() {
       <Container className="position-relative z-index-1">
         <Row className="min-vh-100 align-items-center pt-5">
           <Col lg={7} className="text-center text-lg-start">
-            <div className="badge-wrapper mb-4">
-              <span className="glass-effect py-2 px-4 rounded-pill border-primary text-primary fw-bold tracking-widest text-uppercase small">
-                <FontAwesomeIcon icon={faRocket} className="me-2" /> La Nueva Era del Capital
-              </span>
-            </div>
-            
-            <h1 className="display-1 fw-800 mb-4 tracking-tighter">
+            <h1 className="display-1 fw-800 mb-4 tracking-tighter mt-5 pt-lg-4">
               El Futuro de tu <br />
               <span className="text-gradient glow-text">Patrimonio Digital</span>
             </h1>
             
-            <p className="lead text-muted mb-5 fs-4 max-w-600">
+            <p className="lead text-light opacity-75 mb-4 fs-4 max-w-600">
               Conectamos startups disruptivas con inversores visionarios a través de una plataforma de alta precisión y seguridad de grado institucional.
             </p>
+
+            <div className="badge-wrapper mb-5">
+              <span className="glass-effect py-2 px-4 rounded-pill border-primary text-primary fw-bold tracking-widest text-uppercase small">
+                <FontAwesomeIcon icon={faRocket} className="me-2" /> La Nueva Era del Capital
+              </span>
+            </div>
             
             <div className="d-flex flex-column flex-sm-row gap-4 justify-content-center justify-content-lg-start">
               <Link to="/Login" className="btn-neon px-5 py-3 fs-5">
