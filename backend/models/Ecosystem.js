@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const User = require('./User');
-const { Startup } = require('./Profiles');
+const Startup = require('./Startup');
 
 const Geolocalizacion = sequelize.define('Geolocalizacion', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
