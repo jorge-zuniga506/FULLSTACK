@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 // Middleware global de manejo de errores
 app.use(require('./middlewares/errorHandler'));
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3007;
 const server = app.listen(PORT, async () => {
   console.log(`Servidor backend escuchando en http://localhost:${PORT}`);
 
