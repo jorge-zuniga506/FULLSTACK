@@ -1,5 +1,5 @@
 import React from 'react'
-import PerfilPublicoInversores from '../components/PerfilPublicoInversores'
+import PerfilPublicoInversores from '../components/Inversor/PerfilPublicoInversores'
 function PublicoInversores() {
   return (
     <div>

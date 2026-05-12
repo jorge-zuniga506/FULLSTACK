@@ -1,5 +1,5 @@
 import React from 'react'
-import MensajesInversores from '../components/MensajesInversores'
+import MensajesInversores from '../components/Inversor/MensajesInversores'
 
 function PaginaMensajesInversores() {
   return (

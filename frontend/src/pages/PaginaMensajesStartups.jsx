@@ -1,5 +1,5 @@
 import React from 'react'
-import MensajesStartups from '../components/MensajesStartups'
+import MensajesStartups from '../components/Startup/MensajesStartups'
 
 function PaginaMensajesStartups() {
   return (

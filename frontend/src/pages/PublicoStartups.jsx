@@ -1,5 +1,5 @@
 import React from 'react'
-import PerfilPublicoStartups from '../components/PerfilPublicoStartups'
+import PerfilPublicoStartups from '../components/Startup/PerfilPublicoStartups'
 function PublicoStartups() {
   return (
     <div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import PerfilPrivadoInversor from '../components/PerfilPrivadoInversor'
+import PerfilPrivadoInversor from '../components/Inversor/PerfilPrivadoInversor'
 
 function PaginaPerfilPrivadoInversor() {
   return (

@@ -1,5 +1,5 @@
 import React from 'react'
-import PerfilPrivadoAceleradora from '../components/PerfilPrivadoAceleradora'
+import PerfilPrivadoAceleradora from '../components/Aceleradora/PerfilPrivadoAceleradora'
 
 function PaginaPerfilPrivadoAceleradora() {
   return (

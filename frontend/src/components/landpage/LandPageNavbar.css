@@ -1,0 +1,10 @@
+.navbar-custom {
+  width: 100%;
+}
+
+.logo-box,
+.logo-text,
+.nav-links,
+.comenzar {
+  color: inherit;
+}
