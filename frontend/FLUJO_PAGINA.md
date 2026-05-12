@@ -28,7 +28,8 @@ Permite registro, solicitud de ingreso, exploracion en mapa, perfiles publicos/p
 ## 4) Rutas y funcion de cada pagina
 
 ### Publicas
-- `/` -> `LandPageForm`: portada principal, propuesta de valor y accesos rapidos.
+- `/` -> `LandPageForm`: portada principal, propuesta de valor
+ y accesos rapidos.
 - `/Login` -> `LoginForm`: autenticacion de usuario.
 - `/Register` -> `RegisterForm`: alta de usuario.
 - `/SolicitudStartup` -> `SolicitudForm`: formulario de solicitud para startup.
