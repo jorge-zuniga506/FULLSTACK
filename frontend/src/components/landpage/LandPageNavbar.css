@@ -1,10 +1,22 @@
 .navbar-custom {
-  width: 100%;
+  transition: var(--transition);
+  z-index: 1000;
 }
 
-.logo-box,
-.logo-text,
-.nav-links,
-.comenzar {
-  color: inherit;
+.brand-name {
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: -1px;
+}
+
+.hover-text-primary:hover {
+  color: var(--primary) !important;
+  text-shadow: 0 0 10px var(--primary-glow);
+}
+
+.tracking-tighter {
+  letter-spacing: -0.05em;
+}
+
+.duration-300 {
+  transition-duration: 300ms;
 }
