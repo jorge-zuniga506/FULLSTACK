@@ -5,7 +5,9 @@
   "main": "app.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "migrate": "node scripts/migrate.js up",
+    "migrate:undo": "node scripts/migrate.js down"
   },
   "engines": {
     "node": ">=18"
