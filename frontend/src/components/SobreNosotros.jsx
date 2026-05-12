@@ -1,6 +1,8 @@
 import React from 'react'
 import ComponenteNavbar from './ComponenteNavbar'
 
+
+
 function SobreNosotros() {
   return (
     <div>

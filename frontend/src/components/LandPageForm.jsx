@@ -1,7 +1,6 @@
 import React from 'react'
-import { Navbar, Nav, Container, Row, Col, Button, Card, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Card, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import LandPage from '../pages/LandPage'
 import { Link } from 'react-router-dom';
 import '../styles/LandPage.css';
 function LandPageForm() {
@@ -19,10 +18,10 @@ function LandPageForm() {
           </div>
 
           <div className="nav-links">
-            <a href="/Login">LOGIN</a>
-            <a href="/Register">REGISTRO</a>
-            <a href="/AboutUsPage">SOBRE NOSOTROS</a>
-            <a href="/ContactUS">CONTACTO</a>
+            <Link to="/Login">LOGIN</Link>
+            <Link to="/Register">REGISTRO</Link>
+            <Link to="/AboutUsPage">SOBRE NOSOTROS</Link>
+            <Link to="/ContactUs">CONTACTO</Link>
           </div>
 
           <Button className="btn-primary"><Link to="/DashboardAdmin" className='comenzar'>Acceso Admin</Link></Button>

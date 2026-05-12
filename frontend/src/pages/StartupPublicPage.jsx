@@ -1,4 +1,5 @@
 import React from 'react'
+import StartupPublicLogic from '../components/StartupPublicLogic'
 
 function StartupPublicPage() {
   return (

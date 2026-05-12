@@ -23,7 +23,7 @@ function MapaAdmin() {
     useEffect(() => {
         async function getStartups() {
             const response = await Services.getStartups();
-            setStartups(response);
+            setStartups(Array.isArray(response) ? response : []);
         }
         getStartups();
     }, []);
@@ -175,7 +175,7 @@ function MapaAdmin() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
 
-                        {startups
+                        {(startups || [])
                             .filter(s => !buscador || s.nombre?.toLowerCase().includes(buscador.toLowerCase()))
                             .filter(s => !sector || s.sector?.toString() === sector)
                             .filter(s => !etapa || s.etapa?.toString() === etapa)

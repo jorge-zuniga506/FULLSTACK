@@ -141,6 +141,7 @@ async function getStartups() { // Se coloca async para que el await fetch espere
         return datosStartups
     } catch (error) {
         console.error("Error al obtener las startups: ", error)
+        return []
     }
 }
 
