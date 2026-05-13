@@ -11,5 +11,5 @@ const Aceleradora = sequelize.define('Aceleradora', {
   tableName: 'aceleradoras',
   timestamps: false
 });
-
+ 
 module.exports = Aceleradora;
