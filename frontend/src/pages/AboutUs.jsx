@@ -1,5 +1,5 @@
 import React from 'react'
-import AboutUsPage from '../components/AboutUsPage'
+import AboutUsPage from '../components/Shared/AboutUsPage'
 
 function AboutUs() {
   return (

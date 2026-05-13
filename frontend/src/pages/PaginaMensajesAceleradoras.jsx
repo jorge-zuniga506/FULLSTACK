@@ -1,5 +1,5 @@
 import React from 'react'
-import MensajesAceleradoras from '../components/MensajesAceleradoras'
+import MensajesAceleradoras from '../components/Aceleradora/MensajesAceleradoras'
 
 function PaginaMensajesAceleradoras() {
   return (

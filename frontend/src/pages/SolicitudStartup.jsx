@@ -1,5 +1,5 @@
 import React from 'react'
-import SolicitudForm from '../components/SolicitudForm'
+import SolicitudForm from '../components/Startup/SolicitudForm'
 function SolicitudStartup() {
   return (
     <div>

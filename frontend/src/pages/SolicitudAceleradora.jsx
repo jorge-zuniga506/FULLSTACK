@@ -1,5 +1,5 @@
 import React from 'react'
-import SolicitudAceleradoraForm from '../components/SolicitudAceleradoraForm'
+import SolicitudAceleradoraForm from '../components/Aceleradora/SolicitudAceleradoraForm'
 
 function SolicitudAceleradora() {
   return (

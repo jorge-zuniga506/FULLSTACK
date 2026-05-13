@@ -1,5 +1,5 @@
 import React from 'react'
-import SolicitudPendienteAceleradora from '../components/SolicitudPendienteAceleradora'
+import SolicitudPendienteAceleradora from '../components/Aceleradora/SolicitudPendienteAceleradora'
 
 function PaginaSolicitudPendienteAceleradora() {
   return (

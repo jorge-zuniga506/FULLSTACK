@@ -1,5 +1,5 @@
 import React from 'react'
-import LandPageForm from '../components/LandPageForm'
+import LandPageForm from '../components/Auth/LandPageForm'
 
 function LandPage() {
   return (
