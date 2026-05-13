@@ -54,7 +54,7 @@ function LoginForm() {
         } else if (adminLogueado.length > 0) {
           if (adminLogueado[0].rol === "admin") {
             localStorage.setItem("usuarioLogueado", JSON.stringify(adminLogueado[0]))
-            localStorage.setItem ("token", "token")
+            localStorage.setItem("token", "token")
             navigate("/DashboardAdmin");
           }
         }
@@ -156,13 +156,13 @@ function LoginForm() {
         {/* Security badges */}
         <div className="flex items-center justify-center gap-4 mt-8 pt-6 border-t border-slate-800/50">
           <div className="flex items-center text-[10px] text-slate-500 uppercase tracking-widest font-bold">
-             <span className="material-symbols-outlined text-xs mr-1">security</span>
-             AES-256
+            <span className="material-symbols-outlined text-xs mr-1">security</span>
+            AES-256
           </div>
           <div className="w-1 h-1 bg-slate-700 rounded-full"></div>
           <div className="flex items-center text-[10px] text-slate-500 uppercase tracking-widest font-bold">
-             <span className="material-symbols-outlined text-xs mr-1">verified_user</span>
-             ISO 27001
+            <span className="material-symbols-outlined text-xs mr-1">verified_user</span>
+            ISO 27001
           </div>
         </div>
       </div>
