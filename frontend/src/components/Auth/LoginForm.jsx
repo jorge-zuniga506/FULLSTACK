@@ -1,17 +1,16 @@
-﻿import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 import Services from '../../services/Services';
-import '../../styles/LoginStyle.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
 
-function LoginForm() {
+function LoginForm({ onSwitch }) {
   const [correoUsuario, setCorreoUsuario] = useState("");
   const [contrasenaUsuario, setContrasenaUsuario] = useState("");
   const navigate = useNavigate();
 
-
   async function handleLogin(e) {
     if (e) e.preventDefault();
-
     if (!correoUsuario || !contrasenaUsuario) {
       alert("Por favor ingrese todos los campos");
       return;
@@ -22,19 +21,10 @@ function LoginForm() {
       const startups = (await Services.getStartups()) || [];
       const inversores = (await Services.getInversores()) || [];
       const aceleradoras = (await Services.getAceleradoras()) || [];
-      const adminLogueado = administradores.filter(
-        (usuario) => usuario.correo === correoUsuario && usuario.contrasena === contrasenaUsuario
-      );
-      const startupLogueada = startups.filter(
-        (usuario) => usuario.correo === correoUsuario && usuario.contrasena === contrasenaUsuario
-      );
-      const inversorLogueado = inversores.filter(
-        (usuario) => usuario.correo === correoUsuario && usuario.contrasena === contrasenaUsuario
-      );
-      const aceleradoraLogueada = aceleradoras.filter(
-        (usuario) => usuario.correo === correoUsuario && usuario.contrasena === contrasenaUsuario
-      );
+      
+      const findUser = (list) => list.find(u => u.correo === correoUsuario && u.contrasena === contrasenaUsuario);
 
+<<<<<<< HEAD
       if (startupLogueada.length > 0 || inversorLogueado.length > 0 || aceleradoraLogueada.length > 0 || adminLogueado.length > 0) {
         if (startupLogueada.length > 0) {
           if (startupLogueada[0].rol === "startup") {
@@ -58,18 +48,37 @@ function LoginForm() {
             navigate("/DashboardAdmin");
           }
         }
+=======
+      const admin = findUser(administradores);
+      const startup = findUser(startups);
+      const inversor = findUser(inversores);
+      const aceleradora = findUser(aceleradoras);
+
+      if (admin) {
+        localStorage.setItem("usuarioLogueado", JSON.stringify(admin));
+        localStorage.setItem("token", "token");
+        navigate("/DashboardAdmin");
+      } else if (startup) {
+        localStorage.setItem("usuarioLogueado", JSON.stringify(startup));
+        navigate("/PerfilPrivadoStartup");
+      } else if (inversor) {
+        localStorage.setItem("usuarioLogueado", JSON.stringify(inversor));
+        navigate("/Mapa");
+      } else if (aceleradora) {
+        localStorage.setItem("usuarioLogueado", JSON.stringify(aceleradora));
+        navigate("/PerfilPrivadoAceleradora");
+>>>>>>> b5c27e0cbba049050b9e43a54ef914b97272dc9f
       } else {
         alert("Credenciales incorrectas o usuario no encontrado");
       }
     } catch (error) {
       console.error("Error durante el login:", error);
-      alert("Hubo un problema al intentar iniciar sesi³n. Por favor, intenta de nuevo.");
+      alert("Hubo un problema al intentar iniciar sesión.");
     }
   }
 
-
-
   return (
+<<<<<<< HEAD
     <main className="login-main-container">
       <div className="login-glass-card animate-fade-in shadow-2xl">
         {/* Brand/Logo */}
@@ -165,13 +174,41 @@ function LoginForm() {
             ISO 27001
           </div>
         </div>
+=======
+    <form onSubmit={handleLogin}>
+      <h1 className="auth-title">Iniciar Sesión</h1>
+      <div className="social-container">
+        <a href="#"><FontAwesomeIcon icon={faGoogle} /></a>
+        <a href="#"><FontAwesomeIcon icon={faLinkedinIn} /></a>
+>>>>>>> b5c27e0cbba049050b9e43a54ef914b97272dc9f
       </div>
-    </main>
+      <span className="auth-subtitle text-muted">o usa tu cuenta</span>
+      <input
+        type="email"
+        className="auth-input"
+        placeholder="Email"
+        value={correoUsuario}
+        onChange={(e) => setCorreoUsuario(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        className="auth-input"
+        placeholder="Contraseña"
+        value={contrasenaUsuario}
+        onChange={(e) => setContrasenaUsuario(e.target.value)}
+        required
+      />
+      <a href="#" className="auth-link">¿Olvidaste tu contraseña?</a>
+      <button type="submit" className="auth-button">Entrar</button>
+      
+      <div className="d-lg-none mt-4">
+        <p className="text-muted small">
+          ¿No tienes cuenta? <span className="text-primary cursor-pointer" onClick={onSwitch}>Regístrate</span>
+        </p>
+      </div>
+    </form>
   );
 }
 
 export default LoginForm;
-
-
-
-
