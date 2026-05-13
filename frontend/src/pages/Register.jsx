@@ -1,12 +1,10 @@
-import React from 'react'
-import RegisterForm from '../components/RegisterForm'
+import React from 'react';
+import AuthContainer from '../components/Auth/AuthContainer';
 
 function Register() {
   return (
-    <div>
-      <RegisterForm />
-    </div>
-  )
+    <AuthContainer initialMode="signup" />
+  );
 }
 
-export default Register
+export default Register;

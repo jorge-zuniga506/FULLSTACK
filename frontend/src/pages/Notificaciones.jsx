@@ -1,5 +1,5 @@
 import React from 'react'
-import NotificacionesDeContact from '../components/NotificacionesDeContact'
+import NotificacionesDeContact from '../components/Shared/NotificacionesDeContact'
 function Notificaciones() {
   return (
     <div>

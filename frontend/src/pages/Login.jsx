@@ -1,10 +1,10 @@
-import React from 'react'
-import LoginForm from '../components/LoginForm'
+import React from 'react';
+import AuthContainer from '../components/Auth/AuthContainer';
 
 function Login() {
   return (
-    <div><LoginForm /></div>
-  )
+    <AuthContainer initialMode="signin" />
+  );
 }
 
-export default Login
+export default Login;

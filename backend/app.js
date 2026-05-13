@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const { sequelize, Role } = require('./models');
-const userRoutes = require('./routes/UserRoutes')
+const userRoutes = require('./routes/UserRoutes');
+const authRoutes = require('./routes/AuthRoutes');
 const app = express();
 app.use(express.json());
 
@@ -15,8 +16,8 @@ app.get('/', (req, res) => {
 
 // Middleware global de manejo de errores
 app.use(require('./middlewares/errorHandler'));
-app.use("/usuarios", userRoutes)
-
+app.use("/usuarios", userRoutes);
+app.use("/auth", authRoutes);
 
 const PORT = process.env.PORT || 3007;
 const server = app.listen(PORT, async () => {

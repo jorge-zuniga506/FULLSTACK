@@ -1,5 +1,5 @@
 import React from 'react'
-import GestionarUsuarios from '../components/GestionarUsuarios'
+import GestionarUsuarios from '../components/Admin/GestionarUsuarios'
 
 function PaginaGestionarUsuarios() {
   return (

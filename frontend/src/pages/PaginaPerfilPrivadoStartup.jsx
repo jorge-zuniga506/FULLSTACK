@@ -1,6 +1,6 @@
 import React from 'react'
-import PerfilPrivadoStartup from '../components/PerfilPrivadoStartup'
-import SidebarStartup from '../components/SidebarStartup'
+import PerfilPrivadoStartup from '../components/Startup/PerfilPrivadoStartup'
+import SidebarStartup from '../components/Startup/SidebarStartup'
 
 function PaginaPerfilPrivadoStartup() {
   return (

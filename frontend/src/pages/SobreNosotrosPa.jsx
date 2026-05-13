@@ -1,5 +1,5 @@
 import React from 'react'
-import SobreNosotros from '../components/SobreNosotros'
+import SobreNosotros from '../components/Shared/SobreNosotros'
 
 function SobreNosotrosPa() {
     return (

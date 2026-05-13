@@ -1,5 +1,5 @@
 import React from 'react';
-import SolicitudesPendientes from '../components/SolicitudesPendientes';
+import SolicitudesPendientes from '../components/Admin/SolicitudesPendientes';
 
 export default function PaginaSolicitudesPendientes() {
   return (

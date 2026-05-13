@@ -1,5 +1,5 @@
 import React from 'react'
-import MapaParaAceleradoras from '../components/MapaParaAceleradoras'
+import MapaParaAceleradoras from '../components/Aceleradora/MapaParaAceleradoras'
 const PrincipalAceleradoras = () => {
   return (
     <div>

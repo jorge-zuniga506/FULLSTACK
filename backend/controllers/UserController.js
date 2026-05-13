@@ -1,88 +1,97 @@
-// Instalaciones e importaciones necesarias
-const { User } = require('../models')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const { User } = require('../models');
+const bcrypt = require('bcrypt');
 
-
-
-//INSERT
+// INSERT
 const crearUsuario = async (req, res) => {
-    const { cedula, nombre_hacienda, email, password_hash, role_id } = req.body
-    const clave_encriptada = await bcrypt.hash(password_hash, 10)
-
     try {
+        const { cedula, nombre_hacienda, email, password_hash, role_id } = req.body;
+        const clave_encriptada = await bcrypt.hash(password_hash, 10);
+
         const usuario = await User.create({
             cedula,
             nombre_hacienda,
             email,
             password_hash: clave_encriptada,
             role_id
-        })
+        });
+        
+        // Removemos el password del objeto devuelto por seguridad
+        const usuarioResponse = usuario.toJSON();
+        delete usuarioResponse.password_hash;
+
         res.status(201).json({
             message: 'Usuario creado exitosamente',
-            usuario
-        })
+            usuario: usuarioResponse
+        });
     } catch (error) {
         res.status(500).json({
             message: 'Error al crear el usuario',
             error: error.message
-        })
+        });
     }
-    
-    //SELECT 
- const ObtenerUsuarios = async (req,res)=>{
-    try{
-const usuarios = await User.findAll();
-res.status(200).json(usuarios); 
+};
 
-    }catch (error){
-        res.status(500).json({message: 'Error al obtener los usuarios', error});
+// SELECT 
+const obtenerUsuarios = async (req, res) => {
+    try {
+        const usuarios = await User.findAll({
+            attributes: { exclude: ['password_hash'] } // No devolvemos hashes
+        });
+        res.status(200).json(usuarios); 
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener los usuarios', error: error.message });
     }
-}
+};
 
-//DELETE
-const eliminarUsuarios = async (req,res)=>{
-    try{
-        const {id_Usuario} = req.params;
+// DELETE
+const eliminarUsuario = async (req, res) => {
+    try {
+        const { id_Usuario } = req.params;
 
-        const usuarioEncontrado =await User.findByPk(id_Usuario);
-        if(!usuarioEncontrado){
-            return res.status(404).json({message: 'Usuario no encontrado'});
+        const usuarioEncontrado = await User.findByPk(id_Usuario);
+        if (!usuarioEncontrado) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-        await usuarioEncontrado.destroy()
-        res.status(500).json({message: 'Usuario eliminado correctamente'});
-
-    }catch (error){
-        res.status(500).json({message: 'Error al eliminar el usuario', error});
+        await usuarioEncontrado.destroy();
+        
+        res.status(200).json({ message: 'Usuario eliminado correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar el usuario', error: error.message });
     }
-}
-//UPDATE
-const editarUsuarios = async (req,res)=>{
-    try{
-        const {id_Usuario} = req.params;
+};
 
-        const {cedula,nombre_hacienda,email,password_hash,role_id} = req.body;
+// UPDATE
+const actualizarUsuario = async (req, res) => {
+    try {
+        const { id_Usuario } = req.params;
+        const { cedula, nombre_hacienda, email, password_hash, role_id } = req.body;
 
         const usuarioEncontrado = await User.findByPk(id_Usuario);
 
-        if(!usuarioEncontrado){
-            return res.status(404).json({message: 'Usuario no encontrado'});
+        if (!usuarioEncontrado) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        await usuarioEncontrado.update({cedula,nombre_hacienda,email,password_hash,role_id});
+        let updateData = { cedula, nombre_hacienda, email, role_id };
+        if (password_hash) {
+            updateData.password_hash = await bcrypt.hash(password_hash, 10);
+        }
 
-        res.status(200).json(usuarioEncontrado);
+        await usuarioEncontrado.update(updateData);
 
-    }catch (error){
-        res.status(500).json({message: 'Error al editar el usuario', error});
+        const usuarioResponse = usuarioEncontrado.toJSON();
+        delete usuarioResponse.password_hash;
+
+        res.status(200).json(usuarioResponse);
+
+    } catch (error) {
+        res.status(500).json({ message: 'Error al editar el usuario', error: error.message });
     }
-}
-    
+};
 
-}
 module.exports = {
     crearUsuario,
-    ObtenerUsuarios,
-    eliminarUsuarios,
-    editarUsuarios
-}
+    obtenerUsuarios,
+    eliminarUsuario,
+    actualizarUsuario
+};
