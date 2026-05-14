@@ -66,6 +66,6 @@ const editarAceleradora = async (req,res)=>{
 module.exports = {
     crearAceleradora,
     ObtenerAceleradoras,
-    eliminarAceleradora,
+    eliminarAceleradora, 
     editarAceleradora
 }   

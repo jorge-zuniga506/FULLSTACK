@@ -103,16 +103,21 @@ const logout = async (req, res) => {
 
 const getMe = async (req, res) => {
     try {
-        // El usuario ya fue adjuntado al request por el middleware de autenticación
+        // req.user viene del middleware authRequired
+        const usuario = await User.findByPk(req.user.id, {
+            attributes: { exclude: ['password_hash'] }
+        });
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
         res.status(200).json({
-            message: 'Información del usuario recuperada con éxito',
-            usuario: req.user
+            message: 'Datos del usuario obtenidos exitosamente',
+            user: usuario
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Error al obtener la información del usuario',
-            error: error.message
-        });
+        res.status(500).json({ message: 'Error al obtener datos del usuario', error: error.message });
     }
 };
 

@@ -1,25 +1,22 @@
 const jwt = require('jsonwebtoken');
-const { User, Session } = require('../models');
+const { Session } = require('../models');
 
 // Middleware para verificar JWT y validar sesión
-const authMiddleware = async (req, res, next) => {
+const authRequired = async (req, res, next) => {
     try {
-        // 1. Obtener el token del encabezado Authorization
-        const authHeader = req.headers.authorization;
-        
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ 
-                message: 'No se proporcionó un token de autenticación o el formato es inválido.' 
-            });
+        // Extraer token del header Authorization (formato: Bearer <token>)
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1]; // Obtener token después de 'Bearer '
+
+        if (!token) {
+            return res.status(401).json({ message: 'Token de acceso requerido.' });
         }
 
-        const token = authHeader.split(' ')[1];
-
-        // 2. Verificar el token
+        // Verificar el JWT
         const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_jwt_key_123';
         const decoded = jwt.verify(token, JWT_SECRET);
 
-        // 3. Buscar y validar la sesión en la base de datos
+        // Buscar la sesión en la base de datos
         const session = await Session.findOne({
             where: {
                 token_jwt: token,
@@ -37,32 +34,19 @@ const authMiddleware = async (req, res, next) => {
             return res.status(401).json({ message: 'Token expirado.' });
         }
 
-        // 4. Buscar el usuario en la base de datos
-        const user = await User.findByPk(decoded.id, {
-            attributes: { exclude: ['password_hash'] } // No devolver el hash de la contraseña
-        });
-
-        if (!user) {
-            return res.status(401).json({ message: 'Usuario no encontrado o token inválido.' });
-        }
-
-        // 5. Adjuntar el usuario al objeto request
-        req.user = user;
-        next();
+        // Adjuntar información del usuario a la request
+        req.user = decoded;
+        next(); // Continuar con la siguiente función middleware o ruta
 
     } catch (error) {
-        let message = 'Token inválido o expirado.';
-        if (error.name === 'TokenExpiredError') {
-            message = 'El token ha expirado. Por favor, inicie sesión de nuevo.';
-        } else if (error.name === 'JsonWebTokenError') {
-            message = 'Token inválido.';
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: 'Token inválido.' });
         }
-
-        return res.status(401).json({ 
-            message,
-            error: error.message 
-        });
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expirado.' });
+        }
+        res.status(500).json({ message: 'Error en la autenticación.', error: error.message });
     }
 };
 
-module.exports = authMiddleware;
+module.exports = { authRequired };

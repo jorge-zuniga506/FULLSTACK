@@ -1,8 +1,17 @@
 require('dotenv').config();
 const express = require('express');
 const { sequelize, Role } = require('./models');
-const userRoutes = require('./routes/UserRoutes');
-const authRoutes = require('./routes/AuthRoutes');
+const UserRoutes = require('./routes/UserRoutes');
+const AuthRoutes = require('./routes/AuthRoutes');
+const AceleradoraRoutes = require ('./routes/AceleradoraRoutes');
+const StartupRoutes = require ('./routes/StartupRoutes');
+const SessionRoutes = require ('./routes/SessionRoutes');
+const SectorRoutes = require ('./routes/SectorRoutes');
+const RoleRoutes = require ('./routes/RoleRoutes');
+const InversorRoutes = require ('./routes/InversorRoutes');
+const EcosystemRoutes = require ('./routes/EcosystemRoutes');
+const CommunicationRoutes = require ('./routes/CommunicationRoutes')
+
 const app = express();
 app.use(express.json());
 
@@ -16,8 +25,17 @@ app.get('/', (req, res) => {
 
 // Middleware global de manejo de errores
 app.use(require('./middlewares/errorHandler'));
-app.use("/usuarios", userRoutes);
-app.use("/auth", authRoutes);
+app.use("/api/usuarios", UserRoutes);
+app.use("/api/auth", AuthRoutes);
+app.use("/api/aceleradoras", AceleradoraRoutes);
+app.use("/api/startups",StartupRoutes);
+app.use("/api/sesiones",SessionRoutes);
+app.use("/api/sectores",SectorRoutes);
+app.use("/api/roles",RoleRoutes);
+app.use("/api/inversores",InversorRoutes);
+app.use("/api/ecosistemas",EcosystemRoutes);
+app.use("/api/communication",CommunicationRoutes)
+
 
 const PORT = process.env.PORT || 3007;
 const server = app.listen(PORT, async () => {
