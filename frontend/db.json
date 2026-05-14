@@ -1,5 +1,4 @@
 {
-  "$schema": "./node_modules/json-server/schema.json",
   "aceleradoras": [
     {
       "id": "efc4",
@@ -199,6 +198,17 @@
           "inversion": "50000"
         }
       ]
+    },
+    {
+      "id": "ce22",
+      "nombre": "EDUARDO GABRIEL BOLAÑOS ABARCA",
+      "correo": "gabrielfwdcostarica@gmail.com",
+      "contrasena": "MazdafFD3S",
+      "cedula": "119380988",
+      "rol": "inversor",
+      "tesis": "",
+      "sectoresInteres": [],
+      "portafolio": []
     }
   ],
   "MensajesContactanos": [
@@ -376,5 +386,6 @@
       "descripcion": "Empresa enfocada en la neurociencia, especificamente en la neurotecnología",
       "rol": "startup"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
