@@ -2,7 +2,7 @@ const { User } = require('../models');
 const bcrypt = require('bcrypt');
 
 // INSERT
-const crearUsuario = async (req, res) => {
+ const crearUsuario = async (req, res) => {
     try {
         const { cedula, nombre_hacienda, email, password_hash, role_id } = req.body;
         const clave_encriptada = await bcrypt.hash(password_hash, 10);
