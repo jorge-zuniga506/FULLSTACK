@@ -14,7 +14,7 @@ const crearUsuario = async (req, res) => {
             password_hash: clave_encriptada,
             role_id
         });
-        
+
         // Removemos el password del objeto devuelto por seguridad
         const usuarioResponse = usuario.toJSON();
         delete usuarioResponse.password_hash;
@@ -34,10 +34,10 @@ const crearUsuario = async (req, res) => {
 // SELECT 
 const obtenerUsuarios = async (req, res) => {
     try {
-        const usuarios = await User.findAll({
+        const usuarios = await User.find({
             attributes: { exclude: ['password_hash'] } // No devolvemos hashes
         });
-        res.status(200).json(usuarios); 
+        res.status(200).json(usuarios);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener los usuarios', error: error.message });
     }
@@ -53,7 +53,7 @@ const eliminarUsuario = async (req, res) => {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
         await usuarioEncontrado.destroy();
-        
+
         res.status(200).json({ message: 'Usuario eliminado correctamente' });
     } catch (error) {
         res.status(500).json({ message: 'Error al eliminar el usuario', error: error.message });

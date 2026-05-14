@@ -29,11 +29,11 @@ const login = async (req, res) => {
         const token = jwt.sign(
             { id: usuario.id, email: usuario.email, role_id: usuario.role_id },
             JWT_SECRET,
-            { expiresIn: '2h' } // El token expira en 2 horas
+            { expiresIn: '24h' } // El token expira en 24 horas
         );
 
-        // Calcular fecha de expiración para la sesión (2 horas desde ahora)
-        const expiracion = new Date(Date.now() + 2 * 60 * 60 * 1000);
+        // Calcular fecha de expiración para la sesión (24 horas desde ahora)
+        const expiracion = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
         // Crear sesión en la base de datos para rastrear el token
         try {
@@ -47,6 +47,8 @@ const login = async (req, res) => {
             console.error('Error al crear sesión:', sessionError);
             return res.status(500).json({ message: 'Error al crear sesión de autenticación.' });
         }
+
+        // Devolver usuario (sin password) y el token
         const usuarioResponse = usuario.toJSON();
         delete usuarioResponse.password_hash;
 
@@ -99,7 +101,23 @@ const logout = async (req, res) => {
     }
 };
 
+const getMe = async (req, res) => {
+    try {
+        // El usuario ya fue adjuntado al request por el middleware de autenticación
+        res.status(200).json({
+            message: 'Información del usuario recuperada con éxito',
+            usuario: req.user
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error al obtener la información del usuario',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     login,
-    logout
+    logout,
+    getMe
 };
