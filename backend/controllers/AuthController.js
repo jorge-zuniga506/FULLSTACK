@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { User } = require('../models');
+const { User, Session } = require('../models');
 
 const login = async (req, res) => {
     try {
@@ -29,10 +29,24 @@ const login = async (req, res) => {
         const token = jwt.sign(
             { id: usuario.id, email: usuario.email, role_id: usuario.role_id },
             JWT_SECRET,
-            { expiresIn: '24h' } // El token expira en 24 horas
+            { expiresIn: '2h' } // El token expira en 2 horas
         );
 
-        // Devolver usuario (sin password) y el token
+        // Calcular fecha de expiración para la sesión (2 horas desde ahora)
+        const expiracion = new Date(Date.now() + 2 * 60 * 60 * 1000);
+
+        // Crear sesión en la base de datos para rastrear el token
+        try {
+            await Session.create({
+                user_id: usuario.id,
+                token_jwt: token,
+                expiracion: expiracion,
+                es_valido: true
+            });
+        } catch (sessionError) {
+            console.error('Error al crear sesión:', sessionError);
+            return res.status(500).json({ message: 'Error al crear sesión de autenticación.' });
+        }
         const usuarioResponse = usuario.toJSON();
         delete usuarioResponse.password_hash;
 
@@ -50,22 +64,63 @@ const login = async (req, res) => {
     }
 };
 
-const getMe = async (req, res) => {
+const logout = async (req, res) => {
     try {
-        // El usuario ya fue adjuntado al request por el middleware de autenticación
-        res.status(200).json({
-            message: 'Información del usuario recuperada con éxito',
-            usuario: req.user
+        // Extraer token del header Authorization
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        if (!token) {
+            return res.status(400).json({ message: 'Token requerido para logout.' });
+        }
+
+        // Buscar y invalidar la sesión en la base de datos
+        const session = await Session.findOne({
+            where: {
+                token_jwt: token,
+                es_valido: true
+            }
         });
+
+        if (!session) {
+            return res.status(400).json({ message: 'Sesión no encontrada o ya inválida.' });
+        }
+
+        // Marcar la sesión como inválida
+        await session.update({ es_valido: false });
+
+        res.status(200).json({ message: 'Logout exitoso. Token invalidado.' });
+
     } catch (error) {
         res.status(500).json({
-            message: 'Error al obtener la información del usuario',
+            message: 'Error en el servidor al intentar cerrar sesión',
             error: error.message
         });
     }
 };
 
+const getMe = async (req, res) => {
+    try {
+        // req.user viene del middleware authRequired
+        const usuario = await User.findByPk(req.user.id, {
+            attributes: { exclude: ['password_hash'] }
+        });
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        res.status(200).json({
+            message: 'Datos del usuario obtenidos exitosamente',
+            user: usuario
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener datos del usuario', error: error.message });
+    }
+};
+
 module.exports = {
     login,
+    logout,
     getMe
 };
