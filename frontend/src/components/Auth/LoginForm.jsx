@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from "react-router-dom";
-import Services from '../services/Services';
-import '../styles/LoginStyle.css';
+import Services from '../../services/Services';
+import '../../styles/LoginStyle.css';
 
 function LoginForm() {
   const [correoUsuario, setCorreoUsuario] = useState("");

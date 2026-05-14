@@ -35,6 +35,7 @@ const Routing = () => {
             <Route path='/Register' element = {<Register />} />
             <Route path='/SolicitudStartup' element = {<SolicitudStartup/>} />
             <Route path='/Login' element={<Login />}></Route>
+            <Route path='/login' element={<Login />}></Route>
             <Route path='/Mapa' element={<Mapa/>} />
             <Route path='/PrincipalAceleradoras' element={<PrincipalAceleradoras/>}></Route>
             <Route path='/PublicoAceleradoras' element={<PublicoAceleradoras/>}></Route>

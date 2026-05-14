@@ -22,7 +22,7 @@ function ComponenteNavbar() {
         
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="nav-center">
-            <Nav.Link href="/login" className="nav-link">Login</Nav.Link>
+            <Nav.Link href="/Login" className="nav-link">Login</Nav.Link>
             <Nav.Link href="/registro" className="nav-link">Registro</Nav.Link>
             <Nav.Link href="/sobre-nosotros" className="nav-link">Sobre Nosotros</Nav.Link>
             <Nav.Link href="/contactanos" className="nav-link">Cont¡ctanos</Nav.Link>
