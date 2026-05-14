@@ -36,7 +36,7 @@ const eliminarStartup = async (req,res)=>{
             return res.status(404).json({message: 'Startup no encontrada'});
         }
         await startupEncontrada.destroy()
-        res.status(500).json({message: 'Startup eliminada correctamente'});
+        res.status(200).json({message: 'Startup eliminada correctamente'});
 
     }catch (error){
         res.status(500).json({message: 'Error al eliminar la startup', error});

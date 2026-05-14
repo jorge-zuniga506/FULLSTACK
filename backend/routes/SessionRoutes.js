@@ -1,10 +1,10 @@
 const express = require("express")
 const router = express.Router()
-const { crearSession, obtenerSession, editarSession, eliminarSession} = require("../controllers/SessionController")
+const { crearSession, ObtenerSessions, editarSession, eliminarSession } = require("../controllers/SessionController")
 
 router.post("/crear-session", crearSession)
-router.get("/obtener-session", obtenerSession)
-router.put("/editar-session", editarSessionrSession)
-router.delete("/eliminar-session", eliminarSession)
+router.get("/obtener-session", ObtenerSessions)
+router.put("/editar-session/:id_session", editarSession)
+router.delete("/eliminar-session/:id_session", eliminarSession)
 
 module.exports = router

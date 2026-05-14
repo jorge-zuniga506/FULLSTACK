@@ -33,7 +33,7 @@ const eliminarSession = async (req,res)=>{
             return res.status(404).json({message: 'Session no encontrada'});
         }
         await sessionEncontrada.destroy()
-        res.status(500).json({message: 'Session eliminada correctamente'});
+        res.status(200).json({message: 'Session eliminada correctamente'});
 
     }catch (error){
         res.status(500).json({message: 'Error al eliminar la session', error});

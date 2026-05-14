@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const { crearCommunication, obtenerCommunication, editarCommunication, eliminarCommunication} = require("../controllers/CommunicationController")
+const { crearMensaje, ObtenerMensajes, editarMensaje, eliminarMensaje } = require("../controllers/CommunicationCotroller")
 
-router.post("/crear-communication", crearCommunication)
-router.get("/obtener-communication", obtenerCommunication)
-router.put("/editar-communication", editarCommunication)
-router.delete("/eliminar-communication", eliminarCommunication)
+router.post("/crear-communication", crearMensaje)
+router.get("/obtener-communication", ObtenerMensajes)
+router.put("/editar-communication/:id_mensaje", editarMensaje)
+router.delete("/eliminar-communication/:id_mensaje", eliminarMensaje)
 
 module.exports = router

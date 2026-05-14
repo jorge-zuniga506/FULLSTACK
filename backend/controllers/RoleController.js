@@ -31,7 +31,7 @@ const eliminarRole = async (req,res)=>{
             return res.status(404).json({message: 'Role no encontrado'});
         }
         await roleEncontrado.destroy()
-        res.status(500).json({message: 'Role eliminado correctamente'});
+        res.status(200).json({message: 'Role eliminado correctamente'});
 
     }catch (error){
         res.status(500).json({message: 'Error al eliminar el role', error});

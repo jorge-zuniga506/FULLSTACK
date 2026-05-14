@@ -40,7 +40,19 @@ const User = sequelize.define('User', {
   tableName: 'users',
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: false
+  updatedAt: false,
+  hooks: {
+    beforeUpdate: (user, options) => {
+      if (user.changed('role_id')) {
+        throw new Error('No se permite cambiar el rol del usuario.');
+      }
+    },
+    beforeBulkUpdate: (options) => {
+      if (options.attributes && Object.prototype.hasOwnProperty.call(options.attributes, 'role_id')) {
+        throw new Error('No se permite cambiar el rol del usuario.');
+      }
+    }
+  }
 });
 
 module.exports = User;

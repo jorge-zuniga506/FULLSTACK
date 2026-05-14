@@ -34,7 +34,7 @@ const bcrypt = require('bcrypt');
 // SELECT 
 const obtenerUsuarios = async (req, res) => {
     try {
-        const usuarios = await User.find({
+        const usuarios = await User.findAll({
             attributes: { exclude: ['password_hash'] } // No devolvemos hashes
         });
         res.status(200).json(usuarios);
@@ -66,13 +66,17 @@ const actualizarUsuario = async (req, res) => {
         const { id_Usuario } = req.params;
         const { cedula, nombre_hacienda, email, password_hash, role_id } = req.body;
 
+        if (role_id !== undefined) {
+            return res.status(403).json({ message: 'No se permite cambiar el rol del usuario desde este endpoint.' });
+        }
+
         const usuarioEncontrado = await User.findByPk(id_Usuario);
 
         if (!usuarioEncontrado) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        let updateData = { cedula, nombre_hacienda, email, role_id };
+        let updateData = { cedula, nombre_hacienda, email };
         if (password_hash) {
             updateData.password_hash = await bcrypt.hash(password_hash, 10);
         }

@@ -1,10 +1,10 @@
 const express = require ("express")
 const router = express.Router()
-const { crearSector, obtenerSector, editarSector, eliminarSector} = require("../controllers/RoleController")
+const { crearRole, ObtenerRoles, editarRole, eliminarRole } = require("../controllers/RoleController")
 
 router.post("/crear-rol", crearRole)
-router.get("/obtener-roles", obtenerRole)
-router.put("editar-rol", editarRole)
-router.delete("/eliminar-rol", eliminarRole)
+router.get("/obtener-roles", ObtenerRoles)
+router.put("/editar-rol/:id_role", editarRole)
+router.delete("/eliminar-rol/:id_role", eliminarRole)
 
 module.exports = router

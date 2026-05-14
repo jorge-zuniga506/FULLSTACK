@@ -35,7 +35,7 @@ const eliminarInversor = async (req,res)=>{
             return res.status(404).json({message: 'Inversor no encontrado'});
         }
         await inversorEncontrado.destroy()
-        res.status(500).json({message: 'Inversor eliminado correctamente'});
+        res.status(200).json({message: 'Inversor eliminado correctamente'});
 
     }catch (error){
         res.status(500).json({message: 'Error al eliminar el inversor', error});

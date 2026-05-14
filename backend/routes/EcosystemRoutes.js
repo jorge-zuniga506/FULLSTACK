@@ -1,10 +1,15 @@
 const express = require ("express")
 const router = express.Router()
-const { crearEcosystem, obtnerEcosystem, editarEcosystem, eliminarEcosystem} = require("../controllers/EcosystemController")
+const {
+  crearGeolocalizacion,
+  ObtenerGeolocalizaciones,
+  editarGeolocalizacion,
+  eliminarGeolocalizacion
+} = require("../controllers/EcosystemController")
 
-router.post("/crear-ecosystem", crearEcosystem)
-router.get("/obtener-ecosystem",obtnerEcosystem)
-router.put("/editar-ecosytem",editarEcosystem)
-router.delete("eliminar-ecosystem", eliminarEcosystem)
+router.post("/crear-ecosystem", crearGeolocalizacion)
+router.get("/obtener-ecosystem", ObtenerGeolocalizaciones)
+router.put("/editar-ecosytem/:id_geolocalizacion", editarGeolocalizacion)
+router.delete("/eliminar-ecosystem/:id_geolocalizacion", eliminarGeolocalizacion)
 
 module.exports = router

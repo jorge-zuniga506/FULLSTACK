@@ -32,7 +32,7 @@ const eliminarSector = async (req,res)=>{
             return res.status(404).json({message: 'Sector no encontrado'});
         }
         await sectorEncontrado.destroy()
-        res.status(500).json({message: 'Sector eliminado correctamente'});
+        res.status(200).json({message: 'Sector eliminado correctamente'});
 
     }catch (error){
         res.status(500).json({message: 'Error al eliminar el sector', error});

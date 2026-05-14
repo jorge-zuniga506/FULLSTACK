@@ -1,7 +1,7 @@
 const { Aceleradora } = require('../models');
 
 const crearAceleradora = async (req,res)=>{
-    const {user_id,nombre_aceleradora,sector_id,metas_anuales,descripcion,es_verified} = req.body;
+    const { user_id, nombre, programa_activo, sitio_web } = req.body;
     try{
         const aceleradora = await Aceleradora.create({
             user_id,
@@ -35,7 +35,7 @@ const eliminarAceleradora = async (req,res)=>{
             return res.status(404).json({message: 'Aceleradora no encontrada'});
         }
         await aceleradoraEncontrada.destroy()
-        res.status(500).json({message: 'Aceleradora eliminada correctamente'});
+        res.status(200).json({message: 'Aceleradora eliminada correctamente'});
 
     }catch (error){
         res.status(500).json({message: 'Error al eliminar la aceleradora', error});

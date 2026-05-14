@@ -34,7 +34,7 @@ const eliminarMensaje = async (req,res)=>{
             return res.status(404).json({message: 'Mensaje no encontrado'});
         }
         await mensajeEncontrado.destroy()
-        res.status(500).json({message: 'Mensaje eliminado correctamente'});
+        res.status(200).json({message: 'Mensaje eliminado correctamente'});
 
     }catch (error){
         res.status(500).json({message: 'Error al eliminar el mensaje', error});
@@ -96,7 +96,7 @@ const eliminarConsultaIA = async (req,res)=>{
             return res.status(404).json({message: 'Consulta IA no encontrada'});
         }
         await consultaIAEncontrada.destroy()
-        res.status(500).json({message: 'Consulta IA eliminada correctamente'});
+        res.status(200).json({message: 'Consulta IA eliminada correctamente'});
 
     }catch (error){
         res.status(500).json({message: 'Error al eliminar la consulta IA', error});
