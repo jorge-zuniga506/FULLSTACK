@@ -20,3 +20,27 @@
 .duration-300 {
   transition-duration: 300ms;
 }
+
+.btn-outline-primary {
+  border: 1px solid #00d4ff !important;
+  color: #00d4ff !important;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: #00d4ff;
+  color: #0d1b2a !important;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.btn-outline-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}

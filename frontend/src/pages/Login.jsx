@@ -1,9 +1,16 @@
 import React from 'react';
-import AuthContainer from '../components/Auth/AuthContainer';
+import LandPageNavbar from '../components/landpage/LandPageNavbar';
+import LandPageLogin from '../components/landpage/LandPageLogin';
+import LandPageFooter from '../components/landpage/LandPageFooter';
+import '../styles/LandPage.css';
 
 function Login() {
   return (
-    <AuthContainer initialMode="signin" />
+    <div className="startup-theme">
+      <LandPageNavbar />
+      <LandPageLogin />
+      <LandPageFooter />
+    </div>
   );
 }
 

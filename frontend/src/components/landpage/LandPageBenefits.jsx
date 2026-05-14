@@ -51,7 +51,9 @@ function LandPageBenefits() {
                   <FontAwesomeIcon icon={benefit.icon} style={{ color: benefit.color, fontSize: '1.5rem' }} />
                 </div>
                 <h4 className="h5 fw-bold mb-3">{benefit.title}</h4>
-                <p className="text-muted small mb-0">{benefit.description}</p>
+                <p className="small mb-0" style={{color:'#ffff'}}>
+                  {benefit.description}
+                </p>
               </div>
             </Col>
           ))}

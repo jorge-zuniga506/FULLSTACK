@@ -1,9 +1,16 @@
 import React from 'react'
-import AboutUsPage from '../components/Shared/AboutUsPage'
+import LandPageNavbar from '../components/landpage/LandPageNavbar'
+import LandPageAboutUs from '../components/landpage/LandPageAboutUs'
+import LandPageFooter from '../components/landpage/LandPageFooter'
+import '../styles/LandPage.css'
 
 function AboutUs() {
   return (
-    <div><AboutUsPage/></div>
+    <div className="startup-theme">
+      <LandPageNavbar />
+      <LandPageAboutUs />
+      <LandPageFooter />
+    </div>
   )
 }
 

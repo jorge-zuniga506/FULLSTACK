@@ -39,8 +39,6 @@ function LandPageNavbar() {
           </div>
         </BootstrapNavbar.Brand>
 
-        <BootstrapNavbar.Toggle aria-controls="landpage-nav" className="border-0 bg-primary-glow" />
-        
         <BootstrapNavbar.Collapse id="landpage-nav">
           <Nav className="ms-auto align-items-center gap-4 mt-3 mt-lg-0">
             {NAV_LINKS.map((link) => (
@@ -53,6 +51,12 @@ function LandPageNavbar() {
                 {link.label}
               </Nav.Link>
             ))}
+            <Link to="/Login" className="btn-outline-primary text-decoration-none px-4 py-2 rounded" style={{border: '1px solid #00d4ff', color: '#00d4ff', transition: 'all 0.3s ease'}}>
+              Login
+            </Link>
+            <Link to="/AboutUsPage" className="btn-outline-secondary text-decoration-none px-4 py-2 rounded" style={{border: '1px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.7)', transition: 'all 0.3s ease'}}>
+              Acerca de Nosotros
+            </Link>
             <Link to="/Register" className="btn-neon text-decoration-none">
               Registrarse <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
             </Link>

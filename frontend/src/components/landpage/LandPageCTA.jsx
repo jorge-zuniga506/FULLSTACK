@@ -22,7 +22,7 @@ function LandPageCTA() {
               </p>
             </Col>
             <Col lg={4} className="text-center text-lg-end">
-              <Link to="/ContactUs" className="btn-neon px-5 py-4 fs-4 w-100 shadow-xl">
+              <Link to="/ContactUs" className="btn-neon px-4 py-2 d-inline-block">
                 Solicitar Acceso <FontAwesomeIcon icon={faPaperPlane} className="ms-2" />
               </Link>
               <p className="mt-4 small text-muted">Respuesta garantizada en menos de 24h.</p>
