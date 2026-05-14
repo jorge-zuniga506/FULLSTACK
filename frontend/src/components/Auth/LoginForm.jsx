@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from "react-router-dom";
-import Services from '../../services/Services';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
+import Services from '../services/Services';
+import '../styles/LoginStyle.css';
 
-function LoginForm({ onSwitch }) {
+function LoginForm() {
   const [correoUsuario, setCorreoUsuario] = useState("");
-  const [contrasenaUsuario, setContrasenaUsuario] = useState("");
+  const [contraseñaUsuario, setContraseñaUsuario] = useState("");
   const navigate = useNavigate();
+
 
   async function handleLogin(e) {
     if (e) e.preventDefault();
-    if (!correoUsuario || !contrasenaUsuario) {
+
+    if (!correoUsuario || !contraseñaUsuario) {
       alert("Por favor ingrese todos los campos");
       return;
     }
@@ -21,10 +22,29 @@ function LoginForm({ onSwitch }) {
       const startups = (await Services.getStartups()) || [];
       const inversores = (await Services.getInversores()) || [];
       const aceleradoras = (await Services.getAceleradoras()) || [];
-      
-      const findUser = (list) => list.find(u => u.correo === correoUsuario && u.contrasena === contrasenaUsuario);
+      const adminLogueado = administradores.filter(
+        (usuario) => usuario.correo === correoUsuario && usuario.contraseña === contraseñaUsuario
+      );
+      if (adminLogueado.length > 0) {
 
-<<<<<<< HEAD
+      }
+      const startupLogueada = startups.filter(
+        (usuario) => usuario.correo === correoUsuario && usuario.contraseña === contraseñaUsuario
+      );
+      if (startupLogueada.length > 0) {
+
+      }
+      const inversorLogueado = inversores.filter(
+        (usuario) => usuario.correo === correoUsuario && usuario.contraseña === contraseñaUsuario
+      );
+      if (inversorLogueado.length > 0) {
+      }
+      const aceleradoraLogueada = aceleradoras.filter(
+        (usuario) => usuario.correo === correoUsuario && usuario.contraseña === contraseñaUsuario
+      );
+      if (aceleradoraLogueada.length > 0) {
+      }
+
       if (startupLogueada.length > 0 || inversorLogueado.length > 0 || aceleradoraLogueada.length > 0 || adminLogueado.length > 0) {
         if (startupLogueada.length > 0) {
           if (startupLogueada[0].rol === "startup") {
@@ -48,37 +68,18 @@ function LoginForm({ onSwitch }) {
             navigate("/DashboardAdmin");
           }
         }
-=======
-      const admin = findUser(administradores);
-      const startup = findUser(startups);
-      const inversor = findUser(inversores);
-      const aceleradora = findUser(aceleradoras);
-
-      if (admin) {
-        localStorage.setItem("usuarioLogueado", JSON.stringify(admin));
-        localStorage.setItem("token", "token");
-        navigate("/DashboardAdmin");
-      } else if (startup) {
-        localStorage.setItem("usuarioLogueado", JSON.stringify(startup));
-        navigate("/PerfilPrivadoStartup");
-      } else if (inversor) {
-        localStorage.setItem("usuarioLogueado", JSON.stringify(inversor));
-        navigate("/Mapa");
-      } else if (aceleradora) {
-        localStorage.setItem("usuarioLogueado", JSON.stringify(aceleradora));
-        navigate("/PerfilPrivadoAceleradora");
->>>>>>> b5c27e0cbba049050b9e43a54ef914b97272dc9f
       } else {
         alert("Credenciales incorrectas o usuario no encontrado");
       }
     } catch (error) {
       console.error("Error durante el login:", error);
-      alert("Hubo un problema al intentar iniciar sesión.");
+      alert("Hubo un problema al intentar iniciar sesión. Por favor, intenta de nuevo.");
     }
   }
 
+
+
   return (
-<<<<<<< HEAD
     <main className="login-main-container">
       <div className="login-glass-card animate-fade-in shadow-2xl">
         {/* Brand/Logo */}
@@ -93,7 +94,7 @@ function LoginForm({ onSwitch }) {
         <form onSubmit={handleLogin} className="space-y-6">
           {/* Email Field */}
           <div>
-            <label className="login-label" htmlFor="email">Correo Electr³nico</label>
+            <label className="login-label" htmlFor="email">Correo Electrónico</label>
             <input
               id="email"
               type="email"
@@ -108,25 +109,25 @@ function LoginForm({ onSwitch }) {
           {/* Password Field */}
           <div className="space-y-1">
             <div className="flex justify-between items-center">
-              <label className="login-label" htmlFor="password">Contrasena</label>
+              <label className="login-label" htmlFor="password">Contraseña</label>
               <a href="#" className="text-xs text-primary hover:text-primary-light transition-colors font-medium">
-                ¿Olvidaste tu contrasena?
+                ¿Olvidaste tu contraseña?
               </a>
             </div>
             <input
               id="password"
               type="password"
               className="login-input"
-              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
-              value={contrasenaUsuario}
-              onChange={(e) => setContrasenaUsuario(e.target.value)}
+              placeholder="••••••••"
+              value={contraseñaUsuario}
+              onChange={(e) => setContraseñaUsuario(e.target.value)}
               required
             />
           </div>
 
           {/* Submit Button */}
           <button type="submit" className="btn-neon mt-4 active:scale-95 transition-transform" onClick={handleLogin}>
-            Iniciar Sesi³n
+            Iniciar Sesión
           </button>
 
           {/* Divider */}
@@ -157,7 +158,7 @@ function LoginForm({ onSwitch }) {
           <p className="text-slate-400 text-sm">
             ¿No tienes una cuenta?{" "}
             <Link to="/Register" className="text-primary hover:underline font-semibold decoration-2 underline-offset-4 transition-all">
-              Reg­strate ahora
+              Regístrate ahora
             </Link>
           </p>
         </div>
@@ -174,40 +175,8 @@ function LoginForm({ onSwitch }) {
             ISO 27001
           </div>
         </div>
-=======
-    <form onSubmit={handleLogin}>
-      <h1 className="auth-title">Iniciar Sesión</h1>
-      <div className="social-container">
-        <a href="#"><FontAwesomeIcon icon={faGoogle} /></a>
-        <a href="#"><FontAwesomeIcon icon={faLinkedinIn} /></a>
->>>>>>> b5c27e0cbba049050b9e43a54ef914b97272dc9f
       </div>
-      <span className="auth-subtitle text-muted">o usa tu cuenta</span>
-      <input
-        type="email"
-        className="auth-input"
-        placeholder="Email"
-        value={correoUsuario}
-        onChange={(e) => setCorreoUsuario(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        className="auth-input"
-        placeholder="Contraseña"
-        value={contrasenaUsuario}
-        onChange={(e) => setContrasenaUsuario(e.target.value)}
-        required
-      />
-      <a href="#" className="auth-link">¿Olvidaste tu contraseña?</a>
-      <button type="submit" className="auth-button">Entrar</button>
-      
-      <div className="d-lg-none mt-4">
-        <p className="text-muted small">
-          ¿No tienes cuenta? <span className="text-primary cursor-pointer" onClick={onSwitch}>Regístrate</span>
-        </p>
-      </div>
-    </form>
+    </main>
   );
 }
 
