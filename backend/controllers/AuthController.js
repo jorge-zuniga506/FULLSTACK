@@ -50,6 +50,22 @@ const login = async (req, res) => {
     }
 };
 
+const getMe = async (req, res) => {
+    try {
+        // El usuario ya fue adjuntado al request por el middleware de autenticación
+        res.status(200).json({
+            message: 'Información del usuario recuperada con éxito',
+            usuario: req.user
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error al obtener la información del usuario',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
-    login
+    login,
+    getMe
 };
