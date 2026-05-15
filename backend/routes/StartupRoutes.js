@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { crearStartup, ObtenerStartups, editarStartup, eliminarStartup } = require("../controllers/StartupCotroller")
+const { crearStartup, ObtenerStartups, editarStartup, eliminarStartup } = require("../controllers/StartupController")
 const { validarStartup } = require("../middlewares/validators")
 
 router.post("/crear-startup", validarStartup, crearStartup)

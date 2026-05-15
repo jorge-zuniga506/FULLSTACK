@@ -6,7 +6,7 @@
  * GEOLOCALIZACION — posiciones geográficas de actores:
  *   POST   /crear-ecosystem                        → crearGeolocalizacion
  *   GET    /obtener-ecosystem                      → ObtenerGeolocalizaciones
- *   PUT    /editar-ecosytem/:id_geolocalizacion    → editarGeolocalizacion
+ *   PUT    /editar-ecosystem/:id_geolocalizacion    → editarGeolocalizacion
  *   DELETE /eliminar-ecosystem/:id_geolocalizacion → eliminarGeolocalizacion
  *
  * CONEXION GRAFO — aristas del grafo del ecosistema:
@@ -42,7 +42,7 @@ const {
 // ── Geolocalización ────────────────────────────────────────────────────────────
 router.post  ('/crear-ecosystem',                        crearGeolocalizacion);
 router.get   ('/obtener-ecosystem',                      ObtenerGeolocalizaciones);
-router.put   ('/editar-ecosytem/:id_geolocalizacion',    editarGeolocalizacion);
+router.put   ('/editar-ecosystem/:id_geolocalizacion',    editarGeolocalizacion);
 router.delete('/eliminar-ecosystem/:id_geolocalizacion', eliminarGeolocalizacion);
 
 // ── Conexiones del grafo ──────────────────────────────────────────────────────

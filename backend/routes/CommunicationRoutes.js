@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { crearMensaje, ObtenerMensajes, editarMensaje, eliminarMensaje, crearConsultaIA, ObtenerConsultasIA, editarConsultaIA, eliminarConsultaIA } = require("../controllers/CommunicationCotroller")
+const { crearMensaje, ObtenerMensajes, editarMensaje, eliminarMensaje, crearConsultaIA, ObtenerConsultasIA, editarConsultaIA, eliminarConsultaIA } = require("../controllers/CommunicationController")
 
 router.post("/mensajes", crearMensaje)
 router.get("/mensajes", ObtenerMensajes)

@@ -1,5 +1,5 @@
 /**
- * index.js — Servidor HTTP principal de la aplicación
+ * app.js — Servidor HTTP principal de la aplicación
  *
  * Responsabilidades:
  * - Cargar variables de entorno (.env)
@@ -52,10 +52,6 @@ app.get('/', (req, res) => {
   res.send('Backend del Ecosistema de Startups listo.');
 });
 
-// ─── Middleware global de manejo de errores ────────────────────────────────────
-// Debe registrarse ANTES de las rutas para capturar errores propagados con next(err)
-app.use(require('./middlewares/errorHandler'));
-
 // ─── Registro de routers ───────────────────────────────────────────────────────
 app.use('/api/usuarios',      UserRoutes);
 app.use('/api/auth',          AuthRoutes);
@@ -67,6 +63,10 @@ app.use('/api/roles',         RoleRoutes);
 app.use('/api/inversores',    InversorRoutes);
 app.use('/api/ecosistemas',   EcosystemRoutes);
 app.use('/api/communication', CommunicationRoutes);
+
+// ─── Middleware global de manejo de errores ────────────────────────────────────
+// Debe registrarse AL FINAL de las rutas para capturar errores propagados con next(err)
+app.use(require('./middlewares/errorHandler'));
 
 // ─── Puerto de escucha ────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3007;

@@ -11,10 +11,7 @@ import Landpage           from '../pages/Landpage/Landpage';
 import Login              from '../pages/Auth/Login';
 import Register           from '../pages/Auth/Register';
 
-// Perfiles de entidad: cada uno es una página independiente con navbar top
-import StartupProfile     from '../pages/StartupProfile/StartupProfile';
-import InvestorProfile    from '../pages/InvestorProfile/InvestorProfile';
-import AcceleratorProfile from '../pages/AcceleratorProfile/AcceleratorProfile';
+
 
 // ─── Páginas del Ecosistema (con sidebar via DashboardLayout) ─────────────────
 // Todas estas rutas comparten el sidebar de navegación
@@ -51,11 +48,6 @@ const AppRoutes = () => {
       {/* Autenticación */}
       <Route path="/login"   element={<Login />} />
       <Route path="/register" element={<Register />} />
-
-      {/* Perfiles de entidad — cada uno carga su propio navbar top */}
-      <Route path="/startup/:slug"      element={<StartupProfile />} />
-      <Route path="/investor/:slug"     element={<InvestorProfile />} />
-      <Route path="/accelerator/:slug"  element={<AcceleratorProfile />} />
 
 
       {/* ── 2. PÁGINAS DEL ECOSISTEMA (CON SIDEBAR) ─────────────────────── */}
