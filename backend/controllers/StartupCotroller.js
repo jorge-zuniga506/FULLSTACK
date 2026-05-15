@@ -1,66 +1,44 @@
-const {Startup} = require('../models');
+const StartupService = require('../services/StartupService');
 
-const crearStartup = async (req,res)=>{
-    const {user_id,nombre,descripcion,sector,fecha_fundacion,estado} = req.body;
-    try{
-        const startup = await Startup.create({
-            user_id,
-            nombre,
-            descripcion,
-            sector,
-            fecha_fundacion,
-            estado
-        });
-        res.status(201).json({message: 'Startup creada exitosamente', startup});
-    }catch(error){
-        res.status(500).json({message: 'Error al crear la startup', error});
+const crearStartup = async (req, res) => {
+    try {
+        const startup = await StartupService.crearStartup(req.body);
+        res.status(201).json({ message: 'Startup creada exitosamente', startup });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al crear la startup', error: error.message });
     }
 }
 
-const ObtenerStartups = async (req,res)=>{
-    try{
-const startups = await Startup.findAll();
-res.status(200).json(startups); 
-
-    }catch (error){
-        res.status(500).json({message: 'Error al obtener las startups', error});
+const ObtenerStartups = async (req, res) => {
+    try {
+        const resultado = await StartupService.obtenerStartups(req.query);
+        res.status(200).json(resultado);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener las startups', error: error.message });
     }
 }
 
-const eliminarStartup = async (req,res)=>{
-    try{
-        const {id_Startup} = req.params;
-
-        const startupEncontrada =await Startup.findByPk(id_Startup);
-        if(!startupEncontrada){
-            return res.status(404).json({message: 'Startup no encontrada'});
+const eliminarStartup = async (req, res) => {
+    try {
+        await StartupService.eliminarStartup(req.params.id_Startup);
+        res.status(200).json({ message: 'Startup eliminada correctamente' });
+    } catch (error) {
+        if (error.message === 'Startup no encontrada') {
+            return res.status(404).json({ message: error.message });
         }
-        await startupEncontrada.destroy()
-        res.status(200).json({message: 'Startup eliminada correctamente'});
-
-    }catch (error){
-        res.status(500).json({message: 'Error al eliminar la startup', error});
+        res.status(500).json({ message: 'Error al eliminar la startup', error: error.message });
     }
 }
 
-const editarStartup = async (req,res)=>{
-    try{
-        const {id_Startup} = req.params;
-
-        const {user_id,nombre,descripcion,sector,fecha_fundacion,estado} = req.body;
-
-        const startupEncontrada = await Startup.findByPk(id_Startup);
-
-        if(!startupEncontrada){
-            return res.status(404).json({message: 'Startup no encontrada'});
+const editarStartup = async (req, res) => {
+    try {
+        const startupEditada = await StartupService.editarStartup(req.params.id_Startup, req.body);
+        res.status(200).json(startupEditada);
+    } catch (error) {
+        if (error.message === 'Startup no encontrada') {
+            return res.status(404).json({ message: error.message });
         }
-
-        await startupEncontrada.update({user_id,nombre,descripcion,sector,fecha_fundacion,estado});
-
-        res.status(200).json(startupEncontrada);
-
-    }catch (error){
-        res.status(500).json({message: 'Error al editar la startup', error});
+        res.status(500).json({ message: 'Error al editar la startup', error: error.message });
     }
 }
 
@@ -70,4 +48,3 @@ module.exports = {
     eliminarStartup,
     editarStartup
 }
-    

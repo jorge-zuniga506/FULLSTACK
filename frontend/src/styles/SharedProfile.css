@@ -1,0 +1,536 @@
+/* ==========================================================
+   SHARED PROFILE STYLES
+   Usado por: StartupProfile, InvestorProfile, AcceleratorProfile
+   Contiene: Navbar top, page shell, hero, cards base, modals
+   ========================================================== */
+
+/* --- Reset base para páginas standalone de perfil --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #040d18;
+  color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-y: auto !important;
+}
+
+/* --- Shell principal --- */
+.sp-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #040d18;
+}
+
+/* ============================
+   NAVBAR SUPERIOR
+   ============================ */
+.sp-nav {
+  height: 64px;
+  background: rgba(8, 15, 30, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.sp-nav-back {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.2s;
+}
+.sp-nav-back:hover { color: var(--profile-accent, #00aaff); }
+
+.sp-nav-logo {
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #fff;
+}
+.sp-nav-logo span { color: #00aaff; margin-left: 3px; }
+
+.sp-nav-user {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.4rem 1.1rem;
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+.sp-nav-user:hover {
+  border-color: var(--profile-accent, #00aaff);
+  color: var(--profile-accent, #00aaff);
+}
+
+/* ============================
+   BREADCRUMB
+   ============================ */
+.sp-breadcrumb {
+  padding: 0.75rem 2.5rem;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.sp-breadcrumb a {
+  color: rgba(255, 255, 255, 0.35);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.sp-breadcrumb a:hover { color: var(--profile-accent, #00aaff); }
+.sp-breadcrumb span { color: rgba(255, 255, 255, 0.6); }
+
+/* ============================
+   HERO DE ENTIDAD
+   ============================ */
+.ep-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.ep-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--accent, #00aaff) 12%, transparent), transparent 65%);
+  pointer-events: none;
+}
+
+.ep-hero-inner {
+  position: relative;
+  padding: 2.5rem 2.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ep-hero-left {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.ep-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+
+.ep-hero-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+
+.ep-type-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ep-meta-badge {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ep-name {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 0.3rem;
+  line-height: 1.2;
+}
+
+.ep-tagline {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.ep-edit-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.5rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.ep-edit-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+/* ============================
+   LAYOUT PRINCIPAL (2 cols)
+   ============================ */
+.sp-wrapper {
+  flex: 1;
+  padding: 0 2rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sp-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* ============================
+   TARJETAS GENÉRICAS
+   ============================ */
+.sp-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: border-color 0.2s;
+}
+.sp-card:hover { border-color: rgba(255, 255, 255, 0.12); }
+
+.sp-card-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 1rem;
+}
+
+/* ============================
+   KPI CHIPS (stats pequeños)
+   ============================ */
+.sp-mini-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.sp-stat-chip {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+}
+
+.sp-stat-chip span {
+  display: block;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+
+.sp-stat-chip strong {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ============================
+   TABS
+   ============================ */
+.sp-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0;
+}
+
+.sp-tab-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.sp-tab-btn:hover { color: rgba(255, 255, 255, 0.7); }
+.sp-tab-btn.active {
+  color: var(--profile-accent, #00aaff);
+  border-bottom-color: var(--profile-accent, #00aaff);
+}
+
+/* ============================
+   TEXTO GENÉRICO
+   ============================ */
+.sp-text {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.sp-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 0.75rem;
+}
+
+/* ============================
+   TAGS / BADGES
+   ============================ */
+.sp-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+.sp-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid;
+  font-weight: 500;
+}
+
+/* ============================
+   ACCIONES (sidebar)
+   ============================ */
+.sp-action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sp-btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.sp-btn-primary:hover { transform: translateY(-2px); }
+
+.sp-btn-secondary {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.sp-btn-secondary:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+
+.sp-btn-ghost {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 12px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+.sp-btn-ghost:hover { border-color: rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.7); }
+
+/* ============================
+   CONNECTION LIST
+   ============================ */
+.sp-conn-list { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.sp-conn-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.sp-conn-row:hover { background: rgba(255, 255, 255, 0.04); }
+
+.sp-conn-name { flex: 1; font-size: 0.88rem; color: rgba(255, 255, 255, 0.7); }
+.sp-conn-rel { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ============================
+   TEAM / MENTOR GRID
+   ============================ */
+.sp-team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; }
+
+.sp-team-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.sp-team-card:hover { border-color: rgba(255, 255, 255, 0.12); }
+
+.sp-team-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin: 0 auto 0.75rem;
+  color: #fff;
+}
+
+.sp-team-name { font-size: 0.85rem; font-weight: 600; color: #fff; margin: 0 0 0.25rem; }
+.sp-team-role { font-size: 0.72rem; color: rgba(255, 255, 255, 0.35); margin: 0 0 0.15rem; }
+.sp-team-company { font-size: 0.72rem; color: rgba(255, 255, 255, 0.25); margin: 0; }
+
+/* ============================
+   PORTFOLIO GRID (egresadas/portafolio)
+   ============================ */
+.sp-portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+}
+
+.sp-port-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: block;
+}
+.sp-port-card:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.12); }
+
+.sp-port-logo { font-size: 1.6rem; margin-bottom: 0.4rem; }
+.sp-port-name { font-size: 0.78rem; font-weight: 600; color: #fff; margin: 0 0 0.2rem; }
+.sp-port-meta { font-size: 0.68rem; color: rgba(255, 255, 255, 0.3); margin: 0; }
+
+/* ============================
+   OPEN CALL BANNER
+   ============================ */
+.sp-opencall {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  border-radius: 14px;
+  border: 1px solid;
+  margin-bottom: 1rem;
+}
+.sp-opencall-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.2rem; }
+.sp-opencall-sub { font-size: 0.8rem; color: rgba(255, 255, 255, 0.5); margin: 0; }
+
+/* ============================
+   MODAL
+   ============================ */
+.sp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 13, 24, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 1rem;
+}
+
+.sp-modal {
+  background: #0d1b2e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+
+.sp-modal-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0 0 1.5rem;
+}
+
+.sp-modal-body { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+
+.sp-field label {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.4rem;
+}
+
+.sp-field input,
+.sp-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  resize: vertical;
+}
+.sp-field input:focus,
+.sp-field textarea:focus { border-color: var(--profile-accent, #00aaff); }
+
+.sp-modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+@media (max-width: 900px) {
+  .sp-grid { grid-template-columns: 1fr; }
+  .sp-wrapper { padding: 0 1rem 2rem; }
+}
+
+@media (max-width: 600px) {
+  .ep-hero-inner { padding: 1.5rem 1rem; }
+  .ep-hero-left { gap: 1rem; }
+  .ep-logo { width: 60px; height: 60px; font-size: 1.6rem; }
+  .ep-name { font-size: 1.4rem; }
+}

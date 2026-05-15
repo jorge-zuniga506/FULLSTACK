@@ -1,128 +1,106 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const { User, Session } = require('../models');
+/**
+ * controllers/AuthController.js — Controlador de autenticación
+ *
+ * Actúa como capa HTTP entre las rutas de autenticación y AuthService.
+ * No contiene lógica de negocio — solo traduce requests HTTP en llamadas
+ * al service y formatea las respuestas JSON.
+ *
+ * Funciones:
+ *
+ * ── login ────────────────────────────────────────────────────────────────────
+ * POST /api/auth/login
+ * Body: { email, password }
+ * → 200: { message, token, usuario }
+ * → 400: campos faltantes
+ * → 401: credenciales inválidas
+ * → 500: error de servidor
+ *
+ * ── logout ───────────────────────────────────────────────────────────────────
+ * POST /api/auth/logout   [requiere authRequired]
+ * Header: Authorization: Bearer <token>
+ * → 200: { message: 'Logout exitoso. Token invalidado.' }
+ * → 400: token faltante o sesión ya inválida
+ * → 500: error de servidor
+ *
+ * ── getMe ────────────────────────────────────────────────────────────────────
+ * GET /api/auth/me   [requiere authRequired]
+ * → 200: { message, user }
+ * → 404: usuario no encontrado (caso extremo post-eliminación)
+ * → 500: error de servidor
+ *
+ * El token para logout se extrae del mismo header Authorization
+ * (authMiddleware ya lo validó previamente, aquí solo se lee para pasarlo al service)
+ */
+const AuthService = require('../services/AuthService');
 
+/**
+ * Maneja el inicio de sesión — genera JWT y crea sesión en BD
+ */
 const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
+    const authData = await AuthService.login(email, password);
 
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Por favor ingrese email y contraseña.' });
-        }
-
-        // Buscar usuario por email
-        const usuario = await User.findOne({ where: { email } });
-        if (!usuario) {
-            return res.status(401).json({ message: 'Credenciales inválidas.' });
-        }
-
-        // Comparar contraseña con el hash almacenado
-        const passwordValido = await bcrypt.compare(password, usuario.password_hash);
-        if (!passwordValido) {
-            return res.status(401).json({ message: 'Credenciales inválidas.' });
-        }
-
-        // Obtener el secreto de variables de entorno o usar uno por defecto para desarrollo
-        const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_jwt_key_123';
-
-        // Generar JWT
-        const token = jwt.sign(
-            { id: usuario.id, email: usuario.email, role_id: usuario.role_id },
-            JWT_SECRET,
-            { expiresIn: '24h' } // El token expira en 24 horas
-        );
-
-        // Calcular fecha de expiración para la sesión (24 horas desde ahora)
-        const expiracion = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-        // Crear sesión en la base de datos para rastrear el token
-        try {
-            await Session.create({
-                user_id: usuario.id,
-                token_jwt: token,
-                expiracion: expiracion,
-                es_valido: true
-            });
-        } catch (sessionError) {
-            console.error('Error al crear sesión:', sessionError);
-            return res.status(500).json({ message: 'Error al crear sesión de autenticación.' });
-        }
-
-        // Devolver usuario (sin password) y el token
-        const usuarioResponse = usuario.toJSON();
-        delete usuarioResponse.password_hash;
-
-        res.status(200).json({
-            message: 'Autenticación exitosa',
-            token,
-            usuario: usuarioResponse
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error en el servidor al intentar iniciar sesión',
-            error: error.message
-        });
+    res.status(200).json({
+      message: 'Autenticación exitosa',
+      token:   authData.token,
+      usuario: authData.usuario
+    });
+  } catch (error) {
+    // Distingue entre errores de validación (400) y credenciales inválidas (401)
+    if (error.message === 'Por favor ingrese email y contraseña.') {
+      return res.status(400).json({ message: error.message });
     }
+    if (error.message === 'Credenciales inválidas.') {
+      return res.status(401).json({ message: error.message });
+    }
+    res.status(500).json({
+      message: 'Error en el servidor al intentar iniciar sesión',
+      error:   error.message
+    });
+  }
 };
 
+/**
+ * Maneja el cierre de sesión — marca el JWT como inválido en BD
+ */
 const logout = async (req, res) => {
-    try {
-        // Extraer token del header Authorization
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+  try {
+    // El token viene del header Authorization (ya validado por authRequired)
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-        if (!token) {
-            return res.status(400).json({ message: 'Token requerido para logout.' });
-        }
-
-        // Buscar y invalidar la sesión en la base de datos
-        const session = await Session.findOne({
-            where: {
-                token_jwt: token,
-                es_valido: true
-            }
-        });
-
-        if (!session) {
-            return res.status(400).json({ message: 'Sesión no encontrada o ya inválida.' });
-        }
-
-        // Marcar la sesión como inválida
-        await session.update({ es_valido: false });
-
-        res.status(200).json({ message: 'Logout exitoso. Token invalidado.' });
-
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error en el servidor al intentar cerrar sesión',
-            error: error.message
-        });
+    await AuthService.logout(token);
+    res.status(200).json({ message: 'Logout exitoso. Token invalidado.' });
+  } catch (error) {
+    if (error.message === 'Token requerido para logout.' ||
+        error.message === 'Sesión no encontrada o ya inválida.') {
+      return res.status(400).json({ message: error.message });
     }
+    res.status(500).json({
+      message: 'Error en el servidor al intentar cerrar sesión',
+      error:   error.message
+    });
+  }
 };
 
+/**
+ * Retorna los datos del usuario autenticado (desde req.user.id)
+ */
 const getMe = async (req, res) => {
-    try {
-        // req.user viene del middleware authRequired
-        const usuario = await User.findByPk(req.user.id, {
-            attributes: { exclude: ['password_hash'] }
-        });
-
-        if (!usuario) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
-        }
-
-        res.status(200).json({
-            message: 'Datos del usuario obtenidos exitosamente',
-            user: usuario
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Error al obtener datos del usuario', error: error.message });
+  try {
+    // req.user.id fue adjuntado por authMiddleware al verificar el JWT
+    const usuario = await AuthService.getMe(req.user.id);
+    res.status(200).json({
+      message: 'Datos del usuario obtenidos exitosamente',
+      user:    usuario
+    });
+  } catch (error) {
+    if (error.message === 'Usuario no encontrado.') {
+      return res.status(404).json({ message: error.message });
     }
+    res.status(500).json({ message: 'Error al obtener datos del usuario', error: error.message });
+  }
 };
 
-module.exports = {
-    login,
-    logout,
-    getMe
-};
+module.exports = { login, logout, getMe };

@@ -1,63 +1,44 @@
-const {Session} = require('../models');
-const crearSession = async (req,res)=>{
-    const {user_id,tocken_jwt,expiracion,es_valido} = req.body;
-    try{
-        const session = await Session.create({
-            user_id,
-            tocken_jwt,
-            expiracion,
-            es_valido
-        });
-        res.status(201).json({message: 'Session creada exitosamente', session});
-    }catch(error){
-        res.status(500).json({message: 'Error al crear la session', error});
+const SessionService = require('../services/SessionService');
+
+const crearSession = async (req, res) => {
+    try {
+        const session = await SessionService.crearSession(req.body);
+        res.status(201).json({ message: 'Session creada exitosamente', session });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al crear la session', error: error.message });
     }
 }
 
-const ObtenerSessions = async (req,res)=>{
-    try{
-const sessions = await Session.findAll();
-res.status(200).json(sessions); 
-
-    }catch (error){
-        res.status(500).json({message: 'Error al obtener las sessions', error});
+const ObtenerSessions = async (req, res) => {
+    try {
+        const sessions = await SessionService.obtenerSessions();
+        res.status(200).json(sessions);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener las sessions', error: error.message });
     }
 }
 
-const eliminarSession = async (req,res)=>{
-    try{
-        const {id_session} = req.params;
-
-        const sessionEncontrada =await Session.findByPk(id_session);
-        if(!sessionEncontrada){
-            return res.status(404).json({message: 'Session no encontrada'});
+const eliminarSession = async (req, res) => {
+    try {
+        await SessionService.eliminarSession(req.params.id_session);
+        res.status(200).json({ message: 'Session eliminada correctamente' });
+    } catch (error) {
+        if (error.message === 'Session no encontrada') {
+            return res.status(404).json({ message: error.message });
         }
-        await sessionEncontrada.destroy()
-        res.status(200).json({message: 'Session eliminada correctamente'});
-
-    }catch (error){
-        res.status(500).json({message: 'Error al eliminar la session', error});
+        res.status(500).json({ message: 'Error al eliminar la session', error: error.message });
     }
 }
 
-const editarSession = async (req,res)=>{
-    try{
-        const {id_session} = req.params;
-
-        const {user_id,tocken_jwt,expiracion,es_valido} = req.body;
-
-        const sessionEncontrada = await Session.findByPk(id_session);
-
-        if(!sessionEncontrada){
-            return res.status(404).json({message: 'Session no encontrada'});
+const editarSession = async (req, res) => {
+    try {
+        const sessionEditada = await SessionService.editarSession(req.params.id_session, req.body);
+        res.status(200).json(sessionEditada);
+    } catch (error) {
+        if (error.message === 'Session no encontrada') {
+            return res.status(404).json({ message: error.message });
         }
-
-        await sessionEncontrada.update({user_id,tocken_jwt,expiracion,es_valido});
-
-        res.status(200).json(sessionEncontrada);
-
-    }catch (error){
-        res.status(500).json({message: 'Error al editar la session', error});
+        res.status(500).json({ message: 'Error al editar la session', error: error.message });
     }
 }
 
@@ -67,4 +48,3 @@ module.exports = {
     eliminarSession,
     editarSession
 }
-    
