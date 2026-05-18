@@ -28,6 +28,7 @@
  * ── eliminarStartup(id) ──────────────────────────────────────────────────────
  * Elimina la startup. MetricaDashboard se elimina en cascada.
  */
+const { Op } = require('sequelize');
 const { Startup } = require('../models');
 
 class StartupService {
@@ -54,13 +55,17 @@ class StartupService {
    * @returns {{ totalItems, totalPages, currentPage, startups }}
    */
   static async obtenerStartups(query) {
-    const { page = 1, limit = 10, sector_id, fase, sortBy = 'id', order = 'DESC' } = query;
+    const { page = 1, limit = 10, sector_id, fase, sortBy = 'id', order = 'DESC', search } = query;
     const offset = (page - 1) * limit; // Calcula el offset para SQL LIMIT/OFFSET
 
     // Construye el objeto WHERE dinámicamente según los filtros presentes
     const where = {};
     if (sector_id) where.sector_id = sector_id;
     if (fase)      where.fase      = fase;
+    if (search)    where[Op.or]  = [
+      { nombre_comercial: { [Op.like]: `%${search}%` } },
+      { descripcion:      { [Op.like]: `%${search}%` } }
+    ];
 
     // findAndCountAll retorna tanto los registros como el total sin paginación
     const startups = await Startup.findAndCountAll({

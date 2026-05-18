@@ -1,4 +1,5 @@
 const InversorService = require('../services/InversorService');
+const getInversorId = (params) => params.id || params.id_inversor;
 
 const crearInversor = async (req, res) => {
     try {
@@ -11,8 +12,8 @@ const crearInversor = async (req, res) => {
 
 const ObtenerInversores = async (req, res) => {
     try {
-        const inversores = await InversorService.obtenerInversores();
-        res.status(200).json(inversores);
+        const resultado = await InversorService.obtenerInversores(req.query);
+        res.status(200).json(resultado);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener los inversores', error: error.message });
     }
@@ -20,7 +21,7 @@ const ObtenerInversores = async (req, res) => {
 
 const eliminarInversor = async (req, res) => {
     try {
-        await InversorService.eliminarInversor(req.params.id_inversor);
+        await InversorService.eliminarInversor(getInversorId(req.params));
         res.status(200).json({ message: 'Inversor eliminado correctamente' });
     } catch (error) {
         if (error.message === 'Inversor no encontrado') {
@@ -32,7 +33,7 @@ const eliminarInversor = async (req, res) => {
 
 const editarInversor = async (req, res) => {
     try {
-        const inversorEditado = await InversorService.editarInversor(req.params.id_inversor, req.body);
+        const inversorEditado = await InversorService.editarInversor(getInversorId(req.params), req.body);
         res.status(200).json(inversorEditado);
     } catch (error) {
         if (error.message === 'Inversor no encontrado') {

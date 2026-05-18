@@ -1,4 +1,5 @@
 const StartupService = require('../services/StartupService');
+const getStartupId = (params) => params.id || params.id_Startup;
 
 const crearStartup = async (req, res) => {
     try {
@@ -20,7 +21,7 @@ const ObtenerStartups = async (req, res) => {
 
 const eliminarStartup = async (req, res) => {
     try {
-        await StartupService.eliminarStartup(req.params.id_Startup);
+        await StartupService.eliminarStartup(getStartupId(req.params));
         res.status(200).json({ message: 'Startup eliminada correctamente' });
     } catch (error) {
         if (error.message === 'Startup no encontrada') {
@@ -32,7 +33,7 @@ const eliminarStartup = async (req, res) => {
 
 const editarStartup = async (req, res) => {
     try {
-        const startupEditada = await StartupService.editarStartup(req.params.id_Startup, req.body);
+        const startupEditada = await StartupService.editarStartup(getStartupId(req.params), req.body);
         res.status(200).json(startupEditada);
     } catch (error) {
         if (error.message === 'Startup no encontrada') {
