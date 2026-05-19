@@ -1,0 +1,83 @@
+/* ==========================================================
+   ACCELERATOR PROFILE — SPECIFIC STYLES
+   Color accent: #059669 (verde esmeralda)
+   Importa junto con: SharedProfile.css
+   ========================================================== */
+
+:root {
+  --accel-accent: #059669;
+  --accel-accent-light: #10b981;
+  --accel-accent-glow: rgba(5, 150, 105, 0.25);
+}
+
+.sp-page.accelerator-theme {
+  --profile-accent: var(--accel-accent);
+}
+
+/* --- Botón primario de Accelerator (verde) --- */
+.accel-btn-primary {
+  background: linear-gradient(135deg, #059669, #10b981);
+  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+}
+.accel-btn-primary:hover {
+  box-shadow: 0 12px 28px rgba(5, 150, 105, 0.45);
+}
+
+/* --- Tags de sector (verde) --- */
+.sp-tag.accel-tag {
+  background: rgba(5, 150, 105, 0.08);
+  border-color: rgba(5, 150, 105, 0.3);
+  color: #34d399;
+}
+
+/* --- Open call banner (verde) --- */
+.sp-opencall.accel-call {
+  background: rgba(5, 150, 105, 0.06);
+  border-color: rgba(5, 150, 105, 0.3);
+}
+.sp-opencall.accel-call .sp-opencall-icon { color: #059669; }
+.sp-opencall.accel-call .sp-opencall-title { color: #059669; }
+
+/* --- KPI Bar (grande, para accelerator) --- */
+.sp-kpis-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.sp-kpi {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+.sp-kpi:hover {
+  background: rgba(5, 150, 105, 0.05);
+  border-color: rgba(5, 150, 105, 0.2);
+}
+
+.sp-kpi-icon { font-size: 1.3rem; display: block; margin-bottom: 0.4rem; }
+.sp-kpi-val  { font-size: 1rem; font-weight: 700; color: #fff; display: block; }
+.sp-kpi-key  { font-size: 0.65rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.07em; display: block; margin-top: 0.2rem; }
+
+/* --- Avatar mentores (verde) --- */
+.accel-avatar {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+/* --- Egresadas connection label --- */
+.accel-conn-rel {
+  color: #34d399;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Port card accent on hover --- */
+.sp-port-card.accel-port:hover {
+  border-color: rgba(5, 150, 105, 0.3);
+  background: rgba(5, 150, 105, 0.04);
+}

@@ -1,0 +1,71 @@
+/* ==========================================================
+   STARTUP PROFILE — SPECIFIC STYLES
+   Color accent: #00aaff (azul Nexus Cobalt)
+   Importa junto con: SharedProfile.css
+   ========================================================== */
+
+/* Acento de color para todo el perfil */
+:root {
+  --startup-accent: #00aaff;
+  --startup-accent-glow: rgba(0, 170, 255, 0.25);
+}
+
+/* Override de variable de acento al entrar a esta página */
+.sp-page.startup-theme {
+  --profile-accent: var(--startup-accent);
+}
+
+/* --- Botón primario de Startup (azul) --- */
+.startup-btn-primary {
+  background: linear-gradient(135deg, #0055ff, #00aaff);
+  box-shadow: 0 8px 20px rgba(0, 85, 255, 0.3);
+}
+.startup-btn-primary:hover {
+  box-shadow: 0 12px 28px rgba(0, 85, 255, 0.45);
+}
+
+/* --- Tags de sector (azul) --- */
+.sp-tag.startup-tag {
+  background: rgba(0, 170, 255, 0.08);
+  border-color: rgba(0, 170, 255, 0.25);
+  color: #00aaff;
+}
+
+/* --- Ministat accent bar --- */
+.startup-stat-bar {
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #0055ff, #00aaff);
+  animation: barIn 1s ease-out both;
+}
+
+/* --- Pill de conexión tipo startup --- */
+.sp-conn-pill.startup {
+  border-left: 3px solid #00aaff;
+}
+
+/* --- Avatar de equipo / fundadores --- */
+.startup-avatar {
+  background: linear-gradient(135deg, #0055ff, #00aaff);
+}
+
+/* --- Open call banner color --- */
+.sp-opencall.startup-call {
+  background: rgba(0, 170, 255, 0.05);
+  border-color: rgba(0, 170, 255, 0.2);
+}
+.sp-opencall.startup-call .sp-opencall-title { color: #00aaff; }
+
+/* --- Dot de portfolio list --- */
+.startup-port-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00aaff;
+  flex-shrink: 0;
+}
+
+@keyframes barIn {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}

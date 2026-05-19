@@ -1,15 +1,27 @@
-const express = require('express');
-const router = express.Router();
+/**
+ * routes/AuthRoutes.js — Rutas de autenticación
+ *
+ * Prefijo: /api/auth (montado en app.js)
+ *
+ * Rutas públicas:
+ *   POST /api/auth/login  → { email, password } → JWT + datos del usuario
+ *
+ * Rutas protegidas (requieren authRequired):
+ *   POST /api/auth/logout → invalida la sesión activa en BD
+ *   GET  /api/auth/me     → retorna los datos del usuario autenticado
+ */
+const express  = require('express');
+const router   = express.Router();
 const { login, logout, getMe } = require('../controllers/AuthController');
-const { authRequired } = require('../middlewares/authMiddleware');
+const { authRequired }         = require('../middlewares/authMiddleware');
 
-// Endpoint POST /auth/login
+// Pública: genera JWT si las credenciales son correctas
 router.post('/login', login);
 
-// Endpoint POST /auth/logout (protegido por middleware de autenticación)
+// Protegida: invalida la sesión activa (logout)
 router.post('/logout', authRequired, logout);
 
-// Endpoint GET /auth/me (protegido por middleware de autenticación)
+// Protegida: retorna datos del usuario autenticado
 router.get('/me', authRequired, getMe);
 
 module.exports = router;

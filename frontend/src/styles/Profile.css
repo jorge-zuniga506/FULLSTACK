@@ -1,0 +1,251 @@
+/* ===================================
+   PROFILE STYLES
+   Estructura: Sidebar | Main con tabs
+   =================================== */
+
+html, body { margin:0!important; padding:0!important; overflow:hidden!important; height:100%!important; }
+#root { width:100%!important; max-width:100%!important; margin:0!important; border:none!important; display:block!important; height:100%!important; }
+
+/* Hero */
+.pf-hero {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  flex-shrink: 0;
+}
+
+.pf-avatar-wrap { position:relative; flex-shrink:0; }
+
+.pf-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0055ff, #00aaff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.pf-online-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #34d399;
+  border: 2px solid #080f1e;
+}
+
+.pf-hero-info { flex: 1; }
+.pf-name { font-size:1.3rem; font-weight:800; margin:0 0 0.25rem; }
+.pf-email { font-size:0.82rem; color:rgba(255,255,255,0.35); margin:0 0 0.5rem; }
+
+.pf-badges { display:flex; gap:0.5rem; flex-wrap:wrap; }
+
+.pf-badge {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.5);
+}
+
+.pf-hero-stats {
+  display: flex;
+  gap: 2rem;
+  flex-shrink: 0;
+}
+
+.pf-hero-stat { text-align:center; }
+.pf-hero-num { display:block; font-size:1.4rem; font-weight:800; color:#00aaff; }
+.pf-hero-key { display:block; font-size:0.68rem; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.08em; margin-top:0.1rem; }
+
+/* Tabs */
+.pf-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding-bottom: 0;
+  flex-shrink: 0;
+}
+
+.pf-tab {
+  padding: 0.65rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255,255,255,0.35);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -1px;
+}
+
+.pf-tab:hover { color:rgba(255,255,255,0.7); }
+.pf-tab.active { color:#00aaff; border-bottom-color:#00aaff; }
+
+/* Section */
+.pf-section {
+  overflow-y: auto;
+  scrollbar-width: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pf-section::-webkit-scrollbar { display:none; }
+
+/* Form Grid */
+.pf-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.pf-field { display:flex; flex-direction:column; gap:0.4rem; }
+.pf-full { grid-column: 1 / -1; }
+
+.pf-field label { font-size:0.78rem; font-weight:600; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.08em; }
+
+.pf-field input,
+.pf-field select,
+.pf-field textarea {
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.pf-field input:focus,
+.pf-field select:focus,
+.pf-field textarea:focus { border-color:rgba(0,170,255,0.4); background:rgba(0,170,255,0.04); }
+
+.pf-field select option { background:#080f1e; }
+
+.pf-save-btn {
+  align-self: flex-start;
+  padding: 0.75rem 2rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0055ff, #00aaff);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0,85,255,0.3);
+}
+
+.pf-save-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,85,255,0.5); }
+
+/* Activity */
+.pf-activity-list { display:flex; flex-direction:column; gap:0; }
+
+.pf-activity-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.2s ease;
+}
+
+.pf-activity-row:hover { background:rgba(255,255,255,0.02); border-radius:8px; }
+
+.pf-activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00aaff;
+  flex-shrink: 0;
+}
+
+.pf-activity-info { flex:1; }
+.pf-activity-text { font-size:0.85rem; color:rgba(255,255,255,0.7); margin:0 0 0.15rem; }
+.pf-activity-time { font-size:0.72rem; color:rgba(255,255,255,0.25); margin:0; }
+
+.pf-type-badge { font-size:0.68rem; font-weight:600; }
+.pf-type-startup     { background:rgba(0,170,255,0.1);   color:#00aaff;  }
+.pf-type-investor    { background:rgba(124,58,237,0.1);  color:#a78bfa; }
+.pf-type-accelerator { background:rgba(5,150,105,0.1);   color:#34d399; }
+.pf-type-export      { background:rgba(217,119,6,0.1);   color:#fbbf24; }
+
+/* Settings */
+.pf-settings-list { display:flex; flex-direction:column; gap:0; }
+
+.pf-setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 1rem;
+}
+
+.pf-setting-row.danger { border-top: 1px solid rgba(239,68,68,0.1); margin-top: 0.5rem; }
+
+.pf-setting-label { font-size:0.88rem; font-weight:600; color:#ffffff; margin:0 0 0.2rem; }
+.pf-setting-desc  { font-size:0.75rem; color:rgba(255,255,255,0.3); margin:0; }
+
+.pf-toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.3s ease;
+}
+
+.pf-toggle::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  top: 3px;
+  left: 3px;
+  transition: all 0.3s ease;
+}
+
+.pf-toggle.active { background: #0055ff; }
+.pf-toggle.active::after { left: 23px; background:#ffffff; }
+
+.pf-danger-btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #ef4444;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pf-danger-btn:hover { background:rgba(239,68,68,0.2); }
+
+@media (max-width:768px) {
+  .pf-hero { flex-direction:column; text-align:center; }
+  .pf-form-grid { grid-template-columns:1fr; }
+  .pf-full { grid-column:1; }
+}
