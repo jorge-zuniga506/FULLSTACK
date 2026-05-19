@@ -67,6 +67,8 @@ const LandpageView = () => {
         </div>
       </section>
 
+
+
       {/* ── 3. ECOSYSTEM NEWS & INITIATIVES GRID ── */}
       <EcosystemNews />
     </div>

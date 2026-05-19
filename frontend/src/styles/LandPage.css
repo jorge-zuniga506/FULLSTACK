@@ -562,3 +562,212 @@ html, body {
     gap: 1.2rem;
   }
 }
+
+/* ------- ACERCA DE SECTION ------- */
+.lp-about-section {
+  padding: 6rem 5rem;
+  background-color: #040d18;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #ffffff;
+}
+
+.lp-about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.lp-about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.lp-about-badge {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  border-radius: 30px;
+  background: rgba(177, 245, 0, 0.1);
+  border: 1px solid rgba(177, 245, 0, 0.25);
+  color: #b1f500;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  width: fit-content;
+}
+
+.lp-about-title {
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
+  color: #ffffff;
+}
+
+.lp-about-desc {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+  margin: 0 0 1rem 0;
+}
+
+.lp-about-features {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.lp-about-feat-item {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.lp-about-feat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(139, 0, 221, 0.15);
+  border: 1px solid rgba(139, 0, 221, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(139, 0, 221, 0.1);
+}
+
+.lp-about-feat-item h4 {
+  margin: 0 0 4px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.lp-about-feat-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.5;
+}
+
+/* Right side visual element */
+.lp-about-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lp-about-visual-glow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(139, 0, 221, 0.15) 0%, transparent 65%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  filter: blur(20px);
+}
+
+.lp-about-card-mockup {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 380px;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.lp-about-card-mockup:hover {
+  transform: translateY(-5px);
+}
+
+.lp-mockup-header {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.lp-mockup-header .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.lp-mockup-header .dot.red { background-color: #ff5f56; }
+.lp-mockup-header .dot.yellow { background-color: #ffbd2e; }
+.lp-mockup-header .dot.green { background-color: #27c93f; }
+
+.lp-mockup-body h3 {
+  margin: 0 0 1.25rem 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.lp-mockup-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.lp-stat-box {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.lp-stat-num {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #b1f500;
+}
+
+.lp-stat-lbl {
+  display: block;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.lp-mockup-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lp-mockup-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #7900c2, #b1f500);
+  border-radius: 4px;
+}
+
+/* Responsiveness for about */
+@media (max-width: 992px) {
+  .lp-about-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .lp-about-section {
+    padding: 4rem 2rem;
+  }
+}

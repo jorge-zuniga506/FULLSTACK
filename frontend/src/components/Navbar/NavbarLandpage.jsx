@@ -10,7 +10,12 @@ const NavbarLandpage = () => {
   const closeMenu = () => setIsOpen(false);
 
   useEffect(() => {
-    const sectionIds = ['hero', 'features', 'ecosystem', 'stats'];
+    if (window.location.pathname === '/about') {
+      setActiveSection('about');
+      return;
+    }
+
+    const sectionIds = ['hero', 'PublicoStartups', 'PublicoFounders', 'PublicoInversionistas'];
 
     const updateSection = () => {
       const scrollPosition = window.scrollY + window.innerHeight / 3;
@@ -38,7 +43,8 @@ const NavbarLandpage = () => {
     { id: 'hero', label: 'Inicio' },
     { id: 'PublicoStartups', label: 'startups' },
     { id: 'PublicoFounders', label: 'founders' },
-    { id: 'PublicoInversionistas', label: 'inversionistas' }
+    { id: 'PublicoInversionistas', label: 'inversionistas' },
+    { id: 'about', label: 'Acerca de' }
   ];
 
   return (
@@ -52,16 +58,30 @@ const NavbarLandpage = () => {
         </div>
 
         <div className="navbar-links">
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
-              onClick={closeMenu}
-            >
-              {item.label}
-            </a>
-          ))}
+          {navItems.map((item) => {
+            if (item.id === 'about') {
+              return (
+                <Link
+                  key={item.id}
+                  to="/about"
+                  className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            return (
+              <a
+                key={item.id}
+                href={`/${item.id === 'hero' ? '' : '#' + item.id}`}
+                className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                {item.label}
+              </a>
+            );
+          })}
           {/* Cambiado a botón para abrir la ventana emergente */}
           <button className="nav-btn login-btn" onClick={() => { setShowModal(true); closeMenu(); }}>
             Iniciar Sesión
@@ -80,16 +100,30 @@ const NavbarLandpage = () => {
         </button>
 
         <div className={`navbar-menu ${isOpen ? 'open' : ''}`}>
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              className="navbar-menu-link"
-              onClick={closeMenu}
-            >
-              {item.label}
-            </a>
-          ))}
+          {navItems.map((item) => {
+            if (item.id === 'about') {
+              return (
+                <Link
+                  key={item.id}
+                  to="/about"
+                  className="navbar-menu-link"
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            return (
+              <a
+                key={item.id}
+                href={`/${item.id === 'hero' ? '' : '#' + item.id}`}
+                className="navbar-menu-link"
+                onClick={closeMenu}
+              >
+                {item.label}
+              </a>
+            );
+          })}
           {/* Cambiado a botón en responsive */}
           <button className="navbar-menu-cta" style={{ border: 'none', cursor: 'pointer' }} onClick={() => { setShowModal(true); closeMenu(); }}>
             Iniciar Sesión
