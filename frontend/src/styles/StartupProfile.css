@@ -1,13 +1,13 @@
 /* ==========================================================
    STARTUP PROFILE — SPECIFIC STYLES
-   Color accent: #00aaff (azul Nexus Cobalt)
+   Color accent: #8b00dd (azul Nexus Cobalt)
    Importa junto con: SharedProfile.css
    ========================================================== */
 
 /* Acento de color para todo el perfil */
 :root {
-  --startup-accent: #00aaff;
-  --startup-accent-glow: rgba(0, 170, 255, 0.25);
+  --startup-accent: #8b00dd;
+  --startup-accent-glow: rgba(139, 0, 221 , 0.25);
 }
 
 /* Override de variable de acento al entrar a esta página */
@@ -17,51 +17,51 @@
 
 /* --- Botón primario de Startup (azul) --- */
 .startup-btn-primary {
-  background: linear-gradient(135deg, #0055ff, #00aaff);
-  box-shadow: 0 8px 20px rgba(0, 85, 255, 0.3);
+  background: linear-gradient(135deg, #7900c2, #8b00dd);
+  box-shadow: 0 8px 20px rgba(121, 0, 194 , 0.3);
 }
 .startup-btn-primary:hover {
-  box-shadow: 0 12px 28px rgba(0, 85, 255, 0.45);
+  box-shadow: 0 12px 28px rgba(121, 0, 194 , 0.45);
 }
 
 /* --- Tags de sector (azul) --- */
 .sp-tag.startup-tag {
-  background: rgba(0, 170, 255, 0.08);
-  border-color: rgba(0, 170, 255, 0.25);
-  color: #00aaff;
+  background: rgba(139, 0, 221 , 0.08);
+  border-color: rgba(139, 0, 221 , 0.25);
+  color: #8b00dd;
 }
 
 /* --- Ministat accent bar --- */
 .startup-stat-bar {
   height: 3px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #0055ff, #00aaff);
+  background: linear-gradient(90deg, #7900c2, #8b00dd);
   animation: barIn 1s ease-out both;
 }
 
 /* --- Pill de conexión tipo startup --- */
 .sp-conn-pill.startup {
-  border-left: 3px solid #00aaff;
+  border-left: 3px solid #8b00dd;
 }
 
 /* --- Avatar de equipo / fundadores --- */
 .startup-avatar {
-  background: linear-gradient(135deg, #0055ff, #00aaff);
+  background: linear-gradient(135deg, #7900c2, #8b00dd);
 }
 
 /* --- Open call banner color --- */
 .sp-opencall.startup-call {
-  background: rgba(0, 170, 255, 0.05);
-  border-color: rgba(0, 170, 255, 0.2);
+  background: rgba(139, 0, 221 , 0.05);
+  border-color: rgba(139, 0, 221 , 0.2);
 }
-.sp-opencall.startup-call .sp-opencall-title { color: #00aaff; }
+.sp-opencall.startup-call .sp-opencall-title { color: #8b00dd; }
 
 /* --- Dot de portfolio list --- */
 .startup-port-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #00aaff;
+  background: #8b00dd;
   flex-shrink: 0;
 }
 

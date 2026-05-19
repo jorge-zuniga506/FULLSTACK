@@ -87,4 +87,21 @@ const authRequired = async (req, res, next) => {
   }
 };
 
-module.exports = { authRequired };
+/**
+ * Requiere que el usuario autenticado tenga uno de los roles indicados.
+ * Debe usarse DESPUÉS de authRequired (req.user debe existir).
+ *
+ * Uso: router.delete('/ruta', authRequired, requireRole(1), controller)
+ * donde 1 = id del rol 'admin'
+ */
+const requireRole = (...roleIds) => (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'No autenticado.' });
+  }
+  if (!roleIds.includes(req.user.role_id)) {
+    return res.status(403).json({ message: 'No autorizado. No tienes permisos suficientes.' });
+  }
+  next();
+};
+
+module.exports = { authRequired, requireRole };

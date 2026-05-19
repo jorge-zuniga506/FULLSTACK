@@ -1,4 +1,5 @@
 const RoleService = require('../services/RoleService');
+const getRoleId = (params) => params.id || params.id_role;
 
 const crearRole = async (req, res) => {
     try {
@@ -20,7 +21,7 @@ const ObtenerRoles = async (req, res) => {
 
 const eliminarRole = async (req, res) => {
     try {
-        await RoleService.eliminarRole(req.params.id_role);
+        await RoleService.eliminarRole(getRoleId(req.params));
         res.status(200).json({ message: 'Role eliminado correctamente' });
     } catch (error) {
         if (error.message === 'Role no encontrado') {
@@ -32,7 +33,7 @@ const eliminarRole = async (req, res) => {
 
 const editarRole = async (req, res) => {
     try {
-        const roleEditado = await RoleService.editarRole(req.params.id_role, req.body);
+        const roleEditado = await RoleService.editarRole(getRoleId(req.params), req.body);
         res.status(200).json(roleEditado);
     } catch (error) {
         if (error.message === 'Role no encontrado') {

@@ -55,8 +55,8 @@ html, body {
 
 .logo-nexus { color: #ffffff; }
 .logo-cobalt {
-  color: #00aaff;
-  text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+  color: #8b00dd;
+  text-shadow: 0 0 10px rgba(139, 0, 221 , 0.5);
 }
 
 /* ------- Sidebar Nav ------- */
@@ -86,9 +86,9 @@ html, body {
 }
 
 .db-nav-item.active {
-  background: rgba(0, 170, 255, 0.1);
-  color: #00aaff;
-  border: 1px solid rgba(0, 170, 255, 0.2);
+  background: rgba(139, 0, 221 , 0.1);
+  color: #8b00dd;
+  border: 1px solid rgba(139, 0, 221 , 0.2);
 }
 
 .db-nav-icon { font-size: 1rem; }
@@ -115,7 +115,7 @@ html, body {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0055ff, #00aaff);
+  background: linear-gradient(135deg, #7900c2, #8b00dd);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,19 +185,19 @@ html, body {
 .db-explore-btn {
   padding: 0.7rem 1.5rem;
   border-radius: 10px;
-  background: linear-gradient(135deg, #0055ff, #00aaff);
+  background: linear-gradient(135deg, #7900c2, #8b00dd);
   color: #ffffff;
   font-size: 0.85rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 85, 255, 0.35);
+  box-shadow: 0 4px 15px rgba(121, 0, 194 , 0.35);
   white-space: nowrap;
 }
 
 .db-explore-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 85, 255, 0.5);
+  box-shadow: 0 6px 20px rgba(121, 0, 194 , 0.5);
 }
 
 /* ------- Stats Grid ------- */
@@ -319,7 +319,7 @@ html, body {
 
 .db-card-link {
   font-size: 0.78rem;
-  color: #00aaff;
+  color: #8b00dd;
   text-decoration: none;
   transition: opacity 0.2s ease;
 }
@@ -439,7 +439,7 @@ html, body {
 
 .db-sector-bar {
   height: 100%;
-  background: linear-gradient(90deg, #0055ff, #00aaff);
+  background: linear-gradient(90deg, #7900c2, #8b00dd);
   border-radius: 6px;
   animation: barFill 1.2s ease-out both;
 }
@@ -472,4 +472,23 @@ html, body {
   .db-container { grid-template-columns: 1fr; }
   .db-sidebar { display: none; }
   .db-main { padding: 1.5rem; }
+}
+
+@media (max-width: 580px) {
+  .db-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .db-explore-btn {
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .db-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.8rem;
+  }
 }

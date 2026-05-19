@@ -1,0 +1,587 @@
+/* ==========================================================================
+   PUBLISH STARTUP STYLE SHEET — Cyber-Premium & Form Custom Styles
+   ========================================================================== */
+
+/* Force scroll permission to override any global bundle overflow: hidden styles */
+html,
+body,
+#root {
+  overflow: auto !important;
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+.publish-startup-page {
+  background-color: #f3f5f8;
+  min-height: 100vh;
+  padding: 3rem 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #333333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Container limits and shadow */
+.publish-startup-container {
+  width: 100%;
+  max-width: 1000px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  padding-bottom: 2.5rem;
+}
+
+/* ─── Tabs Navigation ─── */
+.ps-tabs {
+  display: flex;
+  width: 100%;
+  border-bottom: 5px solid #8b00dd;
+}
+
+.ps-tab {
+  flex: 1;
+  text-align: center;
+  padding: 1.1rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.ps-tab.active {
+  background-color: #8b00dd;
+  color: #ffffff;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.ps-tab.inactive {
+  background-color: #c4c4c4;
+  color: #ffffff;
+}
+
+.ps-tab:not(.active):hover {
+  background-color: #b0b0b0;
+}
+
+/* ─── Step Progress Tracker ─── */
+.ps-steps-tracker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+}
+
+.ps-step-line-bg {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  background-color: #d4d4d4;
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.ps-step-line-active {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 40%;
+  /* Halfway for step 1 to 2 active */
+  height: 3px;
+  background-color: #b1f500;
+  z-index: 2;
+  transform: translateY(-50%);
+}
+
+.ps-step-nodes {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  z-index: 3;
+}
+
+.ps-step-node {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.ps-step-node.active {
+  background-color: #b1f500;
+  color: #333333;
+}
+
+.ps-step-node.inactive {
+  background-color: #d4d4d4;
+  color: #ffffff;
+}
+
+/* ─── Form Body ─── */
+.ps-form-body {
+  padding: 0 3rem;
+  text-align: left !important;
+}
+
+.ps-form-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #333333;
+  margin-bottom: 1.8rem;
+  margin-top: 0.5rem;
+  text-align: left !important;
+}
+
+/* Grid layout for two columns */
+.ps-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2.5rem;
+  row-gap: 1.3rem;
+}
+
+/* Individual input group */
+.ps-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: left !important;
+}
+
+/* Span textarea or custom classes */
+.ps-input-group.span-2 {
+  grid-column: span 2;
+}
+
+.ps-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #444444;
+  text-align: left !important;
+}
+
+.ps-required {
+  color: #ff4d4f;
+  margin-left: 2px;
+}
+
+/* Input Fields and Selects */
+.ps-input,
+.ps-select,
+.ps-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #333333;
+  background-color: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.ps-input::placeholder,
+.ps-textarea::placeholder {
+  color: #bfbfbf;
+}
+
+.ps-input:focus,
+.ps-select:focus,
+.ps-textarea:focus {
+  border-color: #8b00dd;
+  box-shadow: 0 0 0 3px rgba(139, 0, 221, 0.08);
+}
+
+/* Flag & Custom Select wrapper */
+.ps-flag-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ps-flag-indicator {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  pointer-events: none;
+  color: #333333;
+}
+
+.ps-flag-indicator img {
+  width: 18px;
+  height: 12px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.ps-input-with-flag {
+  padding-left: 3.2rem;
+}
+
+.ps-select-with-flag {
+  padding-left: 3.2rem;
+}
+
+/* Custom Textarea span height to match double inputs */
+.ps-textarea {
+  height: 195px;
+  resize: none;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+/* File Upload input custom style */
+.ps-file-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ps-file-uploader-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 42px;
+  background-color: #ffffff;
+}
+
+.ps-file-button {
+  background-color: #eef1f6;
+  border: none;
+  border-right: 1px solid #cccccc;
+  padding: 0 1rem;
+  height: 100%;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.ps-file-button:hover {
+  background-color: #e2e7f0;
+}
+
+.ps-file-name {
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  color: #888888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-grow: 1;
+}
+
+.ps-file-subtext {
+  font-size: 0.72rem;
+  color: #8c8c8c;
+  margin-top: 0.2rem;
+  text-align: left !important;
+}
+
+/* ─── Form Actions / Footer ─── */
+.ps-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2.2rem;
+  padding: 0 3rem;
+}
+
+.ps-btn-next {
+  background-color: #8b00dd;
+  color: #ffffff;
+  padding: 0.85rem 3rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(139, 0, 221, 0.3);
+}
+
+.ps-btn-next:hover {
+  background-color: #7900c2;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(139, 0, 221, 0.45);
+}
+
+.ps-btn-next:active {
+  transform: translateY(0);
+}
+
+/* Responsive Styles */
+@media (max-width: 850px) {
+  .ps-form-grid {
+    grid-template-columns: 1fr;
+    row-gap: 1.2rem;
+  }
+
+  .ps-textarea {
+    height: 120px;
+  }
+
+  .ps-form-body {
+    padding: 0 1.5rem;
+  }
+
+  .ps-form-actions {
+    padding: 0 1.5rem;
+  }
+
+  .ps-tabs {
+    flex-wrap: wrap;
+  }
+
+  .ps-tab {
+    font-size: 0.9rem;
+    padding: 0.9rem 0;
+  }
+}
+
+/* ==========================================================================
+   🔍 CUSTOM SEARCHABLE DROPDOWN STYLES — Cyber-Premium Selectors
+   ========================================================================== */
+
+.ps-dropdown-container {
+  position: relative;
+  width: 100%;
+}
+
+.ps-dropdown-trigger {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #333333;
+  background-color: #ffffff;
+  outline: none;
+  cursor: pointer;
+  text-align: left !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.ps-dropdown-trigger:focus,
+.ps-dropdown-trigger.open {
+  border-color: #8b00dd;
+  box-shadow: 0 0 0 3px rgba(139, 0, 221, 0.08);
+}
+
+.ps-dropdown-trigger-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ps-dropdown-caret {
+  border: solid #666666;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+
+.ps-dropdown-trigger.open .ps-dropdown-caret {
+  transform: rotate(-135deg);
+}
+
+.ps-dropdown-menu {
+  position: absolute;
+  top: 105%;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 280px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: psFadeIn 0.15s ease-out;
+}
+
+@keyframes psFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ps-dropdown-search-wrapper {
+  padding: 8px;
+  border-bottom: 1px solid #eeeeee;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ps-dropdown-search-icon {
+  position: absolute;
+  left: 16px;
+  color: #888888;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+}
+
+.ps-dropdown-search-input {
+  width: 100%;
+  padding: 6px 12px 6px 32px;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #333333 !important;
+  outline: none;
+  background-color: #f7f9fb;
+  box-sizing: border-box;
+}
+
+.ps-dropdown-search-input::placeholder {
+  color: #888888 !important;
+  opacity: 1 !important;
+}
+
+.ps-dropdown-search-input:focus {
+  border-color: #8b00dd;
+  background-color: #ffffff;
+  color: #333333 !important;
+}
+
+.ps-dropdown-options-list {
+  overflow-y: auto;
+  max-height: 220px;
+  padding: 4px 0;
+  margin: 0;
+  list-style: none;
+  text-align: left !important;
+}
+
+/* Custom Scrollbar for premium feel */
+.ps-dropdown-options-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ps-dropdown-options-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.ps-dropdown-options-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.ps-dropdown-options-list::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+.ps-dropdown-option {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: #333333;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  box-sizing: border-box;
+}
+
+.ps-dropdown-option:hover {
+  background-color: #f4e6ff;
+}
+
+.ps-dropdown-option.selected {
+  background-color: #8b00dd;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ps-dropdown-no-results {
+  padding: 16px;
+  text-align: center;
+  color: #888888;
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   🌌 SELECTION VIEW & TABS NAVIGATION CUSTOM STYLES
+   ========================================================================== */
+
+.publish-select-screen {
+  background: radial-gradient(circle at top, #140822 0%, #06080d 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+  box-sizing: border-box;
+}
+
+.ps-header-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-bottom: 5px solid #8b00dd;
+  background-color: #ffffff;
+}
+
+.ps-back-btn {
+  background: none;
+  border: none;
+  color: #8b00dd;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 1.1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.ps-back-btn:hover {
+  color: #b1f500;
+  transform: translateX(-4px);
+}
+
+/* Override container tabs inside the form */
+.ps-header-wrapper .ps-tabs {
+  flex-grow: 1;
+  border-bottom: none;
+}

@@ -1,0 +1,58 @@
+.navbar-publish {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 3rem;
+  background-color: #ffffff;
+  /* Una sombra muy suave para que resalte sobre el fondo gris claro de tu página */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04); 
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.np-logo-link {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  text-decoration: none;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.np-nexus {
+  color: #1a1a1a; /* Gris muy oscuro casi negro */
+  font-size: 1.35rem;
+}
+
+.np-cobalt {
+  color: #8b00ff; /* Morado que hace juego con tu diseño */
+  font-size: 1.35rem;
+}
+
+.np-cancel-btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+}
+
+.np-cancel-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+  border-color: #9ca3af;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+  .navbar-publish {
+    padding: 1rem 1.5rem;
+  }
+}

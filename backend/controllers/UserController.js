@@ -31,10 +31,8 @@
  * → 500: error de servidor
  */
 const UserService = require('../services/UserService');
+const getUserId = (params) => params.id || params.id_Usuario;
 
-/**
- * Crea un nuevo usuario en la plataforma
- */
 const crearUsuario = async (req, res) => {
   try {
     const usuario = await UserService.crearUsuario(req.body);
@@ -50,9 +48,6 @@ const crearUsuario = async (req, res) => {
   }
 };
 
-/**
- * Lista todos los usuarios sin sus contraseñas hasheadas
- */
 const obtenerUsuarios = async (req, res) => {
   try {
     const usuarios = await UserService.obtenerUsuarios();
@@ -68,7 +63,7 @@ const obtenerUsuarios = async (req, res) => {
  */
 const eliminarUsuario = async (req, res) => {
   try {
-    await UserService.eliminarUsuario(req.params.id_Usuario);
+    await UserService.eliminarUsuario(getUserId(req.params));
     res.status(200).json({ message: 'Usuario eliminado correctamente' });
   } catch (error) {
     if (error.message === 'Usuario no encontrado') {
@@ -83,7 +78,7 @@ const eliminarUsuario = async (req, res) => {
  */
 const actualizarUsuario = async (req, res) => {
   try {
-    const usuarioEditado = await UserService.actualizarUsuario(req.params.id_Usuario, req.body);
+    const usuarioEditado = await UserService.actualizarUsuario(getUserId(req.params), req.body);
     res.status(200).json(usuarioEditado);
   } catch (error) {
     if (error.message === 'Usuario no encontrado') {

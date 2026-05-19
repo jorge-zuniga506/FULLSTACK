@@ -49,7 +49,7 @@ html, body {
   gap: 0.4rem;
   transition: color 0.2s;
 }
-.sp-nav-back:hover { color: var(--profile-accent, #00aaff); }
+.sp-nav-back:hover { color: var(--profile-accent, #8b00dd); }
 
 .sp-nav-logo {
   font-size: 1.1rem;
@@ -57,7 +57,7 @@ html, body {
   letter-spacing: 1.5px;
   color: #fff;
 }
-.sp-nav-logo span { color: #00aaff; margin-left: 3px; }
+.sp-nav-logo span { color: #8b00dd; margin-left: 3px; }
 
 .sp-nav-user {
   color: rgba(255, 255, 255, 0.7);
@@ -70,8 +70,8 @@ html, body {
   transition: all 0.2s;
 }
 .sp-nav-user:hover {
-  border-color: var(--profile-accent, #00aaff);
-  color: var(--profile-accent, #00aaff);
+  border-color: var(--profile-accent, #8b00dd);
+  color: var(--profile-accent, #8b00dd);
 }
 
 /* ============================
@@ -90,7 +90,7 @@ html, body {
   text-decoration: none;
   transition: color 0.2s;
 }
-.sp-breadcrumb a:hover { color: var(--profile-accent, #00aaff); }
+.sp-breadcrumb a:hover { color: var(--profile-accent, #8b00dd); }
 .sp-breadcrumb span { color: rgba(255, 255, 255, 0.6); }
 
 /* ============================
@@ -104,7 +104,7 @@ html, body {
 .ep-hero-bg {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--accent, #00aaff) 12%, transparent), transparent 65%);
+  background: radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--accent, #8b00dd) 12%, transparent), transparent 65%);
   pointer-events: none;
 }
 
@@ -282,8 +282,8 @@ html, body {
 }
 .sp-tab-btn:hover { color: rgba(255, 255, 255, 0.7); }
 .sp-tab-btn.active {
-  color: var(--profile-accent, #00aaff);
-  border-bottom-color: var(--profile-accent, #00aaff);
+  color: var(--profile-accent, #8b00dd);
+  border-bottom-color: var(--profile-accent, #8b00dd);
 }
 
 /* ============================
@@ -516,7 +516,7 @@ html, body {
   resize: vertical;
 }
 .sp-field input:focus,
-.sp-field textarea:focus { border-color: var(--profile-accent, #00aaff); }
+.sp-field textarea:focus { border-color: var(--profile-accent, #8b00dd); }
 
 .sp-modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; }
 

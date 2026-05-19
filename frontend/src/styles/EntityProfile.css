@@ -26,10 +26,10 @@ html, body { margin:0; padding:0; background:#040d18; color:#fff; font-family:'I
 }
 
 .ep-nav-back { color:rgba(255,255,255,0.4); text-decoration:none; font-size:0.85rem; font-weight:500; transition:color 0.2s; }
-.ep-nav-back:hover { color:#00aaff; }
+.ep-nav-back:hover { color:#8b00dd; }
 
 .ep-nav-logo { font-size:1.1rem; font-weight:900; letter-spacing:1px; }
-.ep-nav-logo span { color:#00aaff; margin-left:2px; }
+.ep-nav-logo span { color:#8b00dd; margin-left:2px; }
 
 .ep-nav-user { color:#fff; text-decoration:none; font-size:0.85rem; border:1px solid rgba(255,255,255,0.1); padding:0.4rem 1rem; border-radius:20px; }
 
@@ -74,7 +74,7 @@ html, body { margin:0; padding:0; background:#040d18; color:#fff; font-family:'I
 .ep-tabs-minimal button {
   background:none; border:none; color:rgba(255,255,255,0.3); padding:0.75rem 0; font-size:0.9rem; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s;
 }
-.ep-tabs-minimal button.active { color:#00aaff; border-bottom-color:#00aaff; }
+.ep-tabs-minimal button.active { color:#8b00dd; border-bottom-color:#8b00dd; }
 
 .ep-mini-stats { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; }
 .ms-item { background:rgba(255,255,255,0.03); padding:1rem; border-radius:12px; border:1px solid rgba(255,255,255,0.05); }
@@ -93,7 +93,7 @@ html, body { margin:0; padding:0; background:#040d18; color:#fff; font-family:'I
 .ep-graph-col { display:flex; flex-direction:column; gap:1.5rem; }
 
 .ep-btn-connect {
-  width:100%; padding:0.85rem; border-radius:12px; background:linear-gradient(135deg, #0055ff, #00aaff); color:#fff; border:none; font-weight:700; cursor:pointer; transition:transform 0.2s; box-shadow:0 10px 20px rgba(0,85,255,0.3);
+  width:100%; padding:0.85rem; border-radius:12px; background:linear-gradient(135deg, #7900c2, #8b00dd); color:#fff; border:none; font-weight:700; cursor:pointer; transition:transform 0.2s; box-shadow:0 10px 20px rgba(121, 0, 194 ,0.3);
 }
 .ep-btn-connect:hover { transform:translateY(-2px); }
 
@@ -103,7 +103,7 @@ html, body { margin:0; padding:0; background:#040d18; color:#fff; font-family:'I
   color:rgba(255,255,255,0.6); text-decoration:none; padding:0.6rem 0.8rem; border-radius:8px; background:rgba(255,255,255,0.02); display:flex; align-items:center; gap:0.75rem; transition:all 0.2s;
 }
 .ep-port-item:hover { background:rgba(255,255,255,0.05); color:#fff; }
-.ep-port-dot { width:6px; height:6px; border-radius:50%; background:#00aaff; }
+.ep-port-dot { width:6px; height:6px; border-radius:50%; background:#8b00dd; }
 
 @media (max-width:900px) {
   .ep-details-grid { grid-template-columns:1fr; gap:2rem; }

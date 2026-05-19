@@ -22,14 +22,17 @@ const RegisterForm = () => {
       <div className="auth-form-panel">
         <div className="auth-content">
 
-          <h1 className="auth-title">Create account</h1>
+          <div className="auth-role-badge">Rol: Emprendedor</div>
+          <h1 className="auth-title">Crear Cuenta</h1>
           <p className="auth-subtitle">
-            Already have an account?{' '}
-            <Link to="/login" className="auth-link">Sign in</Link>
+            ¿Ya tienes una cuenta?{' '}
+            <Link to="/login" className="auth-link">Inicia sesión</Link>
           </p>
 
           {/* Formulario de registro — animaciones escalonadas vía CSS --delay */}
           <form className="auth-form">
+            {/* Campo oculto para asegurar el rol de emprendedor */}
+            <input type="hidden" id="role" name="role" value="emprendedor" />
 
             {/* Campo Nombre completo */}
             <div className="input-group" style={{ '--delay': '0.3s' }}>
