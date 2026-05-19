@@ -10,6 +10,8 @@ import DashboardLayout from '../components/Layout/DashboardLayout';
 import Landpage           from '../pages/Landpage/Landpage';
 import Login              from '../pages/Auth/Login';
 import Register           from '../pages/Auth/Register';
+import PublishGeneral     from '../pages/PublishGeneral/PublishGeneral';
+import AboutPage          from '../pages/About/AboutPage';
 
 
 
@@ -48,6 +50,8 @@ const AppRoutes = () => {
       {/* Autenticación */}
       <Route path="/login"   element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/PublishGeneral" element={<PublishGeneral />} />
+      <Route path="/about"          element={<AboutPage />} />
 
 
       {/* ── 2. PÁGINAS DEL ECOSISTEMA (CON SIDEBAR) ─────────────────────── */}

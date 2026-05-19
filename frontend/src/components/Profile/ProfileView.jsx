@@ -48,11 +48,11 @@ const ProfileView = () => {
           <div className="pf-online-dot"></div>
         </div>
         <div className="pf-hero-info">
-          <h1 className="pf-name">Usuario Explorer</h1>
+          <h1 className="pf-name">Usuario Emprendedor</h1>
           <p className="pf-email">usuario@nexuscobalt.com</p>
           {/* Badges de estado del usuario */}
           <div className="pf-badges">
-            <span className="pf-badge">🔵 Explorer</span>
+            <span className="pf-badge">🔵 Emprendedor</span>
             <span className="pf-badge">✅ Verificado</span>
             <span className="pf-badge">📅 Miembro desde 2024</span>
           </div>
@@ -111,7 +111,7 @@ const ProfileView = () => {
             {/* Rol en el ecosistema */}
             <div className="pf-field">
               <label>Rol en ecosistema</label>
-              <select defaultValue="emprendedor">
+              <select defaultValue="emprendedor" disabled>
                 <option value="emprendedor">Emprendedor</option>
                 <option value="inversor">Inversor</option>
                 <option value="aceleradora">Aceleradora</option>

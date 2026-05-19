@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import authBg from '../../assets/auth_bg.png'; // Imagen decorativa del panel derecho
+import authBg from '../../assets/auth_bg.png';
+import LoginNavbar from '../Navbar/LoginNavbar'; 
+// Imagen decorativa del panel derecho
 
 /**
  * LoginForm — Formulario de inicio de sesión
@@ -14,6 +16,7 @@ import authBg from '../../assets/auth_bg.png'; // Imagen decorativa del panel de
  *
  * TODO: conectar el onSubmit al servicio de autenticación del backend (/api/auth/login)
  */
+
 const LoginForm = () => {
   // Controla la visibilidad de la contraseña en el campo de texto
   const [showPassword, setShowPassword] = useState(false);
@@ -23,16 +26,20 @@ const LoginForm = () => {
 
       {/* ── PANEL IZQUIERDO: Formulario ─────────────────────────────────── */}
       <div className="auth-form-panel">
+        <LoginNavbar />
         <div className="auth-content">
 
-          <h1 className="auth-title">Sign in</h1>
+          <div className="auth-role-badge">Rol: Emprendedor</div>
+          <h1 className="auth-title">Iniciar Sesión</h1>
           <p className="auth-subtitle">
-            Don't have an account?{' '}
-            <Link to="/register" className="auth-link">Create now</Link>
+            ¿No tienes una cuenta?{' '}
+            <Link to="/register" className="auth-link">Regístrate ahora</Link>
           </p>
 
           {/* Formulario principal — animaciones escalonadas vía CSS --delay */}
           <form className="auth-form">
+            {/* Campo oculto para asegurar el rol de emprendedor */}
+            <input type="hidden" id="role" name="role" value="emprendedor" />
 
             {/* Campo Email */}
             <div className="input-group" style={{ '--delay': '0.3s' }}>

@@ -1,0 +1,284 @@
+/* ===================================
+   ECOSYSTEM NEWS & HIGHLIGHTS STYLES
+   Grid Layout: 1 Featured (Left) + 2 Stacked (Right)
+   =================================== */
+
+.lp-news-section {
+  padding: 6rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+  background: transparent;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ------- Header Section ------- */
+.lp-news-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  max-width: 720px;
+}
+
+.lp-news-badge {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  border-radius: 30px;
+  background: rgba(139, 0, 221 , 0.08);
+  border: 1px solid rgba(139, 0, 221 , 0.25);
+  color: #8b00dd;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lp-news-title {
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: -1.5px;
+  background: linear-gradient(135deg, #ffffff 40%, #8b00dd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lp-news-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0.4rem 0 0 0;
+}
+
+/* ------- Grid Layout ------- */
+.lp-news-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.8rem;
+  width: 100%;
+}
+
+.lp-news-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  justify-content: space-between;
+}
+
+/* ------- Card Base ------- */
+.lp-news-card {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.lp-news-card .card-content {
+  position: relative;
+  z-index: 2;
+  padding: 2.2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.lp-news-card .card-arrow {
+  font-size: 1.8rem;
+  font-weight: 300;
+  align-self: flex-end;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lp-news-card .card-title {
+  margin: 0;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.5px;
+}
+
+/* ------- Hover Micro-Animations ------- */
+.lp-news-card:hover {
+  transform: translateY(-6px);
+}
+
+.lp-news-card:hover .card-arrow {
+  transform: translate(5px, -5px);
+}
+
+/* ------- Featured Card (Left) ------- */
+.card-featured {
+  min-height: 520px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #040d18;
+}
+
+.card-featured .card-bg-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.card-featured .card-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-featured .card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(4, 13, 24, 0.98) 12%,
+    rgba(4, 13, 24, 0.5) 55%,
+    rgba(4, 13, 24, 0.1) 100%
+  );
+}
+
+.card-featured:hover .card-bg-img {
+  transform: scale(1.04);
+}
+
+.card-featured:hover {
+  border-color: rgba(139, 0, 221 , 0.35);
+  box-shadow: 0 15px 35px rgba(139, 0, 221 , 0.15);
+}
+
+.card-featured .card-content {
+  justify-content: space-between;
+}
+
+.card-featured .card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: auto;
+}
+
+.card-featured .card-title {
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  color: #ffffff;
+  max-width: 92%;
+}
+
+.card-featured .card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.card-featured .card-tag {
+  padding: 0.3rem 0.9rem;
+  border-radius: 30px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.card-featured .tag-purple {
+  background: rgba(147, 51, 234, 0.15);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  color: #c084fc;
+  box-shadow: 0 0 12px rgba(147, 51, 234, 0.1);
+}
+
+.card-featured .card-flag-cl {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+/* ------- Accent Card (Right Top) ------- */
+.card-accent {
+  background: #ccff00;
+  border: 1px solid #ccff00;
+  flex: 1;
+  min-height: 245px;
+}
+
+.card-accent .card-content {
+  color: #040d18;
+}
+
+.card-accent .card-arrow {
+  color: #040d18;
+}
+
+.card-accent .card-title {
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+  color: #040d18;
+  margin-top: auto;
+}
+
+.card-accent:hover {
+  box-shadow: 0 15px 35px rgba(204, 255, 0, 0.28);
+}
+
+/* ------- Dark Card (Right Bottom) ------- */
+.card-dark {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  flex: 1;
+  min-height: 245px;
+}
+
+.card-dark .card-content {
+  color: #ffffff;
+}
+
+.card-dark .card-arrow {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.card-dark .card-title {
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+  color: #ffffff;
+  margin-top: auto;
+}
+
+.card-dark:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 15px 35px rgba(255, 255, 255, 0.05);
+}
+
+/* ------- Responsive Design ------- */
+@media (max-width: 1024px) {
+  .lp-news-section {
+    padding: 5rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .lp-news-section {
+    gap: 2.5rem;
+  }
+  
+  .lp-news-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .card-featured {
+    min-height: 400px;
+  }
+  
+  .card-accent, .card-dark {
+    min-height: 200px;
+  }
+}

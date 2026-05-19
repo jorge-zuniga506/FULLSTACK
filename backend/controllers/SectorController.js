@@ -1,4 +1,5 @@
 const SectorService = require('../services/SectorService');
+const getSectorId = (params) => params.id || params.id_sector;
 
 const crearSector = async (req, res) => {
     try {
@@ -20,7 +21,7 @@ const ObtenerSectores = async (req, res) => {
 
 const eliminarSector = async (req, res) => {
     try {
-        await SectorService.eliminarSector(req.params.id_sector);
+        await SectorService.eliminarSector(getSectorId(req.params));
         res.status(200).json({ message: 'Sector eliminado correctamente' });
     } catch (error) {
         if (error.message === 'Sector no encontrado') {
@@ -32,7 +33,7 @@ const eliminarSector = async (req, res) => {
 
 const editarSector = async (req, res) => {
     try {
-        const sectorEditado = await SectorService.editarSector(req.params.id_sector, req.body);
+        const sectorEditado = await SectorService.editarSector(getSectorId(req.params), req.body);
         res.status(200).json(sectorEditado);
     } catch (error) {
         if (error.message === 'Sector no encontrado') {

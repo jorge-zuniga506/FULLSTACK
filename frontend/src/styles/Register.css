@@ -76,6 +76,7 @@ html, body {
   max-width: 400px;
   position: relative;
   z-index: 1;
+  margin-top: 3.5rem; /* Evita solapar con la barra superior */
 }
 
 /* ------- Typography ------- */
@@ -95,7 +96,7 @@ html, body {
 }
 
 .auth-link {
-  color: #00aaff;
+  color: #8b00dd;
   font-weight: 600;
   text-decoration: underline;
   transition: color 0.3s ease;
@@ -184,14 +185,14 @@ html, body {
 }
 
 .toggle-password:hover {
-  color: #00aaff;
+  color: #8b00dd;
 }
 
 /* ------- Main Button ------- */
 .auth-btn {
   padding: 0.8rem;
   border-radius: 10px;
-  background: #0055ff;
+  background: #7900c2;
   color: #ffffff;
   font-size: 0.95rem;
   font-weight: 700;
@@ -218,9 +219,9 @@ html, body {
 }
 
 .auth-btn:hover {
-  background: #0066ff;
+  background: #7900c2;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 85, 255, 0.5);
+  box-shadow: 0 8px 25px rgba(121, 0, 194 , 0.5);
 }
 
 /* ------- Divider ------- */
@@ -263,7 +264,7 @@ html, body {
 
 .social-btn:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(0, 170, 255, 0.4);
+  border-color: rgba(139, 0, 221 , 0.4);
   transform: translateY(-2px);
 }
 
@@ -324,3 +325,21 @@ html, body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ------- Premium Role Badge ------- */
+.auth-role-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b1f500; /* lime green accent */
+  background: rgba(139, 0, 221, 0.1); /* light purple bg */
+  border: 1px solid rgba(139, 0, 221, 0.3);
+  border-radius: 50px;
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: fadeSlideUp 0.6s ease-out 0.05s both;
+}
+

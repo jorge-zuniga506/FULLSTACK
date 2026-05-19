@@ -10,7 +10,7 @@ const stats = [
   { id: 1, label: 'Startups',        value: '324',    change: '+12',   icon: '🚀', color: '#00aaff' },
   { id: 2, label: 'Inversores',      value: '87',     change: '+5',    icon: '💼', color: '#7c3aed' },
   { id: 3, label: 'Aceleradoras',    value: '42',     change: '+3',    icon: '⚡', color: '#059669' },
-  { id: 4, label: 'Inversión Total', value: '$45.2M', change: '+$3.1M',icon: '💰', color: '#d97706' },
+  { id: 4, label: 'Convocatorias',   value: '18',     change: '+4',    icon: '📢', color: '#d97706' },
 ];
 
 /** Últimas entidades registradas/actualizadas en el ecosistema */

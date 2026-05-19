@@ -61,7 +61,7 @@ html, body {
   transition: color 0.2s ease;
 }
 
-.ex-back:hover { color: #00aaff; }
+.ex-back:hover { color: #8b00dd; }
 
 .db-logo {
   display: flex;
@@ -73,8 +73,8 @@ html, body {
 
 .logo-nexus { color: #ffffff; }
 .logo-cobalt {
-  color: #00aaff;
-  text-shadow: 0 0 10px rgba(0,170,255,0.5);
+  color: #8b00dd;
+  text-shadow: 0 0 10px rgba(139, 0, 221 ,0.5);
 }
 
 /* ------- Search ------- */
@@ -90,7 +90,7 @@ html, body {
 }
 
 .ex-search-wrap:focus-within {
-  border-color: rgba(0, 170, 255, 0.4);
+  border-color: rgba(139, 0, 221 , 0.4);
 }
 
 .ex-search-icon { font-size: 0.85rem; }
@@ -146,9 +146,9 @@ html, body {
 }
 
 .ex-pill.active {
-  background: rgba(0, 170, 255, 0.12);
-  border-color: rgba(0, 170, 255, 0.35);
-  color: #00aaff;
+  background: rgba(139, 0, 221 , 0.12);
+  border-color: rgba(139, 0, 221 , 0.35);
+  color: #8b00dd;
 }
 
 /* ------- Legend ------- */
@@ -202,7 +202,7 @@ html, body {
   background: #050c1c;
   background-image:
     radial-gradient(ellipse at 60% 40%, rgba(0, 60, 180, 0.1) 0%, transparent 55%),
-    radial-gradient(ellipse at 20% 70%, rgba(0, 170, 255, 0.05) 0%, transparent 45%);
+    radial-gradient(ellipse at 20% 70%, rgba(139, 0, 221 , 0.05) 0%, transparent 45%);
   overflow: hidden;
   display: flex;
   align-items: center;
