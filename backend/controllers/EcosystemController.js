@@ -1,268 +1,260 @@
-const { Geolocalizacion, conexionGrafo, Solicitud, MetricaDashboard} = require('../models');
+/**
+ * controllers/EcosystemController.js — Controlador del ecosistema de relaciones
+ *
+ * Capa HTTP para los 4 grupos de recursos del ecosistema:
+ *   Geolocalizacion, ConexionGrafo, Solicitud, MetricaDashboard
+ *
+ * Patrón general de cada función:
+ *   1. Llama al método correspondiente de EcosystemService
+ *   2. Retorna 200/201 con los datos si todo sale bien
+ *   3. Si el service lanza Error "X no encontrada" → 404
+ *   4. Cualquier otro error → 500
+ *
+ * Rutas (montadas en /api/ecosistemas — ver EcosystemRoutes.js):
+ *
+ * GEOLOCALIZACION:
+ *   POST   /crear-ecosystem                  → crearGeolocalizacion
+ *   GET    /obtener-ecosystem                → ObtenerGeolocalizaciones
+ *   PUT    /editar-ecosytem/:id_geolocalizacion → editarGeolocalizacion
+ *   DELETE /eliminar-ecosystem/:id_geolocalizacion → eliminarGeolocalizacion
+ *
+ * CONEXION GRAFO:
+ *   POST   /conexiones                       → crearConexionGrafo
+ *   GET    /conexiones                       → ObtenerConexionesGrafo
+ *   PUT    /conexiones/:id_conexionGrafo     → editarConexionGrafo
+ *   DELETE /conexiones/:id_conexionGrafo     → eliminarConexionGrafo
+ *
+ * SOLICITUDES:
+ *   POST   /solicitudes                      → CrearSolicitud
+ *   GET    /solicitudes                      → ObtenerSolicitudes
+ *   PUT    /solicitudes/:id_solicitud        → actualizarSolicitud
+ *   DELETE /solicitudes/:id_solicitud        → eliminarSolicitud
+ *   PATCH  /solicitudes/:id_solicitud/aprobar  → aprobarSolicitud
+ *   PATCH  /solicitudes/:id_solicitud/rechazar → rechazarSolicitud
+ *
+ * METRICAS DASHBOARD:
+ *   POST   /metricas                         → crearMetricaDashboard
+ *   GET    /metricas                         → ObtenerMetricasDashboards
+ *   PUT    /metricas/:id_metricaDashboard    → actualizarMetricaDashboard
+ *   DELETE /metricas/:id_metricaDashboard    → eliminarMetricaDashboard
+ */
+const EcosystemService = require('../services/EcosystemService');
 
-const crearGeolocalizacion = async (req,res)=>{
-    const {user_id,latitud,longitud,direccion} = req.body;
-    try{
-        const geolocalizacion = await Geolocalizacion.create({
-            user_id,
-            latitud,
-            longitud,
-            direccion
-        });
-        res.status(201).json({message: 'Geolocalizacion creada exitosamente', geolocalizacion});
-    }catch(error){
-        res.status(500).json({message: 'Error al crear la geolocalizacion', error});
-    }
-}
+// ── GEOLOCALIZACION ───────────────────────────────────────────────────────────
 
-const ObtenerGeolocalizaciones = async (req,res)=>{
-    try{
-const geolocalizaciones = await Geolocalizacion.findAll();
-res.status(200).json(geolocalizaciones); 
+/** Crea una nueva entrada de geolocalización para un usuario */
+const crearGeolocalizacion = async (req, res) => {
+  try {
+    const geo = await EcosystemService.crearGeolocalizacion(req.body);
+    res.status(201).json({ message: 'Geolocalizacion creada exitosamente', geolocalizacion: geo });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear la geolocalizacion', error: error.message });
+  }
+};
 
-    }catch (error){
-        res.status(500).json({message: 'Error al obtener las geolocalizaciones', error});
-    }
-}
+/** Lista todas las geolocalizaciones */
+const ObtenerGeolocalizaciones = async (req, res) => {
+  try {
+    const geos = await EcosystemService.obtenerGeolocalizaciones();
+    res.status(200).json(geos);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener las geolocalizaciones', error: error.message });
+  }
+};
 
-const eliminarGeolocalizacion = async (req,res)=>{
-    try{
-        const {id_geolocalizacion} = req.params;
+/** Elimina una geolocalización por :id_geolocalizacion → 404 si no existe */
+const eliminarGeolocalizacion = async (req, res) => {
+  try {
+    await EcosystemService.eliminarGeolocalizacion(req.params.id_geolocalizacion);
+    res.status(200).json({ message: 'Geolocalizacion eliminada correctamente' });
+  } catch (error) {
+    if (error.message === 'Geolocalizacion no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al eliminar la geolocalizacion', error: error.message });
+  }
+};
 
-        const geolocalizacionEncontrada =await Geolocalizacion.findByPk(id_geolocalizacion);
-        if(!geolocalizacionEncontrada){
-            return res.status(404).json({message: 'Geolocalizacion no encontrada'});
-        }
-        await geolocalizacionEncontrada.destroy()
-        res.status(500).json({message: 'Geolocalizacion eliminada correctamente'});
+/** Edita latitud, longitud o dirección de una geolocalización */
+const editarGeolocalizacion = async (req, res) => {
+  try {
+    const editada = await EcosystemService.editarGeolocalizacion(req.params.id_geolocalizacion, req.body);
+    res.status(200).json(editada);
+  } catch (error) {
+    if (error.message === 'Geolocalizacion no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al editar la geolocalizacion', error: error.message });
+  }
+};
 
-    }catch (error){
-        res.status(500).json({message: 'Error al eliminar la geolocalizacion', error});
-    }
-}
+// ── CONEXION GRAFO ────────────────────────────────────────────────────────────
 
-const editarGeolocalizacion = async (req,res)=>{
-    try{
-        const {id_geolocalizacion} = req.params;
+/** Crea una arista (relación) entre dos actores del ecosistema */
+const crearConexionGrafo = async (req, res) => {
+  try {
+    const conexion = await EcosystemService.crearConexionGrafo(req.body);
+    res.status(201).json({ message: 'ConexionGrafo creada exitosamente', conexionGrafo: conexion });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear la conexionGrafo', error: error.message });
+  }
+};
 
-        const {user_id,latitud,longitud,direccion} = req.body;
+/** Lista todas las conexiones del grafo del ecosistema */
+const ObtenerConexionesGrafo = async (req, res) => {
+  try {
+    const conexiones = await EcosystemService.obtenerConexionesGrafo();
+    res.status(200).json(conexiones);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener las conexionesGrafo', error: error.message });
+  }
+};
 
-        const geolocalizacionEncontrada = await Geolocalizacion.findByPk(id_geolocalizacion);
+/** Elimina una arista por :id_conexionGrafo → 404 si no existe */
+const eliminarConexionGrafo = async (req, res) => {
+  try {
+    await EcosystemService.eliminarConexionGrafo(req.params.id_conexionGrafo);
+    res.status(200).json({ message: 'ConexionGrafo eliminada correctamente' });
+  } catch (error) {
+    if (error.message === 'ConexionGrafo no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al eliminar la conexionGrafo', error: error.message });
+  }
+};
 
-        if(!geolocalizacionEncontrada){
-            return res.status(404).json({message: 'Geolocalizacion no encontrada'});
-        }
+/** Actualiza el tipo de vínculo de una conexión */
+const editarConexionGrafo = async (req, res) => {
+  try {
+    const editada = await EcosystemService.editarConexionGrafo(req.params.id_conexionGrafo, req.body);
+    res.status(200).json(editada);
+  } catch (error) {
+    if (error.message === 'ConexionGrafo no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al editar la conexionGrafo', error: error.message });
+  }
+};
 
-        await geolocalizacionEncontrada.update({user_id,latitud,longitud,direccion});
+// ── SOLICITUDES ────────────────────────────────────────────────────────────────
 
-        res.status(200).json(geolocalizacionEncontrada);
+/** Crea una solicitud de incorporación al ecosistema (estado inicial: 'Pendiente') */
+const CrearSolicitud = async (req, res) => {
+  try {
+    const solicitud = await EcosystemService.crearSolicitud(req.body);
+    res.status(201).json({ message: 'Solicitud creada exitosamente', solicitud });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear la solicitud', error: error.message });
+  }
+};
 
-    }catch (error){
-        res.status(500).json({message: 'Error al editar la geolocalizacion', error});
-    }
-}
+/** Lista todas las solicitudes (panel de administración) */
+const ObtenerSolicitudes = async (req, res) => {
+  try {
+    const solicitudes = await EcosystemService.obtenerSolicitudes();
+    res.status(200).json(solicitudes);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener las solicitudes', error: error.message });
+  }
+};
 
-const crearConexionGrafo = async (req,res)=>{
-    const {actor_origen_id, actor_destino_id,  } = req.body;
-    try{
-        const conexionGrafo = await conexionGrafo.create({
-            actor_origen_id,
-            actor_destino_id,
-            tipo_vinculo,
-            
-        });
-        res.status(201).json({message: 'ConexionGrafo creada exitosamente', conexionGrafo});
-    }catch(error){
-        res.status(500).json({message: 'Error al crear la conexionGrafo', error});
-    }
-}
+/** Actualiza campos de una solicitud (ej: agregar comentarios_admin) */
+const actualizarSolicitud = async (req, res) => {
+  try {
+    const editada = await EcosystemService.actualizarSolicitud(req.params.id_solicitud, req.body);
+    res.status(200).json(editada);
+  } catch (error) {
+    if (error.message === 'Solicitud no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al editar la solicitud', error: error.message });
+  }
+};
 
-const ObtenerConexionesGrafo = async (req,res)=>{
-    try{
-const conexionesGrafo = await conexionGrafo.findAll();
-res.status(200).json(conexionesGrafo); 
+/** Elimina una solicitud permanentemente */
+const eliminarSolicitud = async (req, res) => {
+  try {
+    await EcosystemService.eliminarSolicitud(req.params.id_solicitud);
+    res.status(200).json({ message: 'Solicitud eliminada correctamente' });
+  } catch (error) {
+    if (error.message === 'Solicitud no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al eliminar la solicitud', error: error.message });
+  }
+};
 
-    }catch (error){
-        res.status(500).json({message: 'Error al obtener las conexionesGrafo', error});
-    }
-}
+/** Acción de admin: aprueba la solicitud (estado → 'Aprobada') */
+const aprobarSolicitud = async (req, res) => {
+  try {
+    const aprobada = await EcosystemService.aprobarSolicitud(req.params.id_solicitud);
+    res.status(200).json({ message: 'Solicitud aprobada', solicitud: aprobada });
+  } catch (error) {
+    if (error.message === 'Solicitud no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al aprobar la solicitud', error: error.message });
+  }
+};
 
-const eliminarConexionGrafo = async (req,res)=>{
-    try{
-        const {id_conexionGrafo} = req.params;
+/** Acción de admin: rechaza la solicitud (estado → 'Rechazada') */
+const rechazarSolicitud = async (req, res) => {
+  try {
+    const rechazada = await EcosystemService.rechazarSolicitud(req.params.id_solicitud);
+    res.status(200).json({ message: 'Solicitud rechazada', solicitud: rechazada });
+  } catch (error) {
+    if (error.message === 'Solicitud no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al rechazar la solicitud', error: error.message });
+  }
+};
 
-        const conexionGrafoEncontrada =await conexionGrafo.findByPk(id_conexionGrafo);
-        if(!conexionGrafoEncontrada){
-            return res.status(404).json({message: 'ConexionGrafo no encontrada'});
-        }
-        await conexionGrafoEncontrada.destroy()
-        res.status(500).json({message: 'ConexionGrafo eliminada correctamente'});
+// ── METRICAS DASHBOARD ─────────────────────────────────────────────────────────
 
-    }catch (error){
-        res.status(500).json({message: 'Error al eliminar la conexionGrafo', error});
-    }
-}
+/** Registra un nuevo snapshot de métricas para una startup */
+const crearMetricaDashboard = async (req, res) => {
+  try {
+    const metrica = await EcosystemService.crearMetricaDashboard(req.body);
+    res.status(201).json({ message: 'MetricaDashboard creada exitosamente', metricaDashboard: metrica });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear la metricaDashboard', error: error.message });
+  }
+};
 
-const editarConexionGrafo = async (req,res)=>{
-    try{
-        const {id_conexionGrafo} = req.params;
+/** Lista todas las métricas de todas las startups */
+const ObtenerMetricasDashboards = async (req, res) => {
+  try {
+    const metricas = await EcosystemService.obtenerMetricasDashboards();
+    res.status(200).json(metricas);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener las metricasDashboards', error: error.message });
+  }
+};
 
-        const {actor_origen_id, actor_destino_id, tipo_vinculo} = req.body;
+/** Actualiza una métrica existente (ej: corrección de datos) */
+const actualizarMetricaDashboard = async (req, res) => {
+  try {
+    const editada = await EcosystemService.actualizarMetricaDashboard(req.params.id_metricaDashboard, req.body);
+    res.status(200).json(editada);
+  } catch (error) {
+    if (error.message === 'MetricaDashboard no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al editar la metricaDashboard', error: error.message });
+  }
+};
 
-        const conexionGrafoEncontrada = await conexionGrafo.findByPk(id_conexionGrafo);
+/** Elimina un registro de métricas */
+const eliminarMetricaDashboard = async (req, res) => {
+  try {
+    await EcosystemService.eliminarMetricaDashboard(req.params.id_metricaDashboard);
+    res.status(200).json({ message: 'MetricaDashboard eliminada correctamente' });
+  } catch (error) {
+    if (error.message === 'MetricaDashboard no encontrada') return res.status(404).json({ message: error.message });
+    res.status(500).json({ message: 'Error al eliminar la metricaDashboard', error: error.message });
+  }
+};
 
-        if(!conexionGrafoEncontrada){
-            return res.status(404).json({message: 'ConexionGrafo no encontrada'});
-        }
-
-        await conexionGrafoEncontrada.update({actor_origen_id, actor_destino_id,tipo_vinculo});
-
-        res.status(200).json(conexionGrafoEncontrada);  
-
-    }catch (error){
-        res.status(500).json({message: 'Error al editar la conexionGrafo', error});
-    }
-}
- const CrearSolicitud = async (req,res)=>{
-    const {user_id,tipo,estado,comentarios_admin} = req.body;
-    try{
-        const solicitud = await solicitud.create({
-            user_id,
-            tipo,
-            estado,
-            comentarios_admin
-        });
-        res.status(201).json({message: 'Solicitud creada exitosamente', solicitud});
-    }catch(error){
-        res.status(500).json({message: 'Error al crear la solicitud', error});
-    }
-
-} 
-
-const ObtenerSolicitudes = async (req,res)=>{
-    try{
-const solicitudes = await solicitud.findAll();
-res.status(200).json(solicitudes); 
-
-    }catch (error){
-        res.status(500).json({message: 'Error al obtener las solicitudes', error});
-    }
-}   
-
-const actualizarSolicitud = async (req,res)=>{
-    try{
-        const {id_solicitud} = req.params;
-
-        const {user_id,tipo,estado,comentarios_admin} = req.body;
-
-        const solicitudEncontrada = await solicitud.findByPk(id_solicitud);
-
-        if(!solicitudEncontrada){
-            return res.status(404).json({message: 'Solicitud no encontrada'});
-        }
-
-        await solicitudEncontrada.update({user_id,tipo,estado,comentarios_admin});
-
-        res.status(200).json(solicitudEncontrada);
-
-    }catch (error){
-        res.status(500).json({message: 'Error al editar la solicitud', error});
-    }
-}
-
-const eliminarSolicitud = async (req,res)=>{
-    try{
-        const {id_solicitud} = req.params;
-
-        const solicitudEncontrada =await solicitud.findByPk(id_solicitud);
-        if(!solicitudEncontrada){
-            return res.status(404).json({message: 'Solicitud no encontrada'});
-        }
-        await solicitudEncontrada.destroy()
-        res.status(500).json({message: 'Solicitud eliminada correctamente'});
-
-    }catch (error){
-        res.status(500).json({message: 'Error al eliminar la solicitud', error});
-    }
-}
-  
-const crearMetricaDashboard = async (req,res)=>{
-    const {startup_id,num_empleados,valoracion_estimada,fecha_reporte} = req.body;
-    try{
-        const metricaDashboard = await metricaDashboard.create({
-            startup_id,
-            num_empleados,
-            valoracion_estimada,
-            fecha_reporte
-        });
-        res.status(201).json({message: 'MetricaDashboard creada exitosamente', metricaDashboard});
-    }catch(error){
-        res.status(500).json({message: 'Error al crear la metricaDashboard', error});
-    }
-}
-
-const ObtenerMetricasDashboards = async (req,res)=>{
-    try{
-const metricasDashboards = await metricaDashboard.findAll();
-res.status(200).json(metricasDashboards); 
-
-    }catch (error){
-        res.status(500).json({message: 'Error al obtener las metricasDashboards', error});
-    }
-}   
-
-const actualizarMetricaDashboard = async (req,res)=>{
-    try{
-        const {id_metricaDashboard} = req.params;
-
-        const {startup_id,num_empleados,valoracion_estimada,fecha_reporte} = req.body;
-
-        const metricaDashboardEncontrada = await metricaDashboard.findByPk(id_metricaDashboard);
-
-        if(!metricaDashboardEncontrada){
-            return res.status(404).json({message: 'MetricaDashboard no encontrada'});
-        }
-
-        await metricaDashboardEncontrada.update({startup_id,num_empleados,valoracion_estimada,fecha_reporte});
-
-        res.status(200).json(metricaDashboardEncontrada);
-
-    }catch (error){
-        res.status(500).json({message: 'Error al editar la metricaDashboard', error});
-    }
-}
-
-const eliminarMetricaDashboard = async (req,res)=>{
-    try{
-        const {id_metricaDashboard} = req.params;
-
-        const metricaDashboardEncontrada =await metricaDashboard.findByPk(id_metricaDashboard);
-        if(!metricaDashboardEncontrada){
-            return res.status(404).json({message: 'MetricaDashboard no encontrada'});
-        }
-        await metricaDashboardEncontrada.destroy()
-        res.status(500).json({message: 'MetricaDashboard eliminada correctamente'});
-
-    }catch (error){
-        res.status(500).json({message: 'Error al eliminar la metricaDashboard', error});
-    }
-
-}
-     module.exports = {
-    crearGeolocalizacion,
-    ObtenerGeolocalizaciones,
-    eliminarGeolocalizacion,
-    editarGeolocalizacion,
-    crearConexionGrafo,
-    ObtenerConexionesGrafo,
-    eliminarConexionGrafo,
-    editarConexionGrafo,
-    CrearSolicitud,
-    ObtenerSolicitudes,
-    actualizarSolicitud,
-    eliminarSolicitud,
-    crearMetricaDashboard,
-    ObtenerMetricasDashboards,
-    actualizarMetricaDashboard,
-    eliminarMetricaDashboard
-}
+module.exports = {
+  crearGeolocalizacion,
+  ObtenerGeolocalizaciones,
+  eliminarGeolocalizacion,
+  editarGeolocalizacion,
+  crearConexionGrafo,
+  ObtenerConexionesGrafo,
+  eliminarConexionGrafo,
+  editarConexionGrafo,
+  CrearSolicitud,
+  ObtenerSolicitudes,
+  actualizarSolicitud,
+  eliminarSolicitud,
+  aprobarSolicitud,
+  rechazarSolicitud,
+  crearMetricaDashboard,
+  ObtenerMetricasDashboards,
+  actualizarMetricaDashboard,
+  eliminarMetricaDashboard
+};

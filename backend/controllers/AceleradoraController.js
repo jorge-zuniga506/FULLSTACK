@@ -1,71 +1,50 @@
-const { Aceleradora } = require('../models');
+const AceleradoraService = require('../services/AceleradoraService');
 
-const crearAceleradora = async (req,res)=>{
-    const { user_id, nombre, programa_activo, sitio_web } = req.body;
-    try{
-        const aceleradora = await Aceleradora.create({
-            user_id,
-            nombre,
-            programa_activo,
-            sitio_web
-            
-        });
-        res.status(201).json({message: 'Aceleradora creada exitosamente', aceleradora});
-    }catch(error){
-        res.status(500).json({message: 'Error al crear la aceleradora', error});
+const crearAceleradora = async (req, res) => {
+    try {
+        const aceleradora = await AceleradoraService.crearAceleradora(req.body);
+        res.status(201).json({ message: 'Aceleradora creada exitosamente', aceleradora });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al crear la aceleradora', error: error.message });
     }
 }
 
-const ObtenerAceleradoras = async (req,res)=>{
-    try{
-const aceleradoras = await Aceleradora.findAll();
-res.status(200).json(aceleradoras); 
-
-    }catch (error){
-        res.status(500).json({message: 'Error al obtener las aceleradoras', error});
+const ObtenerAceleradoras = async (req, res) => {
+    try {
+        const aceleradoras = await AceleradoraService.obtenerAceleradoras();
+        res.status(200).json(aceleradoras);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener las aceleradoras', error: error.message });
     }
 }
 
-const eliminarAceleradora = async (req,res)=>{
-    try{
-        const {id_aceleradora} = req.params;
-
-        const aceleradoraEncontrada =await Aceleradora.findByPk(id_aceleradora);
-        if(!aceleradoraEncontrada){
-            return res.status(404).json({message: 'Aceleradora no encontrada'});
+const eliminarAceleradora = async (req, res) => {
+    try {
+        await AceleradoraService.eliminarAceleradora(req.params.id_aceleradora);
+        res.status(200).json({ message: 'Aceleradora eliminada correctamente' });
+    } catch (error) {
+        if (error.message === 'Aceleradora no encontrada') {
+            return res.status(404).json({ message: error.message });
         }
-        await aceleradoraEncontrada.destroy()
-        res.status(200).json({message: 'Aceleradora eliminada correctamente'});
-
-    }catch (error){
-        res.status(500).json({message: 'Error al eliminar la aceleradora', error});
+        res.status(500).json({ message: 'Error al eliminar la aceleradora', error: error.message });
     }
 }
 
-const editarAceleradora = async (req,res)=>{
-    try{
-        const {id_aceleradora} = req.params;
-
-        const {user_id,nombre,programa_activo,sitio_web} = req.body;
-
-        const aceleradoraEncontrada = await Aceleradora.findByPk(id_aceleradora);
-
-        if(!aceleradoraEncontrada){
-            return res.status(404).json({message: 'Aceleradora no encontrada'});
+const editarAceleradora = async (req, res) => {
+    try {
+        const aceleradoraEditada = await AceleradoraService.editarAceleradora(req.params.id_aceleradora, req.body);
+        res.status(200).json(aceleradoraEditada);
+    } catch (error) {
+        if (error.message === 'Aceleradora no encontrada') {
+            return res.status(404).json({ message: error.message });
         }
-
-        await aceleradoraEncontrada.update({user_id,nombre,programa_activo,sitio_web});
-
-        res.status(200).json(aceleradoraEncontrada);
-
-    }catch (error){
-        res.status(500).json({message: 'Error al editar la aceleradora', error});
+        res.status(500).json({ message: 'Error al editar la aceleradora', error: error.message });
     }
 }
 
 module.exports = {
     crearAceleradora,
     ObtenerAceleradoras,
-    eliminarAceleradora, 
+    eliminarAceleradora,
     editarAceleradora
-}   
+}

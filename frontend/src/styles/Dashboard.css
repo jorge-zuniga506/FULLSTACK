@@ -1,0 +1,475 @@
+/* ===================================
+   DASHBOARD STYLES
+   Estructura: Sidebar + Main Content
+   =================================== */
+
+/* Override index.css root restrictions */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+#root {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  border: none !important;
+  display: block !important;
+  height: 100% !important;
+}
+
+/* ------- Page Layout ------- */
+.db-container {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  width: 100%;
+  height: 100vh;
+  background: #040d18;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+/* ------- SIDEBAR ------- */
+.db-sidebar {
+  background: #080f1e;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  overflow: hidden;
+}
+
+.db-logo {
+  display: flex;
+  gap: 0.3rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 0.5rem 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.logo-nexus { color: #ffffff; }
+.logo-cobalt {
+  color: #00aaff;
+  text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+/* ------- Sidebar Nav ------- */
+.db-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.db-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.db-nav-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.db-nav-item.active {
+  background: rgba(0, 170, 255, 0.1);
+  color: #00aaff;
+  border: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+.db-nav-icon { font-size: 1rem; }
+
+/* ------- Sidebar Bottom ------- */
+.db-sidebar-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.db-user-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.db-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0055ff, #00aaff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.db-username {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.db-role {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.db-logout {
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding: 0.3rem;
+}
+
+.db-logout:hover { color: #ef4444; }
+
+/* ------- MAIN CONTENT ------- */
+.db-main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2rem 2.5rem;
+  gap: 1.5rem;
+  scrollbar-width: none;
+}
+
+.db-main::-webkit-scrollbar { display: none; }
+
+/* ------- Header ------- */
+.db-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.db-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.db-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0.25rem 0 0;
+}
+
+.db-explore-btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0055ff, #00aaff);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 85, 255, 0.35);
+  white-space: nowrap;
+}
+
+.db-explore-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 85, 255, 0.5);
+}
+
+/* ------- Stats Grid ------- */
+.db-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.db-stat-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 1.2rem;
+  transition: all 0.3s ease;
+  animation: cardIn 0.6s ease-out both;
+  position: relative;
+  overflow: hidden;
+}
+
+.db-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.6;
+}
+
+.db-stat-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.db-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.db-stat-icon { font-size: 1.4rem; }
+
+.db-stat-change {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+}
+
+.db-stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0 0 0.2rem;
+}
+
+.db-stat-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.db-stat-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.db-stat-fill {
+  height: 100%;
+  width: 65%;
+  border-radius: 3px;
+  animation: barFill 1s ease-out 0.5s both;
+}
+
+/* ------- Bottom Grid ------- */
+.db-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.db-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 1.5rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.db-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  flex-shrink: 0;
+}
+
+.db-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.db-card-link {
+  font-size: 0.78rem;
+  color: #00aaff;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.db-card-link:hover { opacity: 0.7; }
+
+/* ------- Entities List ------- */
+.db-entities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.db-entities-list::-webkit-scrollbar { display: none; }
+
+.db-entity-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.db-entity-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.db-entity-logo {
+  font-size: 1.4rem;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.db-entity-info { flex: 1; min-width: 0; }
+
+.db-entity-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.db-entity-sector {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.db-entity-type {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.db-entity-stage {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+/* ------- Sectors ------- */
+.db-sectors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.db-sectors-list::-webkit-scrollbar { display: none; }
+
+.db-sector-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.db-sector-info {
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.db-sector-name {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.db-sector-count {
+  display: block;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.db-sector-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.db-sector-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #0055ff, #00aaff);
+  border-radius: 6px;
+  animation: barFill 1.2s ease-out both;
+}
+
+.db-sector-pct {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  width: 32px;
+  text-align: right;
+}
+
+/* ------- Keyframe Animations ------- */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes barFill {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+/* ------- Responsive ------- */
+@media (max-width: 1100px) {
+  .db-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .db-bottom-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .db-container { grid-template-columns: 1fr; }
+  .db-sidebar { display: none; }
+  .db-main { padding: 1.5rem; }
+}
