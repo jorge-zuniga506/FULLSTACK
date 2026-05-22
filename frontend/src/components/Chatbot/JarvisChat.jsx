@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './JarvisChat.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
+
 const JarvisChat = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSkill, setActiveSkill] = useState('chat');
   const [messages, setMessages] = useState([
     {
       sender: 'jarvis',
@@ -156,12 +159,15 @@ const JarvisChat = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3007/api/chatbot/ask', {
+      const endpoint = activeSkill === 'classifier' ? '/api/ai/classify-request' : '/api/ai/chat';
+      const payload = activeSkill === 'classifier' ? { text: userText } : { message: userText };
+
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message: userText })
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
@@ -169,7 +175,14 @@ const JarvisChat = () => {
       }
 
       const data = await response.json();
-      const jarvisText = data.response;
+      const jarvisText = activeSkill === 'classifier'
+        ? [
+            `Clasificacion sugerida: ${data.tipo}`,
+            `Confianza: ${Math.round((data.confianza || 0) * 100)}%`,
+            data.razon,
+            data.requiere_revision ? 'Recomendacion: revisar manualmente antes de aprobar.' : 'Recomendacion: puede avanzar a revision del administrador.'
+          ].filter(Boolean).join('\n')
+        : data.response;
 
       const jarvisMessage = {
         sender: 'jarvis',
@@ -183,7 +196,7 @@ const JarvisChat = () => {
       console.error(error);
       setMessages(prev => [...prev, {
         sender: 'jarvis',
-        text: 'Mis disculpas, señor. He experimentado una interrupción temporal en mis servidores de enlace. Por favor, asegúrese de tener configurada la clave de API de Gemini y vuelva a intentarlo.',
+        text: 'Mis disculpas, señor. He experimentado una interrupción temporal en mis servidores de enlace. Verifique que el backend este activo y que la URL de API este configurada correctamente.',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }]);
     } finally {
@@ -268,6 +281,22 @@ const JarvisChat = () => {
 
           {/* Cuerpo del Chat / Mensajes */}
           <div className="jarvis-chat-body">
+            <div className="jarvis-skill-switch" role="group" aria-label="Modo de IA">
+              <button
+                type="button"
+                className={activeSkill === 'chat' ? 'active' : ''}
+                onClick={() => setActiveSkill('chat')}
+              >
+                Chat asesor
+              </button>
+              <button
+                type="button"
+                className={activeSkill === 'classifier' ? 'active' : ''}
+                onClick={() => setActiveSkill('classifier')}
+              >
+                Clasificador
+              </button>
+            </div>
             {messages.map((msg, index) => (
               <div key={index} className={`jarvis-message-wrapper ${msg.sender}`}>
                 <div className="jarvis-message-bubble">
@@ -296,7 +325,7 @@ const JarvisChat = () => {
             <input
               type="text"
               className="jarvis-chat-input"
-              placeholder="Escriba su comando o consulta, señor..."
+              placeholder={activeSkill === 'classifier' ? 'Pegue una solicitud para clasificar...' : 'Escriba su comando o consulta, señor...'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={isLoading}

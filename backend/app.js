@@ -28,6 +28,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 
@@ -46,6 +47,10 @@ const ChatbotRoutes = require('./routes/ChatbotRoutes');
 
 const app = express();
 
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 
 // Sirve archivos estáticos subidos localmente (cuando no se usa Cloudinary)
@@ -80,6 +85,7 @@ const API_LEGACY = '/api';
   app.use(`${prefix}/communication`, CommunicationRoutes);
   app.use(`${prefix}/notifications`, NotificationRoutes);
   app.use(`${prefix}/chatbot`, ChatbotRoutes);
+  app.use(`${prefix}/ai`, ChatbotRoutes);
 });
 
 app.use(require('./middlewares/errorHandler'));

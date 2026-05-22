@@ -223,6 +223,34 @@
   background: radial-gradient(circle at 50% 50%, rgba(10,25,50,0.1) 0%, rgba(0,0,0,0) 100%);
 }
 
+.jarvis-skill-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid rgba(0, 242, 254, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.jarvis-skill-switch button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(226, 241, 255, 0.72);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jarvis-skill-switch button:hover,
+.jarvis-skill-switch button.active {
+  background: rgba(0, 242, 254, 0.14);
+  color: #e2f1ff;
+}
+
 /* Personalizar barra de scroll */
 .jarvis-chat-body::-webkit-scrollbar {
   width: 5px;

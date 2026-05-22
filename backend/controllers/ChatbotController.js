@@ -22,6 +22,26 @@ class ChatbotController {
       });
     }
   }
+
+  async classifyRequest(req, res) {
+    try {
+      const { text, message, description } = req.body;
+      const input = text || message || description;
+
+      if (!input) {
+        return res.status(400).json({ error: 'El texto de la solicitud es requerido.' });
+      }
+
+      const result = await chatbotService.classifyRequest(input);
+
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error('Error en ChatbotController.classifyRequest:', error);
+      return res.status(500).json({
+        error: 'Error interno del servidor al clasificar la solicitud con IA.'
+      });
+    }
+  }
 }
 
 module.exports = new ChatbotController();

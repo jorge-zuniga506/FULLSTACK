@@ -25,12 +25,12 @@ const DashboardLayout = ({ children }) => {
 
   // Definición de los ítems del menú lateral
   const navItems = [
-    { path: '/dashboard',    label: '📊 Dashboard',    id: 'dash'  },
-    { path: '/explorer',     label: '🗺️ Explorador',   id: 'expl'  },
-    { path: '/startups',     label: '🚀 Startups',     id: 'start' },
-    { path: '/investors',    label: '💼 Inversores',   id: 'inv'   },
+    { path: '/dashboard', label: '📊 Dashboard', id: 'dash' },
+    { path: '/explorer', label: '🗺️ Explorador', id: 'expl' },
+    { path: '/startups', label: '🚀 Startups', id: 'start' },
+    { path: '/investors', label: '💼 Inversores', id: 'inv' },
     { path: '/accelerators', label: '⚡ Aceleradoras', id: 'accel' },
-    { path: '/profile',      label: '👤 Mi Perfil',    id: 'prof'  },
+    { path: '/profile', label: '👤 Mi Perfil', id: 'prof' },
   ];
 
   return (
@@ -38,7 +38,7 @@ const DashboardLayout = ({ children }) => {
 
       {/* ── MOBILE HEADER ───────────────────────────────────────────────── */}
       <header className="db-mobile-header">
-        <button 
+        <button
           className={`db-menu-toggle ${isSidebarOpen ? 'active' : ''}`}
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           aria-label="Toggle navigation"

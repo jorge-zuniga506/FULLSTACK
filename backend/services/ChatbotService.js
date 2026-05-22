@@ -31,9 +31,9 @@ class ChatbotService {
               type: "OBJECT",
               properties: {
                 nombre: { type: "STRING", description: "Nombre comercial de la startup a buscar." },
-                fase: { 
-                  type: "STRING", 
-                  description: "Fase de la startup ('Idea', 'Semilla', 'Serie A', 'Serie B', 'Escalamiento')." 
+                fase: {
+                  type: "STRING",
+                  description: "Fase de la startup ('Idea', 'Semilla', 'Serie A', 'Serie B', 'Escalamiento')."
                 },
                 sector: { type: "STRING", description: "Nombre del sector de actividad (ej: Fintech, Healthtech, Agritech, Edtech)." },
                 descripcion: { type: "STRING", description: "Palabras clave o temas de interés de la descripción de la startup." }
@@ -70,13 +70,13 @@ class ChatbotService {
               type: "OBJECT",
               properties: {
                 user_id: { type: "INTEGER", description: "ID del usuario que creó la solicitud." },
-                tipo: { 
-                  type: "STRING", 
-                  description: "Tipo de incorporación solicitada ('startup', 'aceleradora', 'inversor')." 
+                tipo: {
+                  type: "STRING",
+                  description: "Tipo de incorporación solicitada ('startup', 'aceleradora', 'inversor')."
                 },
-                estado: { 
-                  type: "STRING", 
-                  description: "Estado de la solicitud ('Pendiente', 'Aprobada', 'Rechazada')." 
+                estado: {
+                  type: "STRING",
+                  description: "Estado de la solicitud ('Pendiente', 'Aprobada', 'Rechazada')."
                 }
               }
             }
@@ -88,9 +88,9 @@ class ChatbotService {
               type: "OBJECT",
               properties: {
                 user_id: { type: "INTEGER", description: "ID del usuario que realiza la solicitud." },
-                tipo: { 
-                  type: "STRING", 
-                  description: "Tipo de incorporación solicitada ('startup', 'aceleradora', 'inversor')." 
+                tipo: {
+                  type: "STRING",
+                  description: "Tipo de incorporación solicitada ('startup', 'aceleradora', 'inversor')."
                 },
                 comentarios_admin: { type: "STRING", description: "Comentarios o justificación del usuario para la solicitud." }
               },
@@ -267,12 +267,157 @@ class ChatbotService {
     };
   }
 
+  normalizeTipo(value) {
+    if (!value) return null;
+
+    const normalized = String(value).toLowerCase();
+    if (normalized.includes('aceler')) return 'aceleradora';
+    if (normalized.includes('invers')) return 'inversor';
+    if (normalized.includes('startup') || normalized.includes('emprend')) return 'startup';
+
+    return null;
+  }
+
+  classifyRequestLocally(text) {
+    const normalized = text.toLowerCase();
+    const scores = {
+      startup: 0,
+      aceleradora: 0,
+      inversor: 0
+    };
+
+    const keywords = {
+      startup: ['startup', 'emprendimiento', 'producto', 'mvp', 'fundador', 'fundadora', 'clientes', 'traccion', 'idea'],
+      aceleradora: ['aceleradora', 'programa', 'mentoria', 'incubadora', 'cohorte', 'acompanamiento', 'demo day'],
+      inversor: ['inversor', 'inversionista', 'capital', 'equity', 'fondo', 'ticket', 'portafolio', 'invertir']
+    };
+
+    Object.entries(keywords).forEach(([tipo, words]) => {
+      words.forEach(word => {
+        if (normalized.includes(word)) scores[tipo] += 1;
+      });
+    });
+
+    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const [tipo, score] = sorted[0];
+    const total = Object.values(scores).reduce((sum, current) => sum + current, 0);
+
+    return {
+      tipo: score > 0 ? tipo : 'startup',
+      confianza: total > 0 ? Number((score / total).toFixed(2)) : 0.34,
+      razon: score > 0
+        ? `La solicitud contiene señales asociadas con ${tipo}.`
+        : 'No hay suficientes señales; se sugiere revision manual.',
+      requiere_revision: score === 0 || score === sorted[1][1],
+      proveedor: 'local-rules'
+    };
+  }
+
+  parseClassificationResponse(text) {
+    try {
+      const cleaned = text.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      const tipo = this.normalizeTipo(parsed.tipo);
+
+      if (!tipo) {
+        return null;
+      }
+
+      return {
+        tipo,
+        confianza: Number(parsed.confianza || parsed.confidence || 0.7),
+        razon: parsed.razon || parsed.reason || 'Clasificacion generada por IA.',
+        requiere_revision: Boolean(parsed.requiere_revision),
+        proveedor: 'gemini'
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async classifyRequest(text) {
+    const localResult = this.classifyRequestLocally(text);
+
+    if (!this.model) {
+      return localResult;
+    }
+
+    try {
+      const prompt = [
+        'Clasifica la siguiente solicitud de incorporacion al ecosistema.',
+        'Responde solo JSON valido con las claves tipo, confianza, razon y requiere_revision.',
+        'tipo debe ser exactamente uno de: startup, aceleradora, inversor.',
+        `Solicitud: ${text}`
+      ].join('\n');
+
+      const result = await this.model.generateContent(prompt);
+      const responseText = result.response.text();
+      return this.parseClassificationResponse(responseText) || localResult;
+    } catch (error) {
+      console.error('Error clasificando solicitud con IA:', error);
+      return localResult;
+    }
+  }
+
+  async processMessageLocally(message) {
+    const normalized = message.toLowerCase();
+
+    if (normalized.includes('startup')) {
+      const startups = await this.localBuscarStartups({});
+      return {
+        mensaje: startups.length
+          ? `Puedo ayudarle con el ecosistema. En este momento encontre ${startups.length} startups registradas.`
+          : 'Puedo ayudarle con consultas sobre startups, aunque todavia no encontre registros para listar.',
+        data: startups.slice(0, 5)
+      };
+    }
+
+    if (normalized.includes('aceleradora')) {
+      const aceleradoras = await this.localBuscarAceleradoras({});
+      return {
+        mensaje: aceleradoras.length
+          ? `Encontre ${aceleradoras.length} aceleradoras registradas en el ecosistema.`
+          : 'Puedo orientar consultas sobre aceleradoras, aunque todavia no encontre registros para listar.',
+        data: aceleradoras.slice(0, 5)
+      };
+    }
+
+    if (normalized.includes('inversor') || normalized.includes('inversion')) {
+      const inversores = await this.localBuscarInversores({});
+      return {
+        mensaje: inversores.length
+          ? `Encontre ${inversores.length} inversores registrados en el ecosistema.`
+          : 'Puedo orientar consultas sobre inversores, aunque todavia no encontre registros para listar.',
+        data: inversores.slice(0, 5)
+      };
+    }
+
+    if (normalized.includes('solicitud')) {
+      const solicitudes = await this.localBuscarSolicitudes({});
+      return {
+        mensaje: solicitudes.length
+          ? `Encontre ${solicitudes.length} solicitudes registradas. Puede pedirme filtrarlas por estado o tipo.`
+          : 'No encontre solicitudes registradas por ahora, pero puedo ayudarle a clasificarlas o crearlas.',
+        data: solicitudes.slice(0, 5)
+      };
+    }
+
+    return {
+      mensaje: 'Estoy listo para ayudarle con startups, aceleradoras, inversores y solicitudes del ecosistema. Tambien puedo clasificar solicitudes desde el modo Clasificador.',
+      data: []
+    };
+  }
+
   /**
    * Procesa el mensaje del usuario y maneja el flujo de function calling
    */
   async processMessage(message) {
     try {
       if (!this.model) {
+        return await this.processMessageLocally(message);
+      }
+
+      if (false && !this.model) {
         return {
           mensaje: "Lo lamento, el asistente virtual no está disponible porque falta la clave de API de Gemini.",
           data: []
@@ -330,6 +475,7 @@ class ChatbotService {
 
     } catch (error) {
       console.error("Error en ChatbotService:", error);
+      return await this.processMessageLocally(message);
       return {
         mensaje: "Mis disculpas, señor. He experimentado una interrupción temporal en mis servidores de procesamiento. Por favor intente más tarde.",
         data: []

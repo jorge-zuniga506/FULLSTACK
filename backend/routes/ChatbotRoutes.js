@@ -7,5 +7,7 @@ const chatbotController = require('../controllers/ChatbotController');
 
 // Endpoint para el chat.
 router.post('/ask', chatbotController.ask);
+router.post('/chat', chatbotController.ask);
+router.post('/classify-request', chatbotController.classifyRequest);
 
 module.exports = router;
