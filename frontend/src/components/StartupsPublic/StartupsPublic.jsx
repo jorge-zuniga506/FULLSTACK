@@ -274,7 +274,7 @@ const StartupsPublic = () => {
         {/* Encabezado */}
         <div className="public-startups-header">
           <span className="public-badge">🚀 Directorio del Ecosistema</span>
-          <h1 className="public-title">Startups</h1>
+          <h1 className="public-title"><span className="public-title-inner">Startups</span></h1>
           <p className="public-subtitle">
             Conoce las startups de tecnología y emprendimientos que están liderando la innovación y transformación digital en la región.
           </p>
@@ -358,10 +358,10 @@ const StartupsPublic = () => {
                 ×
               </button>
 
-              <div className="public-startup-modal-header" style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+              <div className="public-startup-modal-header" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <span className="public-startup-modal-badge">Startup</span>
-                <h2 className="public-startup-modal-title" style={{marginBottom: '0.25rem', color: getModalTitleColor(activeStartup.logo)}}>{activeStartup.name}</h2>
-                <p className="public-startup-modal-subtitle" style={{marginTop:0}}>{activeStartup.sector} · {activeStartup.stage} · {activeStartup.country}</p>
+                <h2 className="public-startup-modal-title" style={{ marginBottom: '0.25rem', color: getModalTitleColor(activeStartup.logo) }}>{activeStartup.name}</h2>
+                <p className="public-startup-modal-subtitle" style={{ marginTop: 0 }}>{activeStartup.sector} · {activeStartup.stage} · {activeStartup.country}</p>
               </div>
 
               <div className="public-startup-modal-body">
