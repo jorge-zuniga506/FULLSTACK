@@ -18,7 +18,9 @@
  * El patron "obtener por ID + lanzar Error" permite que los controllers
  * conviertan automaticamente ese Error en una respuesta 404.
  */
-const { Geolocalizacion, ConexionGrafo, Solicitud, MetricaDashboard } = require('../models');
+const { Op } = require('sequelize');
+const { Geolocalizacion, ConexionGrafo, Solicitud, MetricaDashboard, User, sequelize } = require('../models');
+const { notificarEstadoSolicitud } = require('./EmailService');
 
 class EcosystemService {
 
@@ -30,8 +32,21 @@ class EcosystemService {
   }
 
   /** Lista todos los registros de geolocalización */
-  static async obtenerGeolocalizaciones() {
-    return await Geolocalizacion.findAll();
+  static async obtenerGeolocalizaciones(query = {}) {
+    const { page, limit } = query;
+    if (!page && !limit) {
+      return await Geolocalizacion.findAll();
+    }
+    const p = parseInt(page, 10) || 1;
+    const l = parseInt(limit, 10) || 10;
+    const offset = (p - 1) * l;
+    const result = await Geolocalizacion.findAndCountAll({ limit: l, offset });
+    return {
+      totalItems:      result.count,
+      totalPages:      Math.ceil(result.count / l),
+      currentPage:     p,
+      geolocalizaciones: result.rows
+    };
   }
 
   /**
@@ -67,8 +82,21 @@ class EcosystemService {
   }
 
   /** Lista todas las conexiones del grafo (aristas) */
-  static async obtenerConexionesGrafo() {
-    return await ConexionGrafo.findAll();
+  static async obtenerConexionesGrafo(query = {}) {
+    const { page, limit } = query;
+    if (!page && !limit) {
+      return await ConexionGrafo.findAll();
+    }
+    const p = parseInt(page, 10) || 1;
+    const l = parseInt(limit, 10) || 10;
+    const offset = (p - 1) * l;
+    const result = await ConexionGrafo.findAndCountAll({ limit: l, offset });
+    return {
+      totalItems:    result.count,
+      totalPages:    Math.ceil(result.count / l),
+      currentPage:   p,
+      conexiones:    result.rows
+    };
   }
 
   /**
@@ -104,8 +132,23 @@ class EcosystemService {
   }
 
   /** Lista todas las solicitudes (para el panel de administración) */
-  static async obtenerSolicitudes() {
-    return await Solicitud.findAll();
+  static async obtenerSolicitudes(query = {}) {
+    const { page, limit, estado } = query;
+    if (!page && !limit && !estado) {
+      return await Solicitud.findAll();
+    }
+    const p = parseInt(page, 10) || 1;
+    const l = parseInt(limit, 10) || 10;
+    const offset = (p - 1) * l;
+    const where = {};
+    if (estado) where.estado = estado;
+    const result = await Solicitud.findAndCountAll({ where, limit: l, offset });
+    return {
+      totalItems:  result.count,
+      totalPages:  Math.ceil(result.count / l),
+      currentPage: p,
+      solicitudes: result.rows
+    };
   }
 
   /**
@@ -133,20 +176,52 @@ class EcosystemService {
 
   /**
    * Acción de administrador: aprueba una solicitud pendiente
-   * Cambia estado → 'Aprobada'
+   * Cambia estado → 'Aprobada'. Operación transaccional.
    */
   static async aprobarSolicitud(id) {
-    const solicitud = await this.obtenerSolicitudPorId(id);
-    return await solicitud.update({ estado: 'Aprobada' });
+    const t = await sequelize.transaction();
+    try {
+      const solicitud = await this.obtenerSolicitudPorId(id);
+      const updated = await solicitud.update({ estado: 'Aprobada' }, { transaction: t });
+      await this._notificarSolicitud(updated);
+      await t.commit();
+      return updated;
+    } catch (error) {
+      await t.rollback();
+      throw error;
+    }
   }
 
   /**
    * Acción de administrador: rechaza una solicitud pendiente
-   * Cambia estado → 'Rechazada'
+   * Cambia estado → 'Rechazada'. Operación transaccional.
    */
   static async rechazarSolicitud(id) {
-    const solicitud = await this.obtenerSolicitudPorId(id);
-    return await solicitud.update({ estado: 'Rechazada' });
+    const t = await sequelize.transaction();
+    try {
+      const solicitud = await this.obtenerSolicitudPorId(id);
+      const updated = await solicitud.update({ estado: 'Rechazada' }, { transaction: t });
+      await this._notificarSolicitud(updated);
+      await t.commit();
+      return updated;
+    } catch (error) {
+      await t.rollback();
+      throw error;
+    }
+  }
+
+  /**
+   * Envía notificación por correo al usuario sobre el cambio de estado de su solicitud.
+   */
+  static async _notificarSolicitud(solicitud) {
+    try {
+      const user = await User.findByPk(solicitud.user_id);
+      if (user && user.email) {
+        await notificarEstadoSolicitud(solicitud, user.email, user.nombre_hacienda);
+      }
+    } catch (error) {
+      console.error('Error al notificar solicitud por email:', error.message);
+    }
   }
 
   // ── METRICAS DASHBOARD ─────────────────────────────────────────────────────
@@ -158,8 +233,21 @@ class EcosystemService {
   }
 
   /** Lista todas las métricas (todas las startups, todos los períodos) */
-  static async obtenerMetricasDashboards() {
-    return await MetricaDashboard.findAll();
+  static async obtenerMetricasDashboards(query = {}) {
+    const { page, limit } = query;
+    if (!page && !limit) {
+      return await MetricaDashboard.findAll();
+    }
+    const p = parseInt(page, 10) || 1;
+    const l = parseInt(limit, 10) || 10;
+    const offset = (p - 1) * l;
+    const result = await MetricaDashboard.findAndCountAll({ limit: l, offset });
+    return {
+      totalItems:   result.count,
+      totalPages:   Math.ceil(result.count / l),
+      currentPage:  p,
+      metricas:     result.rows
+    };
   }
 
   /**

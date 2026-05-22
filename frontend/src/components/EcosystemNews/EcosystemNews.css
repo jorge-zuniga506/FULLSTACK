@@ -1,0 +1,294 @@
+.eco-news-section {
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+/* ─── HIGHLIGHT NEWS GRID ─── */
+.eco-news-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+/* Left Card (Big) */
+.eco-card-big {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+}
+
+.eco-card-big:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(139, 0, 221, 0.15);
+}
+
+.eco-card-image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.eco-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.eco-card-big:hover .eco-card-img {
+  transform: scale(1.03);
+}
+
+.eco-card-gradient-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 70%;
+  background: linear-gradient(to top, rgba(12, 5, 23, 0.95) 0%, rgba(12, 5, 23, 0.5) 50%, transparent 100%);
+  z-index: 2;
+}
+
+.eco-card-arrow-top {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 1.5rem;
+  color: #ffffff;
+  font-weight: 500;
+  z-index: 3;
+  transition: transform 0.3s ease;
+}
+
+.eco-card-big:hover .eco-card-arrow-top,
+.eco-card-grey:hover .eco-card-arrow-top,
+.eco-card-lime:hover .eco-card-arrow-top {
+  transform: translate(3px, -3px);
+}
+
+.eco-card-bottom-content {
+  position: relative;
+  z-index: 3;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.eco-card-big-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  margin: 0 0 1rem 0;
+}
+
+.eco-card-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eco-badge-item.text-badge {
+  background-color: #b1f500;
+  color: #000000;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.eco-badge-item.flag-badge {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Right Columns Container */
+.eco-news-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Lime Green Card */
+.eco-card-lime {
+  position: relative;
+  background-color: #b1f500;
+  border-radius: 16px;
+  padding: 2.2rem 2rem;
+  height: 190px;
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+  box-sizing: border-box;
+  box-shadow: 0 10px 35px rgba(177, 245, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.eco-card-lime:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(177, 245, 0, 0.2);
+}
+
+.eco-card-lime-content h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0c0517;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.dark-arrow {
+  color: #0c0517 !important;
+}
+
+/* Dark Grey Card */
+.eco-card-grey {
+  position: relative;
+  background-color: #4f4f4f;
+  border-radius: 16px;
+  padding: 2.2rem 2rem;
+  height: 190px;
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.eco-card-grey:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.eco-card-grey-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* ─── INICIATIVAS SECTION ─── */
+.initiatives-header {
+  margin-bottom: 2rem;
+}
+
+.initiatives-section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #333333;
+  margin: 0 0 10px 0;
+  text-transform: capitalize;
+}
+
+.initiatives-line {
+  width: 100%;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.initiatives-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.initiative-item-card {
+  background-color: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.initiative-item-card:hover {
+  border-color: #b1f500;
+  box-shadow: 0 10px 25px rgba(177, 245, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.initiative-icon-circle {
+  width: 42px;
+  height: 42px;
+  background-color: #b1f500;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.initiative-item-card:hover .initiative-icon-circle {
+  transform: scale(1.05);
+}
+
+.initiative-emoji-icon {
+  font-size: 1.2rem;
+}
+
+.initiative-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0c0517;
+  flex-grow: 1;
+  margin-left: 1rem;
+}
+
+.initiative-arrow-right {
+  font-size: 1.1rem;
+  color: #a0a0a0;
+  transition: all 0.3s ease;
+}
+
+.initiative-item-card:hover .initiative-arrow-right {
+  color: #b1f500;
+  transform: translateX(4px);
+}
+
+/* ─── RESPONSIVE BREAKPOINTS ─── */
+@media (max-width: 992px) {
+  .eco-news-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .eco-card-big {
+    height: 350px;
+  }
+  .initiatives-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .initiatives-row {
+    grid-template-columns: 1fr;
+  }
+  .eco-card-big-title {
+    font-size: 1.4rem;
+  }
+  .eco-card-lime h3, .eco-card-grey h3 {
+    font-size: 1.1rem;
+  }
+}

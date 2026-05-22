@@ -14,8 +14,8 @@
  *
  * GEOLOCALIZACION:
  *   POST   /crear-ecosystem                  → crearGeolocalizacion
- *   GET    /obtener-ecosystem                → ObtenerGeolocalizaciones
- *   PUT    /editar-ecosytem/:id_geolocalizacion → editarGeolocalizacion
+ *   GET    /obtener-ecosystem                     → ObtenerGeolocalizaciones
+ *   PUT    /editar-ecosystem/:id_geolocalizacion   → editarGeolocalizacion
  *   DELETE /eliminar-ecosystem/:id_geolocalizacion → eliminarGeolocalizacion
  *
  * CONEXION GRAFO:
@@ -55,8 +55,8 @@ const crearGeolocalizacion = async (req, res) => {
 /** Lista todas las geolocalizaciones */
 const ObtenerGeolocalizaciones = async (req, res) => {
   try {
-    const geos = await EcosystemService.obtenerGeolocalizaciones();
-    res.status(200).json(geos);
+    const resultado = await EcosystemService.obtenerGeolocalizaciones(req.query);
+    res.status(200).json(resultado);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener las geolocalizaciones', error: error.message });
   }
@@ -99,8 +99,8 @@ const crearConexionGrafo = async (req, res) => {
 /** Lista todas las conexiones del grafo del ecosistema */
 const ObtenerConexionesGrafo = async (req, res) => {
   try {
-    const conexiones = await EcosystemService.obtenerConexionesGrafo();
-    res.status(200).json(conexiones);
+    const resultado = await EcosystemService.obtenerConexionesGrafo(req.query);
+    res.status(200).json(resultado);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener las conexionesGrafo', error: error.message });
   }
@@ -143,8 +143,8 @@ const CrearSolicitud = async (req, res) => {
 /** Lista todas las solicitudes (panel de administración) */
 const ObtenerSolicitudes = async (req, res) => {
   try {
-    const solicitudes = await EcosystemService.obtenerSolicitudes();
-    res.status(200).json(solicitudes);
+    const resultado = await EcosystemService.obtenerSolicitudes(req.query);
+    res.status(200).json(resultado);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener las solicitudes', error: error.message });
   }
@@ -209,8 +209,8 @@ const crearMetricaDashboard = async (req, res) => {
 /** Lista todas las métricas de todas las startups */
 const ObtenerMetricasDashboards = async (req, res) => {
   try {
-    const metricas = await EcosystemService.obtenerMetricasDashboards();
-    res.status(200).json(metricas);
+    const resultado = await EcosystemService.obtenerMetricasDashboards(req.query);
+    res.status(200).json(resultado);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener las metricasDashboards', error: error.message });
   }

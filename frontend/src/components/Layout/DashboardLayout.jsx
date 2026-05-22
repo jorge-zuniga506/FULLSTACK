@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import '../../styles/EntityList.css'; // Contiene estilos de .el-container, .el-sidebar, .el-main
 
@@ -19,6 +19,9 @@ const DashboardLayout = ({ children }) => {
   // Obtiene la ruta actual para resaltar el nav-item activo
   const location = useLocation();
 
+  // Estado para controlar la apertura del sidebar en pantallas móviles
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   // Definición de los ítems del menú lateral
   const navItems = [
     { path: '/dashboard',    label: '📊 Dashboard',    id: 'dash'  },
@@ -32,8 +35,33 @@ const DashboardLayout = ({ children }) => {
   return (
     <div className="el-container">
 
+      {/* ── MOBILE HEADER ───────────────────────────────────────────────── */}
+      <header className="db-mobile-header">
+        <button 
+          className={`db-menu-toggle ${isSidebarOpen ? 'active' : ''}`}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          aria-label="Toggle navigation"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div className="db-mobile-logo">
+          <span className="logo-nexus">NEXUS</span>
+          <span className="logo-cobalt">COBALT</span>
+        </div>
+        <Link to="/profile" className="db-mobile-avatar-link">
+          <div className="db-avatar">U</div>
+        </Link>
+      </header>
+
+      {/* Backdrop overlay for mobile drawer */}
+      {isSidebarOpen && (
+        <div className="db-sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+      )}
+
       {/* ── SIDEBAR ─────────────────────────────────────────────────────── */}
-      <aside className="el-sidebar">
+      <aside className={`el-sidebar ${isSidebarOpen ? 'open' : ''}`}>
 
         {/* Logo de la plataforma */}
         <div className="db-logo">
@@ -48,6 +76,7 @@ const DashboardLayout = ({ children }) => {
               key={item.id}
               to={item.path}
               className={`db-nav-item ${location.pathname === item.path ? 'active' : ''}`}
+              onClick={() => setIsSidebarOpen(false)}
             >
               {item.label}
             </Link>
@@ -61,11 +90,11 @@ const DashboardLayout = ({ children }) => {
             <div className="db-avatar">U</div>
             <div>
               <p className="db-username">Usuario</p>
-              <p className="db-role">Explorer</p>
+              <p className="db-role">Emprendedor</p>
             </div>
           </div>
           {/* Redirige al landing al salir */}
-          <Link to="/" className="db-logout">← Salir</Link>
+          <Link to="/" className="db-logout" onClick={() => setIsSidebarOpen(false)}>← Salir</Link>
         </div>
 
       </aside>

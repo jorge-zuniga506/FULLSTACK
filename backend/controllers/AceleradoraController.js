@@ -1,4 +1,5 @@
 const AceleradoraService = require('../services/AceleradoraService');
+const getAceleradoraId = (params) => params.id || params.id_aceleradora;
 
 const crearAceleradora = async (req, res) => {
     try {
@@ -11,8 +12,8 @@ const crearAceleradora = async (req, res) => {
 
 const ObtenerAceleradoras = async (req, res) => {
     try {
-        const aceleradoras = await AceleradoraService.obtenerAceleradoras();
-        res.status(200).json(aceleradoras);
+        const resultado = await AceleradoraService.obtenerAceleradoras(req.query);
+        res.status(200).json(resultado);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener las aceleradoras', error: error.message });
     }
@@ -20,7 +21,7 @@ const ObtenerAceleradoras = async (req, res) => {
 
 const eliminarAceleradora = async (req, res) => {
     try {
-        await AceleradoraService.eliminarAceleradora(req.params.id_aceleradora);
+        await AceleradoraService.eliminarAceleradora(getAceleradoraId(req.params));
         res.status(200).json({ message: 'Aceleradora eliminada correctamente' });
     } catch (error) {
         if (error.message === 'Aceleradora no encontrada') {
@@ -32,7 +33,7 @@ const eliminarAceleradora = async (req, res) => {
 
 const editarAceleradora = async (req, res) => {
     try {
-        const aceleradoraEditada = await AceleradoraService.editarAceleradora(req.params.id_aceleradora, req.body);
+        const aceleradoraEditada = await AceleradoraService.editarAceleradora(getAceleradoraId(req.params), req.body);
         res.status(200).json(aceleradoraEditada);
     } catch (error) {
         if (error.message === 'Aceleradora no encontrada') {
