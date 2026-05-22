@@ -1,0 +1,575 @@
+/* ==========================================================================
+   ABOUT CONTACT COMPONENT STYLES (PREMIUM GLASSMORPHISM & TECH AESTHETIC)
+   ========================================================================== */
+
+.about-contact-section {
+  padding: 6rem 5rem;
+  background-color: #040d18;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #ffffff;
+}
+
+/* Ambient glowing orbs */
+.about-contact-glow-bg {
+  position: absolute;
+  top: 30%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(139, 0, 221, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.about-contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 5rem;
+  position: relative;
+  z-index: 2;
+  align-items: center;
+}
+
+/* LEFT SIDE: Info & Brand Context */
+.about-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-badge {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  border-radius: 30px;
+  background: rgba(139, 0, 221, 0.1);
+  border: 1px solid rgba(139, 0, 221, 0.25);
+  color: #c56cf0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  width: fit-content;
+}
+
+.contact-title {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 850;
+  line-height: 1.2;
+  margin: 0;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.contact-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.7;
+  margin: 0 0 1rem 0;
+}
+
+.contact-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-method-item {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.contact-method-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.contact-method-item:hover .contact-method-icon {
+  background: rgba(177, 245, 0, 0.08);
+  border-color: rgba(177, 245, 0, 0.3);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(177, 245, 0, 0.15);
+}
+
+.contact-method-content h4 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.contact-method-content p, 
+.contact-method-content a {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contact-method-content a:hover {
+  color: #b1f500;
+}
+
+/* Social Buttons */
+.contact-socials-wrapper {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1.5rem;
+}
+
+.contact-socials-wrapper h4 {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contact-social-icons {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.social-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.social-icon-btn:hover {
+  background: #ffffff;
+  color: #040d18;
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+}
+
+
+/* RIGHT SIDE: Premium Form Card */
+.about-contact-form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-contact-card {
+  width: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 24px;
+  padding: 2.5rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+
+.about-contact-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.contact-form-header {
+  margin-bottom: 2rem;
+}
+
+.contact-form-header h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.contact-form-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Form Fields */
+.contact-main-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.form-group-custom label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.02em;
+}
+
+.input-with-icon, 
+.textarea-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.textarea-icon {
+  top: 14px;
+}
+
+.input-with-icon input, 
+.input-with-icon select, 
+.textarea-with-icon textarea {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.8rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+/* Support dark styles for select dropdown list */
+.input-with-icon select option {
+  background-color: #0c1524;
+  color: #ffffff;
+}
+
+.input-with-icon input::placeholder, 
+.textarea-with-icon textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Focus and hover states */
+.input-with-icon input:hover, 
+.input-with-icon select:hover, 
+.textarea-with-icon textarea:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.input-with-icon input:focus, 
+.input-with-icon select:focus, 
+.textarea-with-icon textarea:focus {
+  outline: none;
+  border-color: #b1f500;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 15px rgba(177, 245, 0, 0.15);
+}
+
+.input-with-icon input:focus + .input-icon, 
+.input-with-icon select:focus + .input-icon, 
+.textarea-with-icon textarea:focus + .input-icon {
+  color: #b1f500;
+}
+
+/* Error States */
+.form-group-custom.has-error label {
+  color: #ff6b6b;
+}
+
+.form-group-custom.has-error input, 
+.form-group-custom.has-error select, 
+.form-group-custom.has-error textarea {
+  border-color: rgba(255, 107, 107, 0.5);
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.08);
+}
+
+.form-group-custom.has-error input:focus, 
+.form-group-custom.has-error select:focus, 
+.form-group-custom.has-error textarea:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
+}
+
+.error-message {
+  font-size: 0.76rem;
+  color: #ff6b6b;
+  font-weight: 500;
+  margin-top: 4px;
+  animation: slideDownError 0.2s ease forwards;
+}
+
+/* Submit Error Banner */
+.contact-submit-error {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-submit-error p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #ff8b8b;
+  line-height: 1.4;
+}
+
+.error-icon {
+  font-size: 1.1rem;
+}
+
+/* Submit Button styling */
+.contact-submit-btn {
+  width: 100%;
+  padding: 0.95rem;
+  border-radius: 12px;
+  background: #b1f500;
+  color: #040d18;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(177, 245, 0, 0.25);
+  margin-top: 0.5rem;
+}
+
+.contact-submit-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(177, 245, 0, 0.45);
+}
+
+.contact-submit-btn:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.contact-submit-btn:disabled {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.35);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-arrow {
+  font-size: 0.88rem;
+  transition: transform 0.2s ease;
+}
+
+.contact-submit-btn:hover .btn-arrow {
+  transform: translateX(3px) scale(1.1);
+}
+
+/* Custom Dots Loader */
+.btn-loader {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-dot {
+  width: 8px;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulseLoader 1.2s infinite ease-in-out both;
+}
+
+.loader-dot:nth-child(1) { animation-delay: -0.32s; }
+.loader-dot:nth-child(2) { animation-delay: -0.16s; }
+
+
+/* SUCCESS STATE STYLES */
+.contact-success-state {
+  text-align: center;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: zoomInSuccess 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.contact-success-state h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #b1f500;
+  margin: 1.5rem 0 0.5rem 0;
+}
+
+.contact-success-state p {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0 auto 2rem auto;
+}
+
+.contact-success-btn {
+  padding: 0.75rem 1.75rem;
+  border-radius: 50px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.contact-success-btn:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+/* Success Checkmark Circle SVG Animation */
+.success-icon-animation {
+  width: 80px;
+  height: 80px;
+}
+
+.checkmark {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: #b1f500;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px #b1f500;
+  animation: fillSuccess 0.4s ease-in-out 0.4s forwards, scaleSuccess 0.3s ease-in-out 0.9s both;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: #b1f500;
+  fill: none;
+  animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  stroke: #040d18;
+  animation: strokeCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+}
+
+/* ANIMATION KEYFRAMES */
+@keyframes strokeCircle {
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes strokeCheck {
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes fillSuccess {
+  100% { box-shadow: inset 0px 0px 0px 40px #b1f500; }
+}
+
+@keyframes scaleSuccess {
+  0%, 100% { transform: none; }
+  50% { transform: scale3d(1.1, 1.1, 1); }
+}
+
+@keyframes pulseLoader {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+
+@keyframes slideDownError {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomInSuccess {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 992px) {
+  .about-contact-container {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+  .about-contact-section {
+    padding: 4rem 2rem;
+  }
+  .about-contact-info {
+    text-align: center;
+    align-items: center;
+  }
+  .contact-badge {
+    margin: 0 auto;
+  }
+  .contact-social-icons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .about-contact-card {
+    padding: 1.5rem;
+  }
+  .input-with-icon input, 
+  .input-with-icon select, 
+  .textarea-with-icon textarea {
+    font-size: 0.88rem;
+  }
+}

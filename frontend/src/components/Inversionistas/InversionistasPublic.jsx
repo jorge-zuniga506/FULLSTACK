@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../Navbar/NavbarLandpage";
+import Footer from "../Footer/Footer";
 import "../../styles/LandPage.css";
 import "../../styles/Inversionistas.css";
 
@@ -230,6 +231,8 @@ const InversionistasPublic = () => {
           </div>
         </div>
       )}
+      {/* Universal Footer */}
+      <Footer />
     </div>
   );
 };

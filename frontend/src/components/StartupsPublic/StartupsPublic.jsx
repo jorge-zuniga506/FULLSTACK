@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Navbar/NavbarLandpage";
+import Footer from "../Footer/Footer";
 import "../../styles/StartupsPublic.css";
 
 // ─── Datos Mock ───────────────────────────────────────────────────────────────
@@ -389,6 +390,8 @@ const StartupsPublic = () => {
           </div>
         )}
       </main>
+      {/* Universal Footer */}
+      <Footer />
     </div>
   );
 };

@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar/NavbarLandpage';
 import About from '../../components/About/About';
+import AboutContact from '../../components/About/AboutContact';
+import Footer from '../../components/Footer/Footer';
 import '../../styles/About.css';
 
 /**
@@ -29,6 +31,9 @@ const AboutPage = () => {
       {/* Modular About Component */}
       <About />
 
+      {/* Modern Premium Contact Form */}
+      <AboutContact />
+
       {/* Premium CTA Bottom Section */}
       <section className="about-cta-section">
         <div className="about-cta-glow"></div>
@@ -48,10 +53,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Simple elegant footer for standalone page */}
-      <footer className="about-page-footer">
-        <p>&copy; {new Date().getFullYear()} Nexus Cobalt. Todos los derechos reservados.</p>
-      </footer>
+      {/* Universal footer */}
+      <Footer />
     </div>
   );
 };

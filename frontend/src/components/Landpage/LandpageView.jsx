@@ -4,6 +4,7 @@ import heroImg from '../../assets/hero_character.png'; // Imagen del personaje d
 import Navbar from '../../components/Navbar/NavbarLandpage';
 import EcosystemNews from '../EcosystemNews/EcosystemNews';
 import JarvisChat from '../Chatbot/JarvisChat';
+import Footer from '../Footer/Footer';
 import '../../styles/Landpage.css'; // Estilos del landing: .lp-navbar, .lp-hero, .lp-stats, etc.
 
 /**
@@ -72,6 +73,10 @@ const LandpageView = () => {
 
       {/* ── 3. ECOSYSTEM NEWS & INITIATIVES GRID ── */}
       <EcosystemNews />
+      
+      {/* Universal Footer */}
+      <Footer />
+
       <JarvisChat />
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import Navbar from "../Navbar/NavbarLandpage";
+import Footer from "../Footer/Footer";
 import "../../styles/LandPage.css";
 import "../../styles/FoundersPublic.css";
 
@@ -213,6 +214,8 @@ const FoundersPublic = () => {
           </div>
         </div>
       )}
+      {/* Universal Footer */}
+      <Footer />
     </div>
   );
 };
