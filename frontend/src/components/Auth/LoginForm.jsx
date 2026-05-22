@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import authBg from '../../assets/auth_bg.png';
 import LoginNavbar from '../Navbar/LoginNavbar'; 
 // Imagen decorativa del panel derecho
@@ -20,6 +20,9 @@ import LoginNavbar from '../Navbar/LoginNavbar';
 const LoginForm = () => {
   // Controla la visibilidad de la contraseña en el campo de texto
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   return (
     <div className="auth-wrapper">
@@ -37,14 +40,43 @@ const LoginForm = () => {
           </p>
 
           {/* Formulario principal — animaciones escalonadas vía CSS --delay */}
-          <form className="auth-form">
+          <form className="auth-form" onSubmit={async (e) => {
+            e.preventDefault();
+            setError(null);
+            setLoading(true);
+            const form = new FormData(e.currentTarget);
+            const email = form.get('email');
+            const password = form.get('password');
+            try {
+              // Simulación de fetch al backend. Si hay backend lo intentará,
+              // pero para propósitos del frontend navegamos directamente al dashboard.
+              try {
+                const res = await fetch('/api/auth/login', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email, password })
+                });
+                if (res.ok) {
+                  const data = await res.json();
+                  if (data.token) localStorage.setItem('token', data.token);
+                }
+              } catch (e) {
+                // Backend no disponible
+              }
+              navigate('/dashboard', { replace: true });
+            } catch (err) {
+              setError('Error de conexión');
+            } finally {
+              setLoading(false);
+            }
+          }}>
             {/* Campo oculto para asegurar el rol de emprendedor */}
             <input type="hidden" id="role" name="role" value="emprendedor" />
 
             {/* Campo Email */}
             <div className="input-group" style={{ '--delay': '0.3s' }}>
               <label htmlFor="email">Email</label>
-              <input type="email" id="email" placeholder="example@gmail.com" required />
+              <input name="email" type="email" id="email" placeholder="example@gmail.com" required />
             </div>
 
             {/* Campo Contraseña con toggle de visibilidad */}
@@ -52,6 +84,7 @@ const LoginForm = () => {
               <label htmlFor="password">Password</label>
               <div className="input-icon-wrapper">
                 <input
+                  name="password"
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="@#*%"
@@ -70,9 +103,10 @@ const LoginForm = () => {
             </div>
 
             {/* Botón de submit */}
-            <button type="submit" className="auth-btn" style={{ '--delay': '0.5s' }}>
-              Sign in
+            <button type="submit" className="auth-btn" style={{ '--delay': '0.5s' }} disabled={loading}>
+              {loading ? 'Ingresando...' : 'Sign in'}
             </button>
+            {error && <p className="auth-error" style={{ color: '#ff6b6b', marginTop: '0.6rem' }}>{error}</p>}
 
             {/* Separador visual entre form y social buttons */}
             <div className="auth-divider" style={{ '--delay': '0.6s' }}>
