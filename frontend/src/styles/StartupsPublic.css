@@ -369,7 +369,7 @@
 
 .public-startup-modal {
   width: min(920px, 100%);
-  max-height: min(90vh, 860px);
+  max-height: min(calc(100vh - 3rem), 860px);
   background: #081124;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
