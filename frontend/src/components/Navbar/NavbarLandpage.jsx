@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './NavbarLandpage.css'; // <-- Aquí está tu archivo CSS
 
 const NavbarLandpage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [showModal, setShowModal] = useState(false); // Estado para la ventana emergente
+  const location = useLocation();
 
   const closeMenu = () => setIsOpen(false);
 
   useEffect(() => {
-    if (window.location.pathname === '/about') {
+    const path = location.pathname;
+
+    if (path === '/about') {
       setActiveSection('about');
+      return;
+    }
+    if (path === '/PublicStartups') {
+      setActiveSection('PublicStartups');
+      return;
+    }
+    if (path === '/PublicoFounders' || path === '/PublicFounders') {
+      setActiveSection('PublicoFounders');
+      return;
+    }
+    if (path === '/PublicoInversionistas' || path === '/PublicInversionistas') {
+      setActiveSection('PublicoInversionistas');
       return;
     }
 
@@ -37,7 +52,7 @@ const NavbarLandpage = () => {
     return () => {
       window.removeEventListener('scroll', updateSection);
     };
-  }, []);
+  }, [location.pathname]);
 
   const navItems = [
     { id: 'hero', label: 'Inicio' },
@@ -76,6 +91,30 @@ const NavbarLandpage = () => {
                 <Link
                   key={item.id}
                   to="/PublicStartups"
+                  className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            if (item.id === 'PublicoFounders') {
+              return (
+                <Link
+                  key={item.id}
+                  to="/PublicoFounders"
+                  className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            if (item.id === 'PublicoInversionistas') {
+              return (
+                <Link
+                  key={item.id}
+                  to="/PublicoInversionistas"
                   className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
                   onClick={closeMenu}
                 >
@@ -130,6 +169,30 @@ const NavbarLandpage = () => {
                 <Link
                   key={item.id}
                   to="/PublicStartups"
+                  className="navbar-menu-link"
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            if (item.id === 'PublicoFounders') {
+              return (
+                <Link
+                  key={item.id}
+                  to="/PublicoFounders"
+                  className="navbar-menu-link"
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            if (item.id === 'PublicoInversionistas') {
+              return (
+                <Link
+                  key={item.id}
+                  to="/PublicoInversionistas"
                   className="navbar-menu-link"
                   onClick={closeMenu}
                 >

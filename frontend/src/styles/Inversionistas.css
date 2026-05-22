@@ -1,0 +1,590 @@
+/* ========================================================================
+   INVERSIONISTAS PUBLIC VIEW STYLES
+   Paleta Landpage: fondo #040d18, morado #8b00dd, lima #b1f500, blanco
+   ======================================================================== */
+
+.inv-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ------- ENCABEZADO ------- */
+.inv-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.8rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.inv-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 1.1rem;
+  border-radius: 30px;
+  background: rgba(139, 0, 221, 0.1);
+  border: 1px solid rgba(139, 0, 221, 0.25);
+  color: #8b00dd;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  width: fit-content;
+}
+
+.inv-title {
+  margin: 0;
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.inv-title-inner {
+  display: inline;
+  background: linear-gradient(135deg, #ffffff 40%, #8b00dd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.inv-subtitle {
+  margin: 0.4rem 0 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+/* ------- FILTROS ------- */
+.inv-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.inv-filter-field {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+  max-width: 380px;
+}
+
+.inv-filter-field.search-field { flex: 1.2; }
+
+.inv-filter-label {
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  background: #040d18;
+  padding: 0 6px;
+  z-index: 2;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+.inv-filter-input,
+.inv-filter-select {
+  width: 100%;
+  padding: 0.95rem 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: #ffffff;
+  font-size: 0.92rem;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.inv-filter-select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.45)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1.2rem center;
+  background-size: 1rem;
+  padding-right: 3rem;
+}
+
+.inv-filter-select option {
+  background-color: #040d18;
+  color: #ffffff;
+}
+
+.inv-filter-input::placeholder { color: rgba(255, 255, 255, 0.25); }
+
+.inv-filter-input:focus,
+.inv-filter-select:focus {
+  border-color: #8b00dd;
+  background: rgba(139, 0, 221, 0.04);
+  box-shadow: 0 0 16px rgba(139, 0, 221, 0.15);
+}
+
+/* ------- GRID DE CARDS ------- */
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 2rem;
+}
+
+/* ------- CARD ------- */
+.inv-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  min-height: 360px;
+}
+
+.inv-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(139, 0, 221, 0.15);
+  border-color: rgba(139, 0, 221, 0.35);
+}
+
+/* Banner */
+.inv-card-banner {
+  height: 120px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.inv-card-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 80%);
+}
+
+.inv-card-banner-text {
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+/* Avatar */
+.inv-avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-top: -50px;
+  position: relative;
+  z-index: 5;
+}
+
+.inv-avatar-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #040d18;
+  background: #040d18;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.inv-avatar-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 5px solid #040d18;
+  background: rgba(255, 255, 255, 0.05);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.inv-avatar-logo span {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #8b00dd;
+  letter-spacing: 1px;
+}
+
+.inv-card:hover .inv-avatar-img,
+.inv-card:hover .inv-avatar-logo {
+  transform: scale(1.05);
+}
+
+/* Cuerpo */
+.inv-card-body {
+  padding: 1.4rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.inv-card-name {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.2rem;
+  font-weight: 850;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.inv-card-role {
+  margin: 0 0 2rem 0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Botón "Ver Perfil" — oculto, aparece en hover */
+.inv-card-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  background: #b1f500;
+  color: #040d18;
+  border: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(15px);
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s ease,
+              box-shadow 0.3s ease;
+  box-shadow: 0 6px 15px rgba(177, 245, 0, 0.25);
+  letter-spacing: 0.02em;
+}
+
+.inv-card:hover .inv-card-btn {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.inv-card-btn:hover {
+  background: #ffffff;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+}
+
+/* Estado vacío */
+.inv-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+}
+
+/* ------- MODAL PREMIUM ------- */
+.inv-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(4, 13, 24, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  animation: invFadeIn 0.3s ease-out;
+}
+
+.inv-modal-card {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(8, 15, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 26px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+  animation: invScaleUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: #ffffff;
+}
+
+.inv-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 1.5rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.2s ease;
+}
+
+.inv-modal-close:hover {
+  background: #ffffff;
+  color: #040d18;
+}
+
+.inv-modal-banner {
+  height: 140px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.inv-modal-banner-text {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+}
+
+/* Modal header */
+.inv-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 2rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.inv-modal-avatar-wrap {
+  margin-top: -60px;
+  position: relative;
+  z-index: 5;
+  margin-bottom: 1rem;
+}
+
+.inv-modal-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 6px solid rgba(8, 15, 30, 0.95);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.inv-modal-avatar-logo {
+  background: rgba(255, 255, 255, 0.05);
+  display: grid;
+  place-items: center;
+}
+
+.inv-modal-avatar-logo span {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #8b00dd;
+  letter-spacing: 2px;
+}
+
+.inv-modal-name {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.6rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.inv-modal-role {
+  margin: 0 0 1rem 0;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.inv-highlight {
+  color: #8b00dd;
+  font-weight: 700;
+}
+
+.inv-modal-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.inv-modal-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Stats */
+.inv-modal-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.inv-stat-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.inv-stat-val {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #b1f500;
+  margin-bottom: 0.3rem;
+}
+
+.inv-stat-key {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Body */
+.inv-modal-body {
+  padding: 1.5rem 2rem;
+}
+
+.inv-section-title {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 700;
+}
+
+.inv-modal-desc {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Acciones */
+.inv-modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 0 2rem 2.2rem;
+}
+
+.inv-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.inv-action-btn.email-btn {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.inv-action-btn.email-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.inv-action-btn.linkedin-btn {
+  background: #8b00dd;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(139, 0, 221, 0.3);
+}
+
+.inv-action-btn.linkedin-btn:hover {
+  background: #7900c2;
+  box-shadow: 0 6px 20px rgba(139, 0, 221, 0.55);
+  transform: translateY(-2px);
+}
+
+/* Animaciones */
+@keyframes invFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes invScaleUp {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ------- RESPONSIVE ------- */
+@media (max-width: 768px) {
+  .inv-main {
+    padding: 3rem 1.5rem 4rem;
+    gap: 2rem;
+  }
+
+  .inv-title { font-size: 2.5rem; }
+
+  .inv-filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.2rem;
+  }
+
+  .inv-filter-field {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .inv-modal-actions {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .inv-modal-stats {
+    grid-template-columns: 1fr;
+  }
+}
