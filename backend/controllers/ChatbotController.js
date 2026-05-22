@@ -1,6 +1,20 @@
 const chatbotService = require('../services/ChatbotService');
 
 class ChatbotController {
+  async listSkills(req, res) {
+    try {
+      return res.status(200).json({
+        assistant: 'J.A.R.V.I.S.',
+        skills: chatbotService.getSkillDefinitions()
+      });
+    } catch (error) {
+      console.error('Error en ChatbotController.listSkills:', error);
+      return res.status(500).json({
+        error: 'Error interno del servidor al listar las skills de JARVIS.'
+      });
+    }
+  }
+
   async ask(req, res) {
     try {
       const { message } = req.body;

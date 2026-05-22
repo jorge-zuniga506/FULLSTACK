@@ -67,19 +67,25 @@ API RESTful para la gestión de un ecosistema de startups, aceleradoras, inverso
 | Listados paginados en frontend | ❌ No implementado |
 | UI reactiva sin recarga manual | ❌ No implementado |
 
-### RF-07 | Integración de IA — ❌ **NO CUMPLE**
+### RF-07 | Integracion de IA - CUMPLE
 
 | Aspecto | Estado |
 |---------|--------|
 | Modelo `ConsultaIA` existe (tabla + endpoints CRUD) | ✅ |
-| Skill de IA implementada (LLM, agente, automatización, n8n, Make, Zapier) | ❌ **No implementada** |
-| Demostrable durante presentación | ❌ |
+| Skill de IA implementada (LLM + agente clasificador) | OK **JARVIS** |
+| Demostrable durante presentacion | OK Chat flotante en frontend |
 
-**Opciones para cumplir RF-07:**
-- **LLM**: Conectar a Gemini/OpenAI para responder consultas (`POST /api/communication/consultas-ia`)
-- **Agente**: Chatbot que clasifique startups por sector automáticamente
-- **n8n/Make/Zapier**: Workflow que envíe notificaciones al aprobar solicitudes
-- **Automatización**: Email + notificación in-app al cambiar estado de solicitud (backend ya soporta el email)
+**Skill elegida y justificacion: JARVIS, asistente LLM con clasificador automatico.**
+
+Se eligio una skill basada en LLM porque encaja directamente con el caso de uso del ecosistema: los usuarios pueden consultar informacion sobre startups, aceleradoras, inversores y solicitudes usando lenguaje natural. La skill se implementa con Gemini mediante la variable de entorno `GEMINI_API_KEY`, y ademas incluye un respaldo local para que la demo siga funcionando si el proveedor externo no esta disponible.
+
+**Capacidades implementadas:**
+- **Chat asesor:** `POST /api/ai/chat`, conectado al componente flotante J.A.R.V.I.S. del frontend.
+- **Clasificador automatico:** `POST /api/ai/classify-request`, clasifica solicitudes como `startup`, `aceleradora` o `inversor`.
+- **Tools de consulta:** busqueda de startups, aceleradoras, inversores y solicitudes desde el servicio de IA.
+- **Fallback local:** respuestas y clasificacion por reglas cuando Gemini no responde o no hay clave configurada.
+
+Ver detalles tecnicos en `backend/README.md` y documentacion de endpoints en `backend/API.md`.
 
 ---
 
@@ -144,7 +150,7 @@ API RESTful para la gestión de un ecosistema de startups, aceleradoras, inverso
 - [x] **RF-04**: Agregar reintentos de conexión a BD con mensajes descriptivos
 - [x] **RF-04**: Usar transacciones Sequelize en operaciones multi-tabla (aprobación/rechazo de solicitudes)
 - [ ] **RF-06**: Rediseñar frontend con paneles por rol, estados de carga, validaciones, paginación
-- [ ] **RF-07**: Implementar skill de IA (LLM, n8n, agente, automatización con IA)
+- [x] **RF-07**: Implementar skill de IA (JARVIS: LLM + agente clasificador)
 - [ ] **RNF-03**: Crear rama `develop`, adoptar Conventional Commits, usar Pull Requests
 - [x] **RNF-04**: Agregar diagrama ER, Swagger/Postman, ARCHITECTURE.md
 

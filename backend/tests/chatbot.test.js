@@ -80,6 +80,23 @@ describe('Chatbot API Endpoint (/api/chatbot/ask)', () => {
     expect(res.body).toHaveProperty('data');
   });
 
+  it('deberia listar las skills disponibles de JARVIS', async () => {
+    const res = await request(app)
+      .get('/api/ai/skills');
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('assistant', 'J.A.R.V.I.S.');
+    expect(res.body.skills).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'buscar_startups' }),
+        expect.objectContaining({ id: 'buscar_aceleradoras' }),
+        expect.objectContaining({ id: 'buscar_inversores' }),
+        expect.objectContaining({ id: 'buscar_solicitudes' }),
+        expect.objectContaining({ id: 'crear_solicitud' })
+      ])
+    );
+  });
+
   it('deberia retornar los resultados de base de datos en el campo data', async () => {
     const res = await request(app)
       .post('/api/chatbot/ask')

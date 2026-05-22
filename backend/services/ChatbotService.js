@@ -102,6 +102,18 @@ class ChatbotService {
     ];
   }
 
+  getSkillDefinitions() {
+    const tools = this.getToolDefinitions();
+    const functionDeclarations = tools.flatMap(tool => tool.functionDeclarations || []);
+
+    return functionDeclarations.map(tool => ({
+      id: tool.name,
+      name: tool.name,
+      description: tool.description,
+      parameters: tool.parameters || {}
+    }));
+  }
+
   /**
    * Ejecuta la herramienta de base de datos solicitada por la IA
    */
