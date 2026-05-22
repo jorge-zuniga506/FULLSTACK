@@ -44,7 +44,10 @@ const login = async (req, res) => {
     res.status(200).json({
       message: 'Autenticación exitosa',
       token:   authData.token,
-      usuario: authData.usuario
+      usuario: authData.usuario,
+      redirectPath: authData.redirectPath,
+      requiresExtraVerification: authData.requiresExtraVerification,
+      verificationCode: authData.verificationCode
     });
   } catch (error) {
     // Distingue entre errores de validación (400) y credenciales inválidas (401)
@@ -57,6 +60,29 @@ const login = async (req, res) => {
     res.status(500).json({
       message: 'Error en el servidor al intentar iniciar sesión',
       error:   error.message
+    });
+  }
+};
+
+const verifyRoleCode = async (req, res) => {
+  try {
+    const { code } = req.body;
+    const userId = req.user.id;
+
+    await AuthService.verifyRoleCode(userId, code);
+
+    res.status(200).json({
+      message: 'Código de verificación verificado con éxito.'
+    });
+  } catch (error) {
+    if (error.message === 'El código es requerido.' ||
+        error.message === 'Código de verificación inválido.' ||
+        error.message === 'El código ha expirado.') {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({
+      message: 'Error al verificar código de rol',
+      error: error.message
     });
   }
 };
@@ -103,4 +129,27 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { login, logout, getMe };
+const resetRoleCode = async (req, res) => {
+  try {
+    const { password } = req.body;
+    const userId = req.user.id;
+
+    const newCode = await AuthService.resetRoleCode(userId, password);
+
+    res.status(200).json({
+      message: 'Código de verificación restablecido con éxito.',
+      verificationCode: newCode
+    });
+  } catch (error) {
+    if (error.message === 'La contraseña es requerida.' ||
+        error.message === 'Contraseña incorrecta.') {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({
+      message: 'Error al restablecer código de rol',
+      error: error.message
+    });
+  }
+};
+
+module.exports = { login, logout, getMe, verifyRoleCode, resetRoleCode };

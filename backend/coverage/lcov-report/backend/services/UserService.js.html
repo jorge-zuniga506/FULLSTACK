@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.42% </span>
+                <span class="strong">84.78% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>27/28</span>
+                <span class='fraction'>39/46</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">41.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/6</span>
+                <span class='fraction'>10/24</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">92.5% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>27/27</span>
+                <span class='fraction'>37/40</span>
             </div>
         
             
@@ -192,7 +192,30 @@
 <a name='L127'></a><a href='#L127'>127</a>
 <a name='L128'></a><a href='#L128'>128</a>
 <a name='L129'></a><a href='#L129'>129</a>
-<a name='L130'></a><a href='#L130'>130</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -237,7 +260,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -293,6 +335,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -366,12 +412,31 @@ class UserService {
     // El campo se llama password_hash en el modelo pero viene como texto plano desde el controller
     const clave_encriptada = await bcrypt.hash(password_hash, 10);
 &nbsp;
+    // Generar código de doble factor
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let prefix = 'DEMO';
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (role_id === 1 || role_id === '1') <span class="cstat-no" title="statement not covered" >prefix = 'ADMIN';</span>
+    else if (role_id === 2 || <span class="branch-1 cbranch-no" title="branch not covered" >role_id === '2')</span> prefix = 'STARTUP';
+    else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (role_id === 3 || role_id === '3') <span class="cstat-no" title="statement not covered" >prefix = 'ACELERADORA';</span></span>
+    else <span class="cstat-no" title="statement not covered" >if (role_id === 4 || role_id === '4') <span class="cstat-no" title="statement not covered" >prefix = 'INVERSOR';</span></span>
+&nbsp;
+    let randomStr = '';
+    for (let i = 0; i &lt; 4; i++) {
+      randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const verificationCode = `${prefix}${randomStr}`;
+    const codeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
+&nbsp;
     const usuario = await User.create({
       cedula,
       nombre_hacienda,
       email,
       password_hash: clave_encriptada, // Guarda el hash, nunca el texto plano
-      role_id
+      role_id,
+      two_factor_code: verificationCode,
+      two_factor_expires_at: codeExpires,
+      survey_completed: true,
+      is_role_whitelisted: false
     });
 &nbsp;
     // Elimina el hash del objeto antes de retornar al cliente
@@ -410,7 +475,7 @@ class UserService {
    * @throws {Error} Si se intenta cambiar role_id (403 en el controller)
    */
   static async actualizarUsuario(id, data) {
-    const { cedula, nombre_hacienda, email, password_hash, role_id } = data;
+    const { cedula, nombre_hacienda, email, password_hash, role_id, profile_picture } = data;
 &nbsp;
     // Barrera de seguridad: role_id no debe modificarse nunca vía este endpoint
     // (la segunda capa está en los hooks beforeUpdate del modelo User)
@@ -422,6 +487,10 @@ class UserService {
 &nbsp;
     // Solo incluye los campos permitidos en la actualización
     let updateData = { cedula, nombre_hacienda, email };
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (profile_picture !== undefined) {
+<span class="cstat-no" title="statement not covered" >      updateData.profile_picture = profile_picture;</span>
+    }
 &nbsp;
     // Si se envía una nueva contraseña, la hashea antes de actualizar
     <span class="missing-if-branch" title="else path not taken" >E</span>if (password_hash) {
@@ -457,7 +526,7 @@ module.exports = UserService;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-19T17:41:30.405Z
+                at 2026-05-22T21:30:53.568Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

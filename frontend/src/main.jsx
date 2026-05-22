@@ -12,13 +12,17 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import AppRoutes from './routes/AppRoutes';
+import { AuthProvider } from './context/AuthContext';
 
 // Monta la aplicación en el div#root del index.html
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* BrowserRouter habilita la navegación con URLs reales (sin hash) */}
     <BrowserRouter>
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 );
+

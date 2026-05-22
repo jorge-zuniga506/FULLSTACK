@@ -12,11 +12,17 @@
  */
 const express  = require('express');
 const router   = express.Router();
-const { login, logout, getMe } = require('../controllers/AuthController');
+const { login, logout, getMe, verifyRoleCode, resetRoleCode } = require('../controllers/AuthController');
 const { authRequired }         = require('../middlewares/authMiddleware');
 
 // Pública: genera JWT si las credenciales son correctas
 router.post('/login', login);
+
+// Protegida: verifica código 2FA
+router.post('/verify-role-code', authRequired, verifyRoleCode);
+
+// Protegida: restablece código 2FA con contraseña
+router.post('/reset-role-code', authRequired, resetRoleCode);
 
 // Protegida: invalida la sesión activa (logout)
 router.post('/logout', authRequired, logout);

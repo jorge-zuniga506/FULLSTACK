@@ -24,12 +24,34 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #7900c2, #8b00dd);
+  background: linear-gradient(135deg, var(--role-accent, #7900c2), var(--role-accent, #8b00dd));
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.6rem;
   font-weight: 700;
+}
+
+.pf-avatar-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.pf-avatar:hover .pf-avatar-overlay {
+  opacity: 1;
 }
 
 .pf-online-dot {
@@ -65,7 +87,7 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
 }
 
 .pf-hero-stat { text-align:center; }
-.pf-hero-num { display:block; font-size:1.4rem; font-weight:800; color:#8b00dd; }
+.pf-hero-num { display:block; font-size:1.4rem; font-weight:800; color:var(--role-accent, #8b00dd); }
 .pf-hero-key { display:block; font-size:0.68rem; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.08em; margin-top:0.1rem; }
 
 /* Tabs */
@@ -91,7 +113,7 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
 }
 
 .pf-tab:hover { color:rgba(255,255,255,0.7); }
-.pf-tab.active { color:#8b00dd; border-bottom-color:#8b00dd; }
+.pf-tab.active { color:var(--role-accent, #8b00dd); border-bottom-color:var(--role-accent, #8b00dd); }
 
 /* Section */
 .pf-section {
@@ -134,7 +156,7 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
 
 .pf-field input:focus,
 .pf-field select:focus,
-.pf-field textarea:focus { border-color:rgba(139, 0, 221 ,0.4); background:rgba(139, 0, 221 ,0.04); }
+.pf-field textarea:focus { border-color:var(--role-accent, rgba(139, 0, 221 ,0.4)); background:var(--role-bg-alpha, rgba(139, 0, 221 ,0.04)); }
 
 .pf-field input:disabled,
 .pf-field select:disabled,
@@ -152,17 +174,17 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
   align-self: flex-start;
   padding: 0.75rem 2rem;
   border-radius: 10px;
-  background: linear-gradient(135deg, #7900c2, #8b00dd);
+  background: linear-gradient(135deg, var(--role-accent, #7900c2), var(--role-accent, #8b00dd));
   color: #ffffff;
   font-size: 0.88rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 14px rgba(121, 0, 194 ,0.3);
+  box-shadow: 0 4px 14px var(--role-glow, rgba(121, 0, 194 ,0.3));
 }
 
-.pf-save-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(121, 0, 194 ,0.5); }
+.pf-save-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px var(--role-glow, rgba(121, 0, 194 ,0.5)); }
 
 /* Activity */
 .pf-activity-list { display:flex; flex-direction:column; gap:0; }
@@ -182,7 +204,7 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #8b00dd;
+  background: var(--role-accent, #8b00dd);
   flex-shrink: 0;
 }
 
@@ -191,10 +213,10 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
 .pf-activity-time { font-size:0.72rem; color:rgba(255,255,255,0.25); margin:0; }
 
 .pf-type-badge { font-size:0.68rem; font-weight:600; }
-.pf-type-startup     { background:rgba(139, 0, 221 ,0.1);   color:#8b00dd;  }
-.pf-type-investor    { background:rgba(124,58,237,0.1);  color:#a78bfa; }
-.pf-type-accelerator { background:rgba(5,150,105,0.1);   color:#34d399; }
-.pf-type-export      { background:rgba(217,119,6,0.1);   color:#fbbf24; }
+.pf-type-startup     { background:var(--role-bg-alpha, rgba(139, 0, 221 ,0.1));   color:var(--role-accent, #8b00dd);  }
+.pf-type-investor    { background:var(--role-bg-alpha, rgba(124,58,237,0.1));  color:var(--role-accent, #a78bfa); }
+.pf-type-accelerator { background:var(--role-bg-alpha, rgba(5,150,105,0.1));   color:var(--role-accent, #34d399); }
+.pf-type-export      { background:var(--role-bg-alpha, rgba(217,119,6,0.1));   color:var(--role-accent, #fbbf24); }
 
 /* Settings */
 .pf-settings-list { display:flex; flex-direction:column; gap:0; }
@@ -236,7 +258,7 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
   transition: all 0.3s ease;
 }
 
-.pf-toggle.active { background: #7900c2; }
+.pf-toggle.active { background: var(--role-accent, #7900c2); }
 .pf-toggle.active::after { left: 23px; background:#ffffff; }
 
 .pf-danger-btn {

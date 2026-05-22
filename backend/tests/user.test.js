@@ -11,7 +11,7 @@ const createTestUser = async () => {
   const res = await request(app)
     .post('/api/usuarios/crear-usuario')
     .send({
-      cedula: `USR-${String(userCounter).padStart(4, '0')}`,
+      cedula: `20822${String(userCounter).padStart(4, '0')}`,
       nombre_hacienda: `Hacienda Test ${userCounter}`,
       email: `test.${userCounter}.${Date.now()}@example.com`,
       password_hash: 'securePassword123',

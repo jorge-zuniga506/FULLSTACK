@@ -6,6 +6,7 @@ const { authRequired, requireRole } = require('../middlewares/authMiddleware');
 
 // Public: user registration
 router.post("/", validarUsuario, crearUsuario);
+router.post("/register", validarUsuario, crearUsuario);
 router.post("/crear-usuario", validarUsuario, crearUsuario);
 
 // Protected: list, update, delete require auth
