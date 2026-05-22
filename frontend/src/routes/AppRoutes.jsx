@@ -12,6 +12,9 @@ import Login              from '../pages/Auth/Login';
 import Register           from '../pages/Auth/Register';
 import PublishGeneral     from '../pages/PublishGeneral/PublishGeneral';
 import AboutPage          from '../pages/About/AboutPage';
+import StartupsPublicPage from '../pages/StartupsPublic/StartupsPublicPage';
+import FoundersPublicPage from '../pages/Founders/FoundersPublicPage';
+import InversionistasPublicPage from '../pages/Inversionistas/InversionistasPublicPage';
 
 
 
@@ -52,6 +55,11 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/PublishGeneral" element={<PublishGeneral />} />
       <Route path="/about"          element={<AboutPage />} />
+      <Route path="/PublicStartups" element={<StartupsPublicPage />} />
+      <Route path="/PublicoFounders" element={<FoundersPublicPage />} />
+      <Route path="/PublicFounders"  element={<FoundersPublicPage />} />
+      <Route path="/PublicoInversionistas" element={<InversionistasPublicPage />} />
+      <Route path="/PublicInversionistas"  element={<InversionistasPublicPage />} />
 
 
       {/* ── 2. PÁGINAS DEL ECOSISTEMA (CON SIDEBAR) ─────────────────────── */}
