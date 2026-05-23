@@ -71,6 +71,31 @@ const User = sequelize.define('User', {
       model: 'roles', // Nombre de la tabla (no el modelo)
       key: 'id'
     }
+  },
+  two_factor_code: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    defaultValue: null
+  },
+  two_factor_expires_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null
+  },
+  survey_completed: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  is_role_whitelisted: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  profile_picture: {
+    type: DataTypes.TEXT('long'),
+    allowNull: true,
+    defaultValue: null
   }
 }, {
   tableName:  'users',

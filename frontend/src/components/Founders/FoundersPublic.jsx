@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import Navbar from "../Navbar/NavbarLandpage";
 import Footer from "../Footer/Footer";
+import Pagination from "../Common/Pagination";
 import "../../styles/LandPage.css";
 import "../../styles/FoundersPublic.css";
 
@@ -65,6 +66,10 @@ const FoundersPublic = () => {
   const [selectedArea, setSelectedArea] = useState('- Todos -');
   const [selectedFounder, setSelectedFounder] = useState(null);
 
+  // Paginación local
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
   // Extraer valores únicos dinámicamente para los filtros
   const areas = ['- Todos -', ...new Set(FOUNDERS.map(f => f.area))];
 
@@ -79,6 +84,16 @@ const FoundersPublic = () => {
 
     return matchesSearch && matchesArea;
   });
+
+  // Cálculos de paginación
+  const totalPages = Math.ceil(filteredFounders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = filteredFounders.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
 
   return (
     <div className="landpage-container">
@@ -128,8 +143,8 @@ const FoundersPublic = () => {
 
         {/* Grid de Tarjetas de Founders */}
         <div className="public-founders-grid">
-          {filteredFounders.length > 0 ? (
-            filteredFounders.map((founder) => (
+          {paginatedItems.length > 0 ? (
+            paginatedItems.map((founder) => (
               <article className="public-founder-card" key={founder.id}>
                 {/* Banner de la empresa */}
                 <div className="public-founder-banner" style={{ background: founder.bannerStyle }}>
@@ -166,6 +181,13 @@ const FoundersPublic = () => {
             </div>
           )}
         </div>
+
+        {/* Paginación */}
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={handlePageChange} 
+        />
       </main>
 
       {/* ── MODAL DETALLES DEL FOUNDER ────────────────────────────────────── */}

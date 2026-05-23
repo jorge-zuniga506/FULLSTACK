@@ -44,6 +44,8 @@ const EcosystemRoutes = require('./routes/EcosystemRoutes');
 const CommunicationRoutes = require('./routes/CommunicationRoutes');
 const NotificationRoutes = require('./routes/NotificationRoutes');
 const ChatbotRoutes = require('./routes/ChatbotRoutes');
+const IdentityRoutes = require('./routes/IdentityRoutes');
+const DashboardRoutes = require('./routes/DashboardRoutes');
 
 const app = express();
 
@@ -52,6 +54,10 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// Estandarización global de respuestas JSON { status, message, data, meta }
+const responseFormatter = require('./middlewares/responseFormatter');
+app.use(responseFormatter);
 
 // Sirve archivos estáticos subidos localmente (cuando no se usa Cloudinary)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -86,6 +92,8 @@ const API_LEGACY = '/api';
   app.use(`${prefix}/notifications`, NotificationRoutes);
   app.use(`${prefix}/chatbot`, ChatbotRoutes);
   app.use(`${prefix}/ai`, ChatbotRoutes);
+  app.use(`${prefix}/identity`, IdentityRoutes);
+  app.use(`${prefix}/dashboard`, DashboardRoutes);
 });
 
 app.use(require('./middlewares/errorHandler'));
