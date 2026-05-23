@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Navbar from "../Navbar/NavbarLandpage";
 import Footer from "../Footer/Footer";
 import "../../styles/LandPage.css";
@@ -81,6 +82,11 @@ const InversionistasPublic = () => {
   const [selectedIndustry, setSelectedIndustry] = useState('- Todos -');
   const [selectedInversionista, setSelectedInversionista] = useState(null);
 
+  // Valida y asegura el scroll al inicio de la página al renderizar el componente
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const industries = ['- Todos -', ...new Set(INVERSIONISTAS.map(i => i.industry))];
 
   const filtered = INVERSIONISTAS.filter((inv) => {
@@ -135,8 +141,15 @@ const InversionistasPublic = () => {
 
         {/* Grid de cards */}
         <div className="inv-grid">
-          {filtered.length > 0 ? filtered.map((inv) => (
-            <article className="inv-card" key={inv.id}>
+          {filtered.length > 0 ? filtered.map((inv, index) => (
+            <motion.article
+              className="inv-card"
+              key={inv.id}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
               {/* Banner */}
               <div className="inv-card-banner" style={{ background: inv.bannerStyle }}>
                 <span className="inv-card-banner-text">{inv.fund}</span>
@@ -164,7 +177,7 @@ const InversionistasPublic = () => {
                   Ver Perfil
                 </button>
               </div>
-            </article>
+            </motion.article>
           )) : (
             <div className="inv-empty">
               <p>No se encontraron inversionistas con los filtros seleccionados.</p>
