@@ -37,6 +37,8 @@ const AuthService = require('../services/AuthService');
  * Maneja el inicio de sesión — genera JWT y crea sesión en BD
  */
 const login = async (req, res) => {
+  // DEBUG: mostrar body recibido para diagnosticar 400 en login
+  console.log('DEBUG AuthController.login body:', req.body);
   try {
     const { email, password } = req.body;
     const authData = await AuthService.login(email, password);

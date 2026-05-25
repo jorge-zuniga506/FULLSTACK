@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
-
+const cors = require('cors');
 const UserRoutes = require('./routes/UserRoutes');
 const AuthRoutes = require('./routes/AuthRoutes');
 const AceleradoraRoutes = require('./routes/AceleradoraRoutes');
@@ -19,7 +19,11 @@ const NotificationRoutes = require('./routes/NotificationRoutes');
 const app = express();
 
 app.use(express.json());
-
+app.use(cors({
+  origin: 'http://localhost:5173', // Cambia esto al dominio de tu frontend en producción
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 // Sirve archivos estáticos subidos localmente (cuando no se usa Cloudinary)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
