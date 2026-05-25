@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
-=======
 import { useAuth } from '../../context/AuthContext';
->>>>>>> 74c4e8c15f6a5898e8263e05749b5e53530c002d
 import authBg from '../../assets/auth_bg.png';
 import LoginNavbar from '../Navbar/LoginNavbar'; 
 
@@ -16,11 +13,6 @@ const LoginForm = () => {
 
   // Controla la visibilidad de la contraseña en el campo de texto
   const [showPassword, setShowPassword] = useState(false);
-<<<<<<< HEAD
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-=======
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
@@ -40,7 +32,6 @@ const LoginForm = () => {
       setFormError(result.error || 'Credenciales incorrectas o problemas al conectar con el servidor.');
     }
   };
->>>>>>> 74c4e8c15f6a5898e8263e05749b5e53530c002d
 
   return (
     <div className="auth-wrapper">
@@ -78,49 +69,13 @@ const LoginForm = () => {
           )}
 
           {/* Formulario principal — animaciones escalonadas vía CSS --delay */}
-<<<<<<< HEAD
-          <form className="auth-form" onSubmit={async (e) => {
-            e.preventDefault();
-            setError(null);
-            setLoading(true);
-            const form = new FormData(e.currentTarget);
-            const email = form.get('email');
-            const password = form.get('password');
-            try {
-              // Simulación de fetch al backend. Si hay backend lo intentará,
-              // pero para propósitos del frontend navegamos directamente al dashboard.
-              try {
-                const res = await fetch('/api/auth/login', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ email, password })
-                });
-                if (res.ok) {
-                  const data = await res.json();
-                  if (data.token) localStorage.setItem('token', data.token);
-                }
-              } catch (e) {
-                // Backend no disponible
-              }
-              navigate('/dashboard', { replace: true });
-            } catch (err) {
-              setError('Error de conexión');
-            } finally {
-              setLoading(false);
-            }
-          }}>
-=======
           <form className="auth-form" onSubmit={handleSubmit}>
->>>>>>> 74c4e8c15f6a5898e8263e05749b5e53530c002d
             {/* Campo oculto para asegurar el rol de emprendedor */}
             <input type="hidden" id="role" name="role" value="emprendedor" />
 
             {/* Campo Email */}
             <div className="input-group" style={{ '--delay': '0.3s' }}>
               <label htmlFor="email">Email</label>
-<<<<<<< HEAD
-              <input name="email" type="email" id="email" placeholder="example@gmail.com" required />
-=======
               <input
                 type="email"
                 id="email"
@@ -129,7 +84,6 @@ const LoginForm = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
->>>>>>> 74c4e8c15f6a5898e8263e05749b5e53530c002d
             </div>
 
             {/* Campo Contraseña con toggle de visibilidad */}
@@ -137,7 +91,6 @@ const LoginForm = () => {
               <label htmlFor="password">Password</label>
               <div className="input-icon-wrapper">
                 <input
-                  name="password"
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="@#*%"
@@ -158,10 +111,6 @@ const LoginForm = () => {
             </div>
 
             {/* Botón de submit */}
-<<<<<<< HEAD
-            <button type="submit" className="auth-btn" style={{ '--delay': '0.5s' }} disabled={loading}>
-              {loading ? 'Ingresando...' : 'Sign in'}
-=======
             <button
               type="submit"
               className="auth-btn"
@@ -169,9 +118,7 @@ const LoginForm = () => {
               disabled={submitting}
             >
               {submitting ? 'Iniciando sesión...' : 'Sign in'}
->>>>>>> 74c4e8c15f6a5898e8263e05749b5e53530c002d
             </button>
-            {error && <p className="auth-error" style={{ color: '#ff6b6b', marginTop: '0.6rem' }}>{error}</p>}
 
             {/* Separador visual entre form y social buttons */}
             <div className="auth-divider" style={{ '--delay': '0.6s' }}>
