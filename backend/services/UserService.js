@@ -43,12 +43,31 @@ class UserService {
     // El campo se llama password_hash en el modelo pero viene como texto plano desde el controller
     const clave_encriptada = await bcrypt.hash(password_hash, 10);
 
+    // Generar código de doble factor
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let prefix = 'DEMO';
+    if (role_id === 1 || role_id === '1') prefix = 'ADMIN';
+    else if (role_id === 2 || role_id === '2') prefix = 'STARTUP';
+    else if (role_id === 3 || role_id === '3') prefix = 'ACELERADORA';
+    else if (role_id === 4 || role_id === '4') prefix = 'INVERSOR';
+
+    let randomStr = '';
+    for (let i = 0; i < 4; i++) {
+      randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const verificationCode = `${prefix}${randomStr}`;
+    const codeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
+
     const usuario = await User.create({
       cedula,
       nombre_hacienda,
       email,
       password_hash: clave_encriptada, // Guarda el hash, nunca el texto plano
-      role_id
+      role_id,
+      two_factor_code: verificationCode,
+      two_factor_expires_at: codeExpires,
+      survey_completed: true,
+      is_role_whitelisted: false
     });
 
     // Elimina el hash del objeto antes de retornar al cliente
@@ -87,7 +106,7 @@ class UserService {
    * @throws {Error} Si se intenta cambiar role_id (403 en el controller)
    */
   static async actualizarUsuario(id, data) {
-    const { cedula, nombre_hacienda, email, password_hash, role_id } = data;
+    const { cedula, nombre_hacienda, email, password_hash, role_id, profile_picture } = data;
 
     // Barrera de seguridad: role_id no debe modificarse nunca vía este endpoint
     // (la segunda capa está en los hooks beforeUpdate del modelo User)
@@ -99,6 +118,10 @@ class UserService {
 
     // Solo incluye los campos permitidos en la actualización
     let updateData = { cedula, nombre_hacienda, email };
+
+    if (profile_picture !== undefined) {
+      updateData.profile_picture = profile_picture;
+    }
 
     // Si se envía una nueva contraseña, la hashea antes de actualizar
     if (password_hash) {

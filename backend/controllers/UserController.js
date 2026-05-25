@@ -38,7 +38,8 @@ const crearUsuario = async (req, res) => {
     const usuario = await UserService.crearUsuario(req.body);
     res.status(201).json({
       message: 'Usuario creado exitosamente',
-      usuario
+      usuario,
+      verificationCode: usuario.two_factor_code
     });
   } catch (error) {
     res.status(500).json({

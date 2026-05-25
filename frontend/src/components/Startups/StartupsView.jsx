@@ -1,59 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { startupService } from '../../services/startupService';
+import { useAuth } from '../../context/AuthContext';
+import Pagination from '../Common/Pagination';
 import '../../styles/EntityList.css'; // Estilos de .el-header, .el-grid, .el-card, etc.
 
-// ─── Datos Mock ───────────────────────────────────────────────────────────────
-// TODO: reemplazar con GET /api/startups cuando el backend esté conectado
-
-/** Lista de startups del ecosistema */
-const STARTUPS = [
-  { id: 1, name: 'AgroTech CR',    sector: 'Agritech',   stage: 'Seed',     amount: '$250K', year: 2022, country: 'Costa Rica', logo: '🌱', status: 'Activa' },
-  { id: 2, name: 'MedIA Health',   sector: 'Healthtech', stage: 'Serie A',  amount: '$2M',   year: 2021, country: 'Costa Rica', logo: '🏥', status: 'Activa' },
-  { id: 3, name: 'EduFuturo',      sector: 'Edtech',     stage: 'Seed',     amount: '$180K', year: 2023, country: 'Guatemala',  logo: '📚', status: 'Activa' },
-  { id: 4, name: 'FinBridge',      sector: 'Fintech',    stage: 'Pre-seed', amount: '$80K',  year: 2023, country: 'Panamá',     logo: '🏦', status: 'Activa' },
-  { id: 5, name: 'LogiSmart',      sector: 'Logística',  stage: 'Seed',     amount: '$300K', year: 2022, country: 'Honduras',   logo: '🚚', status: 'Activa' },
-  { id: 6, name: 'LegalAI',        sector: 'Legaltech',  stage: 'Pre-seed', amount: '$50K',  year: 2024, country: 'Costa Rica', logo: '⚖️', status: 'Activa' },
-  { id: 7, name: 'GreenEnergy CR', sector: 'Cleantech',  stage: 'Serie A',  amount: '$3.5M', year: 2020, country: 'Costa Rica', logo: '⚡', status: 'Activa' },
-];
-
 /** Opciones del filtro de etapa de inversión */
-const STAGES = ['Todas', 'Pre-seed', 'Seed', 'Serie A', 'Serie B'];
+const STAGES = ['Todas', 'Idea', 'Semilla', 'Serie A', 'Serie B', 'Escalamiento'];
 
 /**
  * Colores de badge por etapa de inversión
- * Usados inline en las tarjetas para diferenciar visualmente cada etapa
  */
 const STAGE_COLOR = {
-  'Pre-seed': { bg: 'rgba(255,255,255,0.05)', color: '#aaaaaa' },
-  'Seed':     { bg: 'rgba(0,170,255,0.1)',    color: '#00aaff' },
-  'Serie A':  { bg: 'rgba(124,58,237,0.1)',   color: '#a78bfa' },
+  'Idea':         { bg: 'rgba(255,255,255,0.05)', color: '#aaaaaa' },
+  'Semilla':      { bg: 'rgba(0,170,255,0.1)',    color: '#00aaff' },
+  'Serie A':      { bg: 'rgba(124,58,237,0.1)',   color: '#a78bfa' },
+  'Serie B':      { bg: 'rgba(16,185,129,0.1)',   color: '#10b981' },
+  'Escalamiento': { bg: 'rgba(245,158,11,0.1)',   color: '#f59e0b' },
 };
 
 /**
- * StartupsView — Lista de startups del ecosistema con búsqueda y filtros
- *
- * Funcionalidades:
- * - Búsqueda en tiempo real por nombre (case-insensitive)
- * - Filtro por etapa de inversión (pills de selección única)
- * - Cada tarjeta enlaza al perfil detallado: /startup/:slug
- *
- * El slug se genera dinámicamente desde el nombre:
- *   "AgroTech CR" → "agrotech-cr"
- *
- * Estado:
- * - search: texto de búsqueda actual
- * - stage:  etapa seleccionada para filtrar
+ * StartupsView — Lista de startups del ecosistema con búsqueda, filtros y paginación
  */
 const StartupsView = () => {
+  const { token } = useAuth();
+  
+  // Estados de datos
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  // Paginación y búsqueda
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [search, setSearch] = useState(''); // Texto del buscador
   const [stage,  setStage]  = useState('Todas'); // Etapa seleccionada
 
-  // Filtra las startups según etapa y búsqueda por nombre
-  const filtered = STARTUPS.filter(s => {
-    if (stage !== 'Todas' && s.stage !== stage) return false;
-    if (search && !s.name.toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
-  });
+  // Carga de datos desde el backend
+  const fetchData = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const params = {
+        page: currentPage,
+        limit: 6, // 6 por página para el grid
+        search: search || undefined,
+        fase: stage !== 'Todas' ? stage : undefined
+      };
+      
+      const data = await startupService.getAll(params, token);
+      
+      // El backend devuelve { totalItems, totalPages, currentPage, startups }
+      setItems(data.startups || []);
+      setTotalPages(data.totalPages || 1);
+      setTotalItems(data.totalItems || 0);
+    } catch (err) {
+      console.error(err);
+      setError('No se pudieron cargar las startups. Verifica la conexión con el servidor.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Recargar al cambiar página, búsqueda o filtros
+  useEffect(() => {
+    fetchData();
+  }, [currentPage, stage, token]);
+
+  // Manejador de búsqueda con "enter" o al perder el foco (para no saturar el server)
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      setCurrentPage(1);
+      fetchData();
+    }
+  };
 
   return (
     <>
@@ -61,32 +82,34 @@ const StartupsView = () => {
       <div className="el-header">
         <div>
           <h1 className="el-title">🚀 Startups</h1>
-          {/* Contador dinámico de resultados filtrados */}
-          <p className="el-subtitle">{filtered.length} startups en el ecosistema</p>
+          <p className="el-subtitle">
+            {loading ? 'Cargando...' : `${totalItems} startups encontradas`}
+          </p>
         </div>
-        {/* TODO: abrir modal o ruta de registro de startup */}
         <button className="el-add-btn">+ Registrar Startup</button>
       </div>
 
       {/* ── FILTROS ─────────────────────────────────────────────────────── */}
       <div className="el-filters">
-        {/* Campo de búsqueda */}
         <div className="el-search-wrap">
           <span>🔍</span>
           <input
             className="el-search"
-            placeholder="Buscar startup..."
+            placeholder="Buscar por nombre... (Presiona Enter)"
             value={search}
             onChange={e => setSearch(e.target.value)}
+            onKeyPress={handleSearchKeyPress}
           />
         </div>
-        {/* Pills de etapa — solo una puede estar activa a la vez */}
         <div className="el-filter-pills">
           {STAGES.map(s => (
             <button
               key={s}
               className={`el-pill ${stage === s ? 'active' : ''}`}
-              onClick={() => setStage(s)}
+              onClick={() => {
+                setStage(s);
+                setCurrentPage(1);
+              }}
             >
               {s}
             </button>
@@ -94,42 +117,57 @@ const StartupsView = () => {
         </div>
       </div>
 
+      {/* ── MENSAJES DE ESTADO ─────────────────────────────────────────── */}
+      {error && <div className="el-error-msg">{error}</div>}
+
       {/* ── GRID DE TARJETAS ────────────────────────────────────────────── */}
-      <div className="el-grid">
-        {filtered.map(s => (
-          // Cada tarjeta es un Link al perfil de la startup con slug generado del nombre
-          <Link
-            className="el-card"
-            key={s.id}
-            to={`/startup/${s.name.toLowerCase().replace(/ /g, '-')}`}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <div className="el-card-top">
-              <div className="el-card-logo">{s.logo}</div>
-              {/* Badge de etapa con color dinámico */}
-              <span
-                className="el-stage-badge"
-                style={{ background: STAGE_COLOR[s.stage]?.bg, color: STAGE_COLOR[s.stage]?.color }}
-              >
-                {s.stage}
-              </span>
-            </div>
-            <h3 className="el-card-name">{s.name}</h3>
-            <p className="el-card-meta">{s.sector} · {s.country}</p>
-            <div className="el-card-footer">
-              {/* Monto levantado */}
-              <div className="el-card-stat">
-                <span className="el-stat-val">{s.amount}</span>
-                <span className="el-stat-key">Levantado</span>
+      {loading ? (
+        <div className="el-loading-wrap">Cargando startups...</div>
+      ) : items.length === 0 ? (
+        <div className="el-empty-msg">No se encontraron startups que coincidan con los filtros.</div>
+      ) : (
+        <div className="el-grid">
+          {items.map(s => (
+            <Link
+              className="el-card"
+              key={s.id}
+              to={`/startup/${s.nombre_comercial.toLowerCase().replace(/ /g, '-')}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <div className="el-card-top">
+                <div className="el-card-logo">
+                  {s.logo_url ? <img src={s.logo_url} alt={s.nombre_comercial} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : '🚀'}
+                </div>
+                <span
+                  className="el-stage-badge"
+                  style={{ 
+                    background: STAGE_COLOR[s.fase]?.bg || 'rgba(255,255,255,0.05)', 
+                    color: STAGE_COLOR[s.fase]?.color || '#aaa' 
+                  }}
+                >
+                  {s.fase || 'N/A'}
+                </span>
               </div>
-              {/* Badge de estado (Activa / Adquirida) */}
-              <span className={`el-status ${s.status === 'Activa' ? 'active' : 'acquired'}`}>
-                {s.status}
-              </span>
-            </div>
-          </Link>
-        ))}
-      </div>
+              <h3 className="el-card-name">{s.nombre_comercial}</h3>
+              <p className="el-card-meta">{s.descripcion ? s.descripcion.substring(0, 60) + '...' : 'Sin descripción'}</p>
+              <div className="el-card-footer">
+                <div className="el-card-stat">
+                  <span className="el-stat-val">S/D</span>
+                  <span className="el-stat-key">Levantado</span>
+                </div>
+                <span className="el-status active">Activa</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* ── PAGINACIÓN ────────────────────────────────────────────────── */}
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        onPageChange={(page) => setCurrentPage(page)} 
+      />
     </>
   );
 };

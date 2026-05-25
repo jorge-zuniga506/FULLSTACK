@@ -40,7 +40,11 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
 }
 
 .logo-nexus { color: #ffffff; }
-.logo-cobalt { color: #8b00dd; text-shadow: 0 0 10px rgba(139, 0, 221 ,0.5); }
+.logo-cobalt {
+  color: var(--role-accent, #8b00dd) !important;
+  text-shadow: 0 0 10px var(--role-glow, rgba(139, 0, 221 ,0.5)) !important;
+  transition: all 0.3s ease;
+}
 
 .db-nav { display:flex; flex-direction:column; gap:0.3rem; flex:1; }
 
@@ -58,12 +62,31 @@ html, body { margin:0!important; padding:0!important; overflow:hidden!important;
 }
 
 .db-nav-item:hover { background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.8); }
-.db-nav-item.active { background:rgba(139, 0, 221 ,0.1); color:#8b00dd; border:1px solid rgba(139, 0, 221 ,0.2); }
+.db-nav-item.active {
+  background: var(--role-bg-alpha, rgba(139, 0, 221, 0.1)) !important;
+  color: var(--role-accent, #8b00dd) !important;
+  border: 1px solid var(--role-border-alpha, rgba(139, 0, 221, 0.2)) !important;
+  box-shadow: 0 0 10px var(--role-glow, rgba(139, 0, 221, 0.15)) !important;
+}
 
 .db-sidebar-bottom { border-top:1px solid rgba(255,255,255,0.05); padding-top:1rem; display:flex; flex-direction:column; gap:0.75rem; }
 
 .db-user-card { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:10px; background:rgba(255,255,255,0.03); }
-.db-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#7900c2,#8b00dd); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; flex-shrink:0; }
+.db-avatar {
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background: linear-gradient(135deg, var(--role-accent, #7900c2), #060d1a) !important;
+  border: 1px solid var(--role-border-alpha, rgba(255, 255, 255, 0.1)) !important;
+  box-shadow: 0 0 10px var(--role-glow, rgba(121, 0, 194, 0.3));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:0.9rem;
+  flex-shrink:0;
+  color: #ffffff;
+}
 .db-username { font-size:0.85rem; font-weight:600; color:#ffffff; margin:0; }
 .db-role { font-size:0.72rem; color:rgba(255,255,255,0.4); margin:0; }
 .db-logout { text-align:center; font-size:0.78rem; color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s; padding:0.3rem; }
