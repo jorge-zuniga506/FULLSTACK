@@ -281,6 +281,22 @@ const RegisterForm = () => {
               </select>
             </div>
 
+            {/* EMAIL */}
+            <div className="input-group">
+              <label htmlFor="email">
+                Email
+              </label>
+
+              <input
+                type="email"
+                id="email"
+                placeholder="example@gmail.com"
+                required
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+
             {/* PASSWORDS */}
             <div className="input-row">
               <div className="input-group" style={{ '--delay': '0.5s' }}>
