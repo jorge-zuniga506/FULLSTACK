@@ -1,28 +1,37 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import authBg from '../../assets/auth_bg.png';
 import LoginNavbar from '../Navbar/LoginNavbar'; 
-// Imagen decorativa del panel derecho
 
 /**
  * LoginForm — Formulario de inicio de sesión
- *
- * Estructura de dos paneles (split-screen):
- * - Panel izquierdo: formulario con email, contraseña y acceso social
- * - Panel derecho:   imagen decorativa con overlay
- *
- * Estado local:
- * - showPassword: alterna entre input type="text" / "password" para ver la contraseña
- *
- * TODO: conectar el onSubmit al servicio de autenticación del backend (/api/auth/login)
  */
-
 const LoginForm = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   // Controla la visibilidad de la contraseña en el campo de texto
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [formError, setFormError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError('');
+    setSubmitting(true);
+
+    const result = await login(email, password);
+    setSubmitting(false);
+
+    if (result.success) {
+      navigate('/verify-role-code');
+    } else {
+      setFormError(result.error || 'Credenciales incorrectas o problemas al conectar con el servidor.');
+    }
+  };
 
   return (
     <div className="auth-wrapper">
@@ -39,44 +48,42 @@ const LoginForm = () => {
             <Link to="/register" className="auth-link">Regístrate ahora</Link>
           </p>
 
+          {/* Banner de error glassmorphic */}
+          {formError && (
+            <div className="form-error-banner" style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '8px',
+              color: '#f87171',
+              padding: '12px 16px',
+              fontSize: '14px',
+              textAlign: 'left',
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
+            }}>
+              <span>⚠️</span>
+              <div>{formError}</div>
+            </div>
+          )}
+
           {/* Formulario principal — animaciones escalonadas vía CSS --delay */}
-          <form className="auth-form" onSubmit={async (e) => {
-            e.preventDefault();
-            setError(null);
-            setLoading(true);
-            const form = new FormData(e.currentTarget);
-            const email = form.get('email');
-            const password = form.get('password');
-            try {
-              // Simulación de fetch al backend. Si hay backend lo intentará,
-              // pero para propósitos del frontend navegamos directamente al dashboard.
-              try {
-                const res = await fetch('/api/auth/login', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ email, password })
-                });
-                if (res.ok) {
-                  const data = await res.json();
-                  if (data.token) localStorage.setItem('token', data.token);
-                }
-              } catch (e) {
-                // Backend no disponible
-              }
-              navigate('/dashboard', { replace: true });
-            } catch (err) {
-              setError('Error de conexión');
-            } finally {
-              setLoading(false);
-            }
-          }}>
+          <form className="auth-form" onSubmit={handleSubmit}>
             {/* Campo oculto para asegurar el rol de emprendedor */}
             <input type="hidden" id="role" name="role" value="emprendedor" />
 
             {/* Campo Email */}
             <div className="input-group" style={{ '--delay': '0.3s' }}>
               <label htmlFor="email">Email</label>
-              <input name="email" type="email" id="email" placeholder="example@gmail.com" required />
+              <input
+                type="email"
+                id="email"
+                placeholder="example@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
 
             {/* Campo Contraseña con toggle de visibilidad */}
@@ -88,6 +95,8 @@ const LoginForm = () => {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="@#*%"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 {/* Botón para mostrar/ocultar contraseña */}
@@ -103,8 +112,13 @@ const LoginForm = () => {
             </div>
 
             {/* Botón de submit */}
-            <button type="submit" className="auth-btn" style={{ '--delay': '0.5s' }} disabled={loading}>
-              {loading ? 'Ingresando...' : 'Sign in'}
+            <button
+              type="submit"
+              className="auth-btn"
+              style={{ '--delay': '0.5s' }}
+              disabled={submitting}
+            >
+              {submitting ? 'Iniciando sesión...' : 'Sign in'}
             </button>
             {error && <p className="auth-error" style={{ color: '#ff6b6b', marginTop: '0.6rem' }}>{error}</p>}
 
@@ -124,14 +138,6 @@ const LoginForm = () => {
               Continue with Google
             </button>
 
-            {/* Botón Social: Facebook OAuth (pendiente de implementar) */}
-            <button type="button" className="social-btn facebook-btn" style={{ '--delay': '0.8s' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              Continue with Facebook
-            </button>
-
           </form>
         </div>
       </div>
@@ -148,3 +154,4 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+

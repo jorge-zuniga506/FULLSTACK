@@ -5,6 +5,7 @@ import PublishFounders from '../../components/PublishFounders/PublishFounders';
 import PublishInvestors from '../../components/PublishInvestors/PublishInvestors';
 import NavbarPublish from '../../components/Navbar/NavbarPublish';  
 import Publication from '../../components/Publication/Publication';
+import Footer from '../../components/Footer/Footer';
 import '../../styles/PublishGeneral.css';
 
 const PublishGeneral = () => {
@@ -81,6 +82,9 @@ const PublishGeneral = () => {
           </div>
         </div>
       )}
+      
+      {/* Universal Footer */}
+      <Footer />
     </>
   );
 };

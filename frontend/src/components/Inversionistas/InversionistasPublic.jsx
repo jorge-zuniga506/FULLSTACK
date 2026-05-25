@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../Navbar/NavbarLandpage";
+import Footer from "../Footer/Footer";
+import Pagination from "../Common/Pagination";
 import "../../styles/LandPage.css";
 import "../../styles/Inversionistas.css";
 
@@ -80,6 +82,10 @@ const InversionistasPublic = () => {
   const [selectedIndustry, setSelectedIndustry] = useState('- Todos -');
   const [selectedInversionista, setSelectedInversionista] = useState(null);
 
+  // Paginación local
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
   const industries = ['- Todos -', ...new Set(INVERSIONISTAS.map(i => i.industry))];
 
   const filtered = INVERSIONISTAS.filter((inv) => {
@@ -89,6 +95,16 @@ const InversionistasPublic = () => {
     const matchesIndustry = selectedIndustry === '- Todos -' || inv.industry === selectedIndustry;
     return matchesSearch && matchesIndustry;
   });
+
+  // Cálculos de paginación
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
 
   return (
     <div className="landpage-container">
@@ -134,7 +150,7 @@ const InversionistasPublic = () => {
 
         {/* Grid de cards */}
         <div className="inv-grid">
-          {filtered.length > 0 ? filtered.map((inv) => (
+          {paginatedItems.length > 0 ? paginatedItems.map((inv) => (
             <article className="inv-card" key={inv.id}>
               {/* Banner */}
               <div className="inv-card-banner" style={{ background: inv.bannerStyle }}>
@@ -170,6 +186,13 @@ const InversionistasPublic = () => {
             </div>
           )}
         </div>
+
+        {/* Paginación */}
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={handlePageChange} 
+        />
       </main>
 
       {/* Modal detalle */}
@@ -230,6 +253,8 @@ const InversionistasPublic = () => {
           </div>
         </div>
       )}
+      {/* Universal Footer */}
+      <Footer />
     </div>
   );
 };

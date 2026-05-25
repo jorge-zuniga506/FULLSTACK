@@ -933,6 +933,49 @@ Marca todos los mensajes de un chat como leídos.
 
 ---
 
+### Asistente IA
+
+#### POST `/api/ai/chat`
+
+Alias compatible con la tarea de Trello. Tambien disponible como `POST /api/chatbot/chat` y `POST /api/chatbot/ask`.
+
+```json
+{
+  "message": "Recomendame startups fintech en etapa semilla"
+}
+```
+
+**Response 200:**
+```json
+{
+  "response": "Respuesta generada por JARVIS",
+  "data": []
+}
+```
+
+#### POST `/api/ai/classify-request`
+
+Clasifica automaticamente una solicitud de incorporacion como `startup`, `aceleradora` o `inversor`.
+
+```json
+{
+  "text": "Somos un fondo con capital para invertir en startups fintech."
+}
+```
+
+**Response 200:**
+```json
+{
+  "tipo": "inversor",
+  "confianza": 0.86,
+  "razon": "La solicitud menciona capital de inversion.",
+  "requiere_revision": false,
+  "proveedor": "local-rules"
+}
+```
+
+> Para respuestas LLM reales, configurar `GEMINI_API_KEY`. Sin esa variable, la clasificacion usa reglas locales como respaldo.
+
 ### Consultas IA
 
 #### POST `/api/communication/consultas-ia`

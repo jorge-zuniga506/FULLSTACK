@@ -8,12 +8,13 @@
     "start": "node server.js",
     "migrate": "node scripts/migrate.js up",
     "migrate:undo": "node scripts/migrate.js down",
-    "test": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles"
+    "test": "cross-env NODE_ENV=test jest --forceExit --coverage --detectOpenHandles"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.6",

@@ -38,8 +38,11 @@ module.exports = (err, req, res, next) => {
   // Construye la respuesta de error
   // El stack trace solo se incluye en desarrollo para no exponer internos en producción
   res.status(statusCode).json({
-    success: false,
+    status: 'error',
     message: err.message || 'Error interno del servidor',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    data: null,
+    meta: {
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    }
   });
 };

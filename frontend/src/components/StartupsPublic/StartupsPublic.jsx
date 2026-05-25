@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Navbar/NavbarLandpage";
+import Footer from "../Footer/Footer";
+import Pagination from "../Common/Pagination";
 import "../../styles/StartupsPublic.css";
 
 // ─── Datos Mock ───────────────────────────────────────────────────────────────
@@ -244,6 +246,10 @@ const StartupsPublic = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeStartup, setActiveStartup] = useState(null);
 
+  // Paginación local para datos mock
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
   const openStartupModal = (startup) => {
     setActiveStartup(startup);
     setIsModalOpen(true);
@@ -263,6 +269,16 @@ const StartupsPublic = () => {
     if (search && !s.name.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
+
+  // Cálculos de paginación
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
 
   return (
     <div className="public-startups-container">
@@ -313,7 +329,7 @@ const StartupsPublic = () => {
 
         {/* ── GRID DE TARJETAS ── */}
         <div className="public-startups-grid">
-          {filtered.map(s => (
+          {paginatedItems.map(s => (
             <div className="public-startup-card" key={s.id}>
               <div className="public-startup-card-top">
                 {renderLogo(s.logo, s.name)}
@@ -346,6 +362,13 @@ const StartupsPublic = () => {
             </div>
           ))}
         </div>
+
+        {/* ── PAGINACIÓN ── */}
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={handlePageChange} 
+        />
         {isModalOpen && activeStartup && (
           <div className="public-startup-modal-overlay" onClick={closeStartupModal}>
             <div className="public-startup-modal" onClick={(e) => e.stopPropagation()}>
@@ -389,6 +412,8 @@ const StartupsPublic = () => {
           </div>
         )}
       </main>
+      {/* Universal Footer */}
+      <Footer />
     </div>
   );
 };

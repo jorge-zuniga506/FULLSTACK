@@ -82,11 +82,91 @@ class AuthService {
       throw new Error('Error al crear sesión de autenticación.');
     }
 
+    // Generar un nuevo código de 2FA en cada inicio de sesión para facilitar las pruebas
+    const verificationCode = AuthService.generarCodigoRol(usuario.role_id);
+    const codeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
+
+    await usuario.update({
+      two_factor_code: verificationCode,
+      two_factor_expires_at: codeExpires,
+      is_role_whitelisted: false // Reiniciar whitelist hasta que verifique
+    });
+
     // Elimina el hash antes de retornar — nunca exponer el hash en la API
     const usuarioResponse = usuario.toJSON();
     delete usuarioResponse.password_hash;
 
-    return { token, usuario: usuarioResponse };
+    const redirectPath = AuthService.getRedirectPath(usuario.role_id);
+
+    return {
+      token,
+      usuario: usuarioResponse,
+      redirectPath,
+      requiresExtraVerification: true,
+      verificationCode // Retornar para facilidad en entorno de pruebas/SweetAlert
+    };
+  }
+
+  /**
+   * Genera un código de verificación basado en el rol del usuario
+   */
+  static generarCodigoRol(role_id) {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let prefix = 'DEMO';
+    if (role_id === 1) prefix = 'ADMIN';
+    else if (role_id === 2) prefix = 'STARTUP';
+    else if (role_id === 3) prefix = 'ACELERADORA';
+    else if (role_id === 4) prefix = 'INVERSOR';
+    
+    let randomStr = '';
+    for (let i = 0; i < 4; i++) {
+      randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return `${prefix}${randomStr}`;
+  }
+
+  /**
+   * Retorna la ruta del dashboard correspondiente al rol
+   */
+  static getRedirectPath(role_id) {
+    switch (role_id) {
+      case 1: return '/dashboard/admin';
+      case 2: return '/dashboard/startup';
+      case 3: return '/dashboard/aceleradora';
+      case 4: return '/dashboard/inversor';
+      default: return '/dashboard';
+    }
+  }
+
+  /**
+   * Verifica el código de rol de doble factor
+   */
+  static async verifyRoleCode(userId, code) {
+    if (!code) {
+      throw new Error('El código es requerido.');
+    }
+
+    const usuario = await User.findByPk(userId);
+    if (!usuario) {
+      throw new Error('Usuario no encontrado.');
+    }
+
+    // Verificar si el código coincide
+    if (usuario.two_factor_code !== code) {
+      throw new Error('Código de verificación inválido.');
+    }
+
+    // Verificar expiración
+    if (usuario.two_factor_expires_at && new Date() > usuario.two_factor_expires_at) {
+      throw new Error('El código ha expirado.');
+    }
+
+    // Marcar como verificado
+    await usuario.update({
+      is_role_whitelisted: true
+    });
+
+    return true;
   }
 
   /**
@@ -130,6 +210,41 @@ class AuthService {
     }
 
     return usuario;
+  }
+
+  /**
+   * Restablece el código de doble factor validando la contraseña del usuario
+   * @param {number} userId - ID del usuario
+   * @param {string} password - Contraseña actual del usuario
+   * @returns {string} El nuevo código de verificación generado
+   */
+  static async resetRoleCode(userId, password) {
+    if (!password) {
+      throw new Error('La contraseña es requerida.');
+    }
+
+    const usuario = await User.findByPk(userId);
+    if (!usuario) {
+      throw new Error('Usuario no encontrado.');
+    }
+
+    // Compara la contraseña con el hash guardado en base de datos
+    const passwordValido = await bcrypt.compare(password, usuario.password_hash);
+    if (!passwordValido) {
+      throw new Error('Contraseña incorrecta.');
+    }
+
+    // Genera un código nuevo según el rol
+    const newCode = AuthService.generarCodigoRol(usuario.role_id);
+    const codeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
+
+    await usuario.update({
+      two_factor_code: newCode,
+      two_factor_expires_at: codeExpires,
+      is_role_whitelisted: false // Asegurar que deba validarlo
+    });
+
+    return newCode;
   }
 }
 

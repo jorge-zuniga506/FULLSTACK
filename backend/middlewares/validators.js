@@ -98,11 +98,16 @@ const validarInversor = [
  *   role_id          — requerido, entero (FK a roles)
  */
 const validarUsuario = [
-  body('cedula').notEmpty().isString(),
-  body('nombre_hacienda').notEmpty().isString(),
+  body('cedula')
+    .notEmpty().withMessage('La cédula es requerida')
+    .isString().withMessage('La cédula debe ser texto')
+    .matches(/^\d{9,12}$/).withMessage('La cédula debe contener entre 9 y 12 dígitos numéricos'),
+  body('nombre_hacienda').notEmpty().withMessage('El nombre es requerido').isString(),
   body('email').isEmail().withMessage('Correo inválido'),
   body('password_hash').isLength({ min: 6 }).withMessage('La contraseña debe tener mínimo 6 caracteres'),
-  body('role_id').notEmpty().isInt(),
+  body('role_id')
+    .notEmpty().withMessage('El rol es requerido')
+    .isInt({ min: 1, max: 4 }).withMessage('Debe seleccionar un rol válido (1-4)'),
   handleValidationErrors
 ];
 
@@ -122,6 +127,7 @@ const validarActualizacionUsuario = [
   body('nombre_hacienda').optional().isString(),
   body('email').optional().isEmail().withMessage('Correo inválido'),
   body('password_hash').optional().isLength({ min: 6 }).withMessage('La contraseña debe tener mínimo 6 caracteres'),
+  body('profile_picture').optional().isString(),
   handleValidationErrors
 ];
 
