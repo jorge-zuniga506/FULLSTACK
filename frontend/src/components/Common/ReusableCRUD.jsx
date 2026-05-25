@@ -43,12 +43,14 @@ const ReusableCRUD = ({ service, columns, title, defaultValues = {}, onActionSuc
     setError('');
     try {
       // Usamos el servicio específico inyectado para la petición GET
-      const data = await service.getAll({
+      const response = await service.getAll({
         page: currentPage,
         limit: 5, // 5 por página para que quepa bien en el dash
         search: searchQuery
       }, token);
-      
+      const data = response?.data;
+      const meta = response?.meta || {};
+
       // Adaptamos dinámicamente si el backend devuelve paginación estructurada o un array directo
       if (data && Array.isArray(data)) {
         setItems(data);
@@ -58,7 +60,7 @@ const ReusableCRUD = ({ service, columns, title, defaultValues = {}, onActionSuc
         const arrayKey = Object.keys(data).find(key => Array.isArray(data[key]));
         const rows = arrayKey ? data[arrayKey] : (data.rows || data.items || []);
         setItems(rows);
-        setTotalPages(data.totalPages || 1);
+        setTotalPages(data.totalPages || meta.totalPages || 1);
       }
     } catch (err) {
       console.error(err);
@@ -713,3 +715,4 @@ const ReusableCRUD = ({ service, columns, title, defaultValues = {}, onActionSuc
 };
 
 export default ReusableCRUD;
+
