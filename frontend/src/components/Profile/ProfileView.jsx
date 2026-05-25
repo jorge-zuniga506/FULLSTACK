@@ -190,12 +190,14 @@ const ProfileView = () => {
 
       // Endpoint: PUT /api/usuarios/:id
       const response = await apiService.update('/api/usuarios', user.id, payload, token);
+      const updatedUserData = response?.data || {};
+      const nextUser = { ...user, ...updatedUserData };
 
       // Actualizar el estado global del usuario en el contexto
-      setUser({ ...user, ...response });
+      setUser(nextUser);
       
       // Actualizar persistencia local
-      localStorage.setItem('user', JSON.stringify({ ...user, ...response }));
+      localStorage.setItem('user', JSON.stringify(nextUser));
       setPassword(''); // Limpiar campo clave
 
       Swal.fire({

@@ -31,7 +31,6 @@ const path = require('path');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
-const cors = require('cors');
 const UserRoutes = require('./routes/UserRoutes');
 const AuthRoutes = require('./routes/AuthRoutes');
 const AceleradoraRoutes = require('./routes/AceleradoraRoutes');
@@ -50,10 +49,26 @@ const DashboardRoutes = require('./routes/DashboardRoutes');
 const app = express();
 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      process.env.CORS_ORIGIN
+    ].filter(Boolean);
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
-app.use(express.json());
+// Aumenta el límite de payload para permitir actualización de foto de perfil en Base64.
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Estandarización global de respuestas JSON { status, message, data, meta }
 const responseFormatter = require('./middlewares/responseFormatter');
@@ -68,6 +83,9 @@ app.get('/', (req, res) => {
 });
 
 // ── Swagger / OpenAPI Docs ────────────────────────────────────────────────────
+app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+app.get('/api/v1/docs.json', (req, res) => res.json(swaggerSpec));
+// Compatibilidad con rutas legacy de documentación
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
 app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
 
@@ -99,3 +117,4 @@ const API_LEGACY = '/api';
 app.use(require('./middlewares/errorHandler'));
 
 module.exports = app;
+

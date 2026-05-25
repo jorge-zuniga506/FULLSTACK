@@ -31,6 +31,7 @@
 const jwt     = require('jsonwebtoken');
 const bcrypt  = require('bcrypt');
 const { User, Session } = require('../models');
+const { notificarCodigoRestablecido } = require('./EmailService');
 
 class AuthService {
 
@@ -180,17 +181,14 @@ class AuthService {
       throw new Error('Token requerido para logout.');
     }
 
-    // Busca la sesión activa con ese token
-    const session = await Session.findOne({
-      where: { token_jwt: token, es_valido: true }
-    });
+    const [updatedCount] = await Session.update(
+      { es_valido: false },
+      { where: { token_jwt: token, es_valido: true } }
+    );
 
-    if (!session) {
-      throw new Error('Sesión no encontrada o ya inválida.');
+    if (!updatedCount) {
+      throw new Error('Sesion no encontrada o ya invalida.');
     }
-
-    // Marca la sesión como inválida (el JWT sigue existiendo pero authMiddleware lo rechazará)
-    await session.update({ es_valido: false });
     return true;
   }
 
@@ -244,8 +242,19 @@ class AuthService {
       is_role_whitelisted: false // Asegurar que deba validarlo
     });
 
+    const correoEnviado = await notificarCodigoRestablecido({
+      to: usuario.email,
+      userName: usuario.nombre_hacienda || usuario.email,
+      code: newCode
+    });
+
+    if (!correoEnviado) {
+      console.warn(`No se pudo enviar correo de restablecimiento para usuario ${usuario.id}.`);
+    }
+
     return newCode;
   }
 }
 
 module.exports = AuthService;
+

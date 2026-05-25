@@ -47,7 +47,7 @@ const LoginForm = () => {
             ¿No tienes una cuenta?{' '}
             <Link to="/register" className="auth-link">Regístrate ahora</Link>
           </p>
-
+ 
           {/* Banner de error glassmorphic */}
           {formError && (
             <div className="form-error-banner" style={{
@@ -120,7 +120,6 @@ const LoginForm = () => {
             >
               {submitting ? 'Iniciando sesión...' : 'Sign in'}
             </button>
-            {error && <p className="auth-error" style={{ color: '#ff6b6b', marginTop: '0.6rem' }}>{error}</p>}
 
             {/* Separador visual entre form y social buttons */}
             <div className="auth-divider" style={{ '--delay': '0.6s' }}>

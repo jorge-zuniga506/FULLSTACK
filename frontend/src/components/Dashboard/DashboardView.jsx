@@ -24,11 +24,14 @@ const DashboardView = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState([]);
   const [recentEntities, setRecentEntities] = useState([]);
+  const [dashboardError, setDashboardError] = useState('');
 
   // Carga de datos reales del dashboard (usando el endpoint de admin por ser el más completo)
   const fetchDashboardData = async () => {
     try {
-      const data = await apiService.getOne('/api/dashboard/admin', token);
+      setDashboardError('');
+      const response = await apiService.getOne('/api/dashboard/admin', token);
+      const data = response?.data || {};
       
       // Mapeamos los stats del backend
       if (data.stats) {
@@ -56,6 +59,7 @@ const DashboardView = () => {
 
     } catch (err) {
       console.error('Error al cargar dashboard:', err);
+      setDashboardError(err.message || 'No se pudo cargar el dashboard.');
     } finally {
       setLoading(false);
     }
@@ -84,6 +88,7 @@ const DashboardView = () => {
       </div>
 
       {/* ── KPI CARDS ───────────────────────────────────────────────────── */}
+      {dashboardError && (<div style={{ marginBottom: '16px', color: '#f87171' }}>Error: {dashboardError}</div>)} 
       <div className="db-stats-grid">
         {loading ? (
           <p style={{ color: '#9ca3af' }}>Sincronizando métricas...</p>
@@ -182,3 +187,6 @@ const DashboardView = () => {
 
 
 export default DashboardView;
+
+
+

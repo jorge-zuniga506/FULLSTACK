@@ -35,6 +35,7 @@ const getUserId = (params) => params.id || params.id_Usuario;
 
 const crearUsuario = async (req, res) => {
   try {
+    console.log('DEBUG crearUsuario - body:', req.body);
     const usuario = await UserService.crearUsuario(req.body);
     res.status(201).json({
       message: 'Usuario creado exitosamente',
@@ -42,6 +43,7 @@ const crearUsuario = async (req, res) => {
       verificationCode: usuario.two_factor_code
     });
   } catch (error) {
+    console.error('DEBUG crearUsuario - error:', error);
     res.status(500).json({
       message: 'Error al crear el usuario',
       error:   error.message

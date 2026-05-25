@@ -46,7 +46,8 @@ const RegisterForm = () => {
 
     try {
       // Usamos el token como null porque es una ruta pública
-      const data = await apiService.getOne(`/api/identity/hacienda/${cleanCedula}`);
+      const response = await apiService.getOne(`/api/identity/hacienda/${cleanCedula}`);
+      const data = response?.data || {};
       if (data && data.nombreCompleto) {
         setNombreHacienda(data.nombreCompleto);
         Swal.fire({
@@ -280,22 +281,6 @@ const RegisterForm = () => {
               </select>
             </div>
 
-            {/* EMAIL */}
-            <div className="input-group">
-              <label htmlFor="email">
-                Email
-              </label>
-
-              <input
-                type="email"
-                id="email"
-                placeholder="example@gmail.com"
-                required
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-
             {/* PASSWORDS */}
             <div className="input-row">
               <div className="input-group" style={{ '--delay': '0.5s' }}>
@@ -367,4 +352,5 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+
 

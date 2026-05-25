@@ -153,3 +153,10 @@ Ver diagrama ER en `README.md` o en `backend/API.md` (sección Modelos de Datos)
 - `sectores`, `startups`, `aceleradoras`, `inversores` — Perfiles de negocio
 - `geolocalizacion`, `conexiones_grafo`, `solicitudes`, `metricas_dashboard` — Ecosistema
 - `mensajes`, `consultas_ia`, `notificaciones`, `mensajes_contacto_publico` — Comunicación
+
+## Actualizaciones recientes (JWT + Cookies + Contrato API)
+
+- El contrato de respuestas se estandariza a { status, message, data, meta } mediante middleware global.
+- El login ahora retorna JWT en body y tambien lo setea en cookie ccess_token (HttpOnly, SameSite=Lax, Secure en produccion).
+- El middleware de autenticacion acepta token desde Authorization: Bearer o cookie para compatibilidad dual.
+- El frontend incluye manejo centralizado de 401: limpia sesion y redirige a /Login para evitar estados inconsistentes.

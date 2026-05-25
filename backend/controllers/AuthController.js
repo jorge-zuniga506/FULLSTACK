@@ -33,6 +33,14 @@
  */
 const AuthService = require('../services/AuthService');
 
+const buildCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  path: '/',
+  maxAge: 24 * 60 * 60 * 1000
+});
+
 /**
  * Maneja el inicio de sesión — genera JWT y crea sesión en BD
  */
@@ -42,6 +50,8 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const authData = await AuthService.login(email, password);
+
+    res.cookie('access_token', authData.token, buildCookieOptions());
 
     res.status(200).json({
       message: 'Autenticación exitosa',
@@ -56,7 +66,7 @@ const login = async (req, res) => {
     if (error.message === 'Por favor ingrese email y contraseña.') {
       return res.status(400).json({ message: error.message });
     }
-    if (error.message === 'Credenciales inválidas.') {
+    if (error.message && error.message.toLowerCase().includes('credenciales')) {
       return res.status(401).json({ message: error.message });
     }
     res.status(500).json({
@@ -96,9 +106,13 @@ const logout = async (req, res) => {
   try {
     // El token viene del header Authorization (ya validado por authRequired)
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const bearerToken = authHeader && authHeader.split(' ')[1];
+    const cookieHeader = req.headers.cookie || '';
+    const cookieToken = cookieHeader.split(';').map(p => p.trim()).find(p => p.startsWith('access_token='));
+    const token = bearerToken || (cookieToken ? decodeURIComponent(cookieToken.split('=')[1] || '') : null);
 
     await AuthService.logout(token);
+    res.clearCookie('access_token', { path: '/', sameSite: 'lax', secure: process.env.NODE_ENV === 'production' });
     res.status(200).json({ message: 'Logout exitoso. Token invalidado.' });
   } catch (error) {
     if (error.message === 'Token requerido para logout.' ||
@@ -155,3 +169,5 @@ const resetRoleCode = async (req, res) => {
 };
 
 module.exports = { login, logout, getMe, verifyRoleCode, resetRoleCode };
+
+
