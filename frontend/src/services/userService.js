@@ -5,15 +5,15 @@ import { apiService } from './apiService';
  */
 export const userService = {
   getAll(params, token) {
-    return apiService.getAll('/api/users', params, token);
+    return apiService.getAll('/api/usuarios', params, token);
   },
   create(data, token) {
-    return apiService.create('/api/users', data, token);
+    return apiService.create('/api/usuarios', data, token);
   },
   update(id, data, token) {
-    return apiService.update('/api/users', id, data, token);
+    return apiService.update('/api/usuarios', id, data, token);
   },
   delete(id, token) {
-    return apiService.delete('/api/users', id, token);
+    return apiService.delete('/api/usuarios', id, token);
   }
 };

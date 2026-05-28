@@ -46,7 +46,8 @@ const RegisterForm = () => {
 
     try {
       // Usamos el token como null porque es una ruta pública
-      const data = await apiService.getOne(`/api/identity/hacienda/${cleanCedula}`);
+      const response = await apiService.getOne(`/api/identity/hacienda/${cleanCedula}`);
+      const data = response?.data || {};
       if (data && data.nombreCompleto) {
         setNombreHacienda(data.nombreCompleto);
         Swal.fire({
@@ -346,4 +347,5 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+
 

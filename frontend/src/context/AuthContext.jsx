@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+﻿import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiService } from '../services/apiService';
 
 const AuthContext = createContext(null);
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
 
 export const AuthProvider = ({ children }) => {
@@ -11,7 +11,15 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Cada vez que cambia el token, actualizamos localStorage
+  const clearLocalSession = () => {
+    setToken(null);
+    setUser(null);
+    setIsRoleVerified(false);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('isRoleVerified');
+  };
+
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);
@@ -22,34 +30,46 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  // Recupera la sesión activa cuando el componente se monta
+  useEffect(() => {
+    const onUnauthorized = () => {
+      clearLocalSession();
+      if (window.location.pathname !== '/Login') {
+        window.location.assign('/Login');
+      }
+    };
+
+    window.addEventListener(apiService.AUTH_401_EVENT, onUnauthorized);
+    return () => window.removeEventListener(apiService.AUTH_401_EVENT, onUnauthorized);
+  }, []);
+
   useEffect(() => {
     const fetchMe = async () => {
       if (!token) {
         setLoading(false);
         return;
       }
+
       try {
         const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
           method: 'GET',
+          credentials: 'include',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
 
-        if (response.ok) {
-          const rawData = await response.json();
-          const user = (rawData && rawData.status && rawData.data) ? rawData.data.user : rawData.user;
-          setUser(user);
-        } else {
-          // Si el token es inválido o expiró, lo limpiamos
-          setToken(null);
-          setUser(null);
-          setIsRoleVerified(false);
+        if (!response.ok) {
+          clearLocalSession();
+          return;
         }
+
+        const rawData = await response.json();
+        const payload = rawData?.data || rawData;
+        const currentUser = payload?.user || payload?.usuario || payload;
+        setUser(currentUser);
       } catch (err) {
-        console.error('Error al recuperar sesión:', err);
+        console.error('Error al recuperar sesion:', err);
       } finally {
         setLoading(false);
       }
@@ -58,31 +78,30 @@ export const AuthProvider = ({ children }) => {
     fetchMe();
   }, [token]);
 
-  // Acción de Login
   const login = async (email, password) => {
     setError(null);
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password })
       });
 
       const rawData = await response.json();
-
       if (!response.ok) {
-        throw new Error(rawData.message || 'Error al iniciar sesión');
+        throw new Error(rawData.message || 'Error al iniciar sesion');
       }
 
-      const data = (rawData && rawData.status && rawData.data) ? rawData.data : rawData;
-
+      const data = rawData?.data || rawData;
       setToken(data.token);
       setUser(data.usuario);
-      setIsRoleVerified(false); // Requiere verificación por código siempre tras login
+      setIsRoleVerified(false);
       sessionStorage.setItem('isRoleVerified', 'false');
       localStorage.setItem('user', JSON.stringify(data.usuario));
+
       return {
         success: true,
         redirectPath: data.redirectPath,
@@ -94,7 +113,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Acción de Registro (con Autologin posterior)
   const register = async ({ cedula, nombre_hacienda, email, password, role_id }) => {
     setError(null);
     try {
@@ -103,31 +121,27 @@ export const AuthProvider = ({ children }) => {
         nombre_hacienda,
         email,
         password_hash: password,
-        role_id: parseInt(role_id, 10),
+        role_id: parseInt(role_id, 10)
       };
 
       const response = await fetch(`${API_BASE_URL}/api/usuarios/register`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
 
       const rawData = await response.json();
-
       if (!response.ok) {
         throw new Error(rawData.message || (rawData.errors && rawData.errors[0]?.msg) || 'Error al registrarse');
       }
 
-      const data = (rawData && rawData.status && rawData.data) ? rawData.data : rawData;
-
-      // Autologin exitoso tras el registro
       const loginResult = await login(email, password);
-      // Retornar también el verificationCode generado durante el login (el cual es el activo en BD)
       return {
         ...loginResult,
-        verificationCode: loginResult.verificationCode || data.verificationCode
+        verificationCode: loginResult.verificationCode || rawData?.data?.verificationCode
       };
     } catch (err) {
       setError(err.message);
@@ -135,23 +149,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Acción de Verificación de Código 2FA
   const verifyCode = async (code) => {
     setError(null);
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/verify-role-code`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code })
       });
 
       const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || 'Error al verificar el código');
+        throw new Error(data.message || 'Error al verificar el codigo');
       }
 
       setIsRoleVerified(true);
@@ -163,27 +176,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Acción de Restablecer Código 2FA con la Contraseña
   const resetRoleCode = async (password) => {
     setError(null);
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/reset-role-code`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ password })
       });
 
       const rawData = await response.json();
-
       if (!response.ok) {
-        throw new Error(rawData.message || 'Error al restablecer el código');
+        throw new Error(rawData.message || 'Error al restablecer el codigo');
       }
 
-      const data = (rawData && rawData.status && rawData.data) ? rawData.data : rawData;
-
+      const data = rawData?.data || rawData;
       return { success: true, verificationCode: data.verificationCode };
     } catch (err) {
       setError(err.message);
@@ -191,45 +202,38 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Acción de Logout
   const logout = async () => {
     setError(null);
     try {
-      if (token) {
-        await fetch(`${API_BASE_URL}/api/auth/logout`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-      }
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: token ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' }
+      });
     } catch (err) {
-      console.error('Error al revocar sesión en backend:', err);
+      console.error('Error al revocar sesion en backend:', err);
     } finally {
-      // Siempre borramos localmente pase lo que pase en el backend
-      setToken(null);
-      setUser(null);
-      setIsRoleVerified(false);
-      sessionStorage.removeItem('isRoleVerified');
+      clearLocalSession();
     }
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      setUser,
-      token,
-      isRoleVerified,
-      loading,
-      error,
-      login,
-      register,
-      verifyCode,
-      resetRoleCode,
-      logout,
-      setError
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        token,
+        isRoleVerified,
+        loading,
+        error,
+        login,
+        register,
+        verifyCode,
+        resetRoleCode,
+        logout,
+        setError
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -108,7 +108,8 @@ const AdminDashboard = () => {
     setLoading(true);
     setError('');
     try {
-      const data = await apiService.getOne('/api/dashboard/admin', token);
+      const response = await apiService.getOne('/api/dashboard/admin', token);
+      const data = response?.data || {};
       setDashboardData(data);
     } catch (err) {
       console.error('Error al obtener datos del panel administrativo:', err);

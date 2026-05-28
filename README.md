@@ -122,7 +122,7 @@ Ver detalles tecnicos en `backend/README.md` y documentacion de endpoints en `ba
 |--------|--------|
 | README.md raíz | ✅ Creado |
 | Diagrama entidad-relación | ✅ Incluido abajo |
-| Postman Collection / Swagger | ✅ `http://localhost:3007/api/docs` |
+| Postman Collection / Swagger | ✅ `http://localhost:3007/api/v1/docs` |
 | ARCHITECTURE.md | ✅ Creado en raíz |
 | API.md (documentación endpoints) | ✅ `backend/API.md` |
 
@@ -324,3 +324,4 @@ npm run dev            # http://localhost:5173
 cd ../backend
 npm test
 ```
+

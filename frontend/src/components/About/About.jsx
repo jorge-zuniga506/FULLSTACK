@@ -9,9 +9,9 @@ const About = () => {
         {/* Left Side: Content & Features */}
         <div className="about-content">
           <span className="about-badge">🔍 ¿Qué es Nexus Cobalt?</span>
-          <h2 className="about-title">Conectamos las piezas del ecosistema tecnológico</h2>
+          <h2 className="about-title">Conectamos las piezas del ecosistema tecnológico del trading.</h2>
           <p className="about-desc">
-            Nexus Cobalt es la vitrina y plataforma interactiva líder diseñada para potenciar el
+            Nexus Cobalt es la base y plataforma interactiva líder. Diseñada para potenciar el
             crecimiento del ecosistema emprendedor en América Latina. Facilitamos la visibilidad y
             el contacto directo entre startups innovadoras, fundadores apasionados e inversionistas
             visionarios.

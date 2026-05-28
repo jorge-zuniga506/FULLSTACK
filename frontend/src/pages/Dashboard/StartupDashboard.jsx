@@ -97,7 +97,8 @@ const StartupDashboard = () => {
     setLoading(true);
     setError('');
     try {
-      const data = await apiService.getOne('/api/dashboard/startup', token);
+      const response = await apiService.getOne('/api/dashboard/startup', token);
+      const data = response?.data || {};
       setDashboardData(data);
     } catch (err) {
       console.error('Error al obtener datos del panel de startup:', err);

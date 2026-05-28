@@ -24,6 +24,14 @@
 const jwt     = require('jsonwebtoken');
 const { Session } = require('../models');
 
+const extractTokenFromCookies = (cookieHeader = '') => {
+  if (!cookieHeader) return null;
+  const parts = cookieHeader.split(';').map(part => part.trim());
+  const tokenPair = parts.find(part => part.startsWith('access_token='));
+  if (!tokenPair) return null;
+  return decodeURIComponent(tokenPair.split('=')[1] || '');
+};
+
 /**
  * authRequired — Middleware de autenticación
  *
@@ -38,7 +46,9 @@ const authRequired = async (req, res, next) => {
     // ── 1. Extrae el token del header Authorization ─────────────────────
     // Formato esperado: "Bearer eyJhbGci..."
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Toma la parte después de 'Bearer '
+    const bearerToken = authHeader && authHeader.split(' ')[1];
+    const cookieToken = extractTokenFromCookies(req.headers.cookie);
+    const token = bearerToken || cookieToken; // Toma la parte después de 'Bearer '
 
     if (!token) {
       return res.status(401).json({ message: 'Token de acceso requerido.' });
@@ -105,3 +115,4 @@ const requireRole = (...roleIds) => (req, res, next) => {
 };
 
 module.exports = { authRequired, requireRole };
+

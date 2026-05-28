@@ -202,6 +202,58 @@ Obtén el token mediante \`POST /auth/login\`.
           },
         },
       },
+      '/auth/verify-role-code': {
+        post: {
+          tags: ['Auth'],
+          summary: 'Validar codigo 2FA de rol',
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['code'],
+                  properties: {
+                    code: { type: 'string', example: 'STARTUPA1B2' }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            200: { description: 'Codigo validado' },
+            400: { description: 'Codigo invalido o expirado' },
+            401: { description: 'No autenticado' }
+          }
+        }
+      },
+      '/auth/reset-role-code': {
+        post: {
+          tags: ['Auth'],
+          summary: 'Regenerar codigo 2FA de rol',
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['password'],
+                  properties: {
+                    password: { type: 'string', format: 'password', example: '123456' }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            200: { description: 'Codigo regenerado' },
+            400: { description: 'Password incorrecto o faltante' },
+            401: { description: 'No autenticado' }
+          }
+        }
+      },
 
       // ─── Usuarios ──────────────────────────────────────────────────────────
       '/usuarios': {
@@ -356,26 +408,46 @@ Obtén el token mediante \`POST /auth/login\`.
 
       // ─── Ecosistema ────────────────────────────────────────────────────────
       '/ecosistemas/obtener-ecosystem': {
-        get: { tags: ['Ecosistema'], summary: 'Listar geolocalizaciones (público)', parameters: [{ name: 'page', in: 'query', schema: { type: 'integer' } }, { name: 'limit', in: 'query', schema: { type: 'integer' } }], responses: { 200: { description: 'Geolocalizaciones' } } },
-        post: { tags: ['Ecosistema'], summary: 'Crear geolocalización', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Geolocalización creada' } } },
+        get: { tags: ['Ecosistema'], summary: 'Listar geolocalizaciones (publico)', parameters: [{ name: 'page', in: 'query', schema: { type: 'integer' } }, { name: 'limit', in: 'query', schema: { type: 'integer' } }], responses: { 200: { description: 'Geolocalizaciones' }, 400: { description: 'Parametros invalidos' } } },
+      },
+      '/ecosistemas/crear-ecosystem': {
+        post: { tags: ['Ecosistema'], summary: 'Crear geolocalizacion', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Geolocalizacion creada' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' } } },
+      },
+      '/ecosistemas/editar-ecosystem/{id_geolocalizacion}': {
+        put: { tags: ['Ecosistema'], summary: 'Editar geolocalizacion', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_geolocalizacion', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Geolocalizacion actualizada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
+      },
+      '/ecosistemas/eliminar-ecosystem/{id_geolocalizacion}': {
+        delete: { tags: ['Ecosistema'], summary: 'Eliminar geolocalizacion', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_geolocalizacion', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Geolocalizacion eliminada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
       },
       '/ecosistemas/conexiones': {
-        get: { tags: ['Ecosistema'], summary: 'Listar conexiones (público)', responses: { 200: { description: 'Conexiones' } } },
-        post: { tags: ['Ecosistema'], summary: 'Crear conexión', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Conexión creada' } } },
+        get: { tags: ['Ecosistema'], summary: 'Listar conexiones (publico)', responses: { 200: { description: 'Conexiones' } } },
+        post: { tags: ['Ecosistema'], summary: 'Crear conexion', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Conexion creada' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' } } },
+      },
+      '/ecosistemas/conexiones/{id_conexionGrafo}': {
+        put: { tags: ['Ecosistema'], summary: 'Editar conexion', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_conexionGrafo', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Conexion actualizada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
+        delete: { tags: ['Ecosistema'], summary: 'Eliminar conexion', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_conexionGrafo', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Conexion eliminada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
       },
       '/ecosistemas/solicitudes': {
-        get: { tags: ['Ecosistema'], summary: 'Listar solicitudes (público)', parameters: [{ name: 'estado', in: 'query', schema: { type: 'string', enum: ['Pendiente', 'Aprobada', 'Rechazada'] } }], responses: { 200: { description: 'Solicitudes' } } },
-        post: { tags: ['Ecosistema'], summary: 'Crear solicitud', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Solicitud creada' } } },
+        get: { tags: ['Ecosistema'], summary: 'Listar solicitudes (publico)', parameters: [{ name: 'estado', in: 'query', schema: { type: 'string', enum: ['Pendiente', 'Aprobada', 'Rechazada'] } }], responses: { 200: { description: 'Solicitudes' } } },
+        post: { tags: ['Ecosistema'], summary: 'Crear solicitud', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Solicitud creada' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' } } },
       },
-      '/ecosistemas/solicitudes/{id}/aprobar': {
-        patch: { tags: ['Ecosistema'], summary: 'Aprobar solicitud (admin)', security: [{ bearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Solicitud aprobada' } } },
+      '/ecosistemas/solicitudes/{id_solicitud}': {
+        put: { tags: ['Ecosistema'], summary: 'Actualizar solicitud', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_solicitud', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Solicitud actualizada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
+        delete: { tags: ['Ecosistema'], summary: 'Eliminar solicitud', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_solicitud', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Solicitud eliminada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
       },
-      '/ecosistemas/solicitudes/{id}/rechazar': {
-        patch: { tags: ['Ecosistema'], summary: 'Rechazar solicitud (admin)', security: [{ bearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Solicitud rechazada' } } },
+      '/ecosistemas/solicitudes/{id_solicitud}/aprobar': {
+        patch: { tags: ['Ecosistema'], summary: 'Aprobar solicitud (admin)', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_solicitud', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Solicitud aprobada' }, 401: { description: 'No autenticado' }, 403: { description: 'No autorizado' }, 404: { description: 'No encontrada' } } },
+      },
+      '/ecosistemas/solicitudes/{id_solicitud}/rechazar': {
+        patch: { tags: ['Ecosistema'], summary: 'Rechazar solicitud (admin)', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_solicitud', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Solicitud rechazada' }, 401: { description: 'No autenticado' }, 403: { description: 'No autorizado' }, 404: { description: 'No encontrada' } } },
       },
       '/ecosistemas/metricas': {
-        get: { tags: ['Ecosistema'], summary: 'Listar métricas (público)', responses: { 200: { description: 'Métricas' } } },
-        post: { tags: ['Ecosistema'], summary: 'Crear métrica', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Métrica creada' } } },
+        get: { tags: ['Ecosistema'], summary: 'Listar metricas (publico)', responses: { 200: { description: 'Metricas' } } },
+        post: { tags: ['Ecosistema'], summary: 'Crear metrica', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Metrica creada' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' } } },
+      },
+      '/ecosistemas/metricas/{id_metricaDashboard}': {
+        put: { tags: ['Ecosistema'], summary: 'Actualizar metrica', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_metricaDashboard', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Metrica actualizada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
+        delete: { tags: ['Ecosistema'], summary: 'Eliminar metrica', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_metricaDashboard', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Metrica eliminada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
       },
 
       // ─── Communication ─────────────────────────────────────────────────────
@@ -394,6 +466,82 @@ Obtén el token mediante \`POST /auth/login\`.
       '/communication/consultas-ia': {
         get: { tags: ['Communication'], summary: 'Listar consultas IA', security: [{ bearerAuth: [] }], responses: { 200: { description: 'Consultas' } } },
         post: { tags: ['Communication'], summary: 'Crear consulta IA', security: [{ bearerAuth: [] }], responses: { 201: { description: 'Consulta creada' } } },
+      },
+      '/communication/chats/{chat_id}/mensajes': {
+        get: { tags: ['Communication'], summary: 'Obtener mensajes por chat', security: [{ bearerAuth: [] }], parameters: [{ name: 'chat_id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Mensajes del chat' }, 401: { description: 'No autenticado' }, 404: { description: 'Chat no encontrado' } } },
+        post: { tags: ['Communication'], summary: 'Enviar mensaje a chat', security: [{ bearerAuth: [] }], parameters: [{ name: 'chat_id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 201: { description: 'Mensaje creado' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' }, 404: { description: 'Chat no encontrado' } } },
+      },
+      '/communication/mensajes/leer-todos': {
+        put: { tags: ['Communication'], summary: 'Marcar mensajes de chat como leidos', security: [{ bearerAuth: [] }], responses: { 200: { description: 'Mensajes marcados' }, 401: { description: 'No autenticado' } } },
+      },
+      '/communication/mensajes/{id_mensaje}/leer': {
+        put: { tags: ['Communication'], summary: 'Marcar mensaje como leido', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_mensaje', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Mensaje marcado' }, 401: { description: 'No autenticado' }, 404: { description: 'Mensaje no encontrado' } } },
+      },
+      '/communication/mensajes/{id_mensaje}': {
+        put: { tags: ['Communication'], summary: 'Editar mensaje', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_mensaje', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Mensaje actualizado' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' }, 404: { description: 'Mensaje no encontrado' } } },
+        delete: { tags: ['Communication'], summary: 'Eliminar mensaje', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_mensaje', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Mensaje eliminado' }, 401: { description: 'No autenticado' }, 404: { description: 'Mensaje no encontrado' } } },
+      },
+      '/communication/consultas-ia/{id_consultaIA}': {
+        put: { tags: ['Communication'], summary: 'Editar consulta IA', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_consultaIA', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Consulta actualizada' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' }, 404: { description: 'Consulta no encontrada' } } },
+        delete: { tags: ['Communication'], summary: 'Eliminar consulta IA', security: [{ bearerAuth: [] }], parameters: [{ name: 'id_consultaIA', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Consulta eliminada' }, 401: { description: 'No autenticado' }, 404: { description: 'Consulta no encontrada' } } },
+      },
+
+      // ─── Dashboard ───────────────────────────────────────────────────────────
+      '/dashboard/startup': {
+        get: { tags: ['Dashboard'], summary: 'Dashboard rol Startup', security: [{ bearerAuth: [] }], responses: { 200: { description: 'Dashboard startup' }, 401: { description: 'No autenticado' }, 403: { description: 'No autorizado' } } },
+      },
+      '/dashboard/aceleradora': {
+        get: { tags: ['Dashboard'], summary: 'Dashboard rol Aceleradora', security: [{ bearerAuth: [] }], responses: { 200: { description: 'Dashboard aceleradora' }, 401: { description: 'No autenticado' }, 403: { description: 'No autorizado' } } },
+      },
+      '/dashboard/inversor': {
+        get: { tags: ['Dashboard'], summary: 'Dashboard rol Inversor', security: [{ bearerAuth: [] }], responses: { 200: { description: 'Dashboard inversor' }, 401: { description: 'No autenticado' }, 403: { description: 'No autorizado' } } },
+      },
+      '/dashboard/admin': {
+        get: { tags: ['Dashboard'], summary: 'Dashboard rol Admin', security: [{ bearerAuth: [] }], responses: { 200: { description: 'Dashboard admin' }, 401: { description: 'No autenticado' }, 403: { description: 'No autorizado' } } },
+      },
+
+      // ─── Identity ────────────────────────────────────────────────────────────
+      '/identity/hacienda/{cedula}': {
+        get: {
+          tags: ['Identity'],
+          summary: 'Consultar cedula en Hacienda',
+          parameters: [{ name: 'cedula', in: 'path', required: true, schema: { type: 'string' } }],
+          responses: {
+            200: { description: 'Datos encontrados' },
+            400: { description: 'Cedula invalida' },
+            404: { description: 'No encontrada' }
+          }
+        }
+      },
+
+      // ─── Chatbot / AI ───────────────────────────────────────────────────
+      '/chatbot/ask': {
+        post: { tags: ['Chatbot'], summary: 'Preguntar al asistente', responses: { 200: { description: 'Respuesta generada' }, 400: { description: 'Prompt invalido' } } },
+      },
+      '/chatbot/chat': {
+        post: { tags: ['Chatbot'], summary: 'Alias de ask para chat', responses: { 200: { description: 'Respuesta generada' }, 400: { description: 'Prompt invalido' } } },
+      },
+      '/chatbot/classify-request': {
+        post: { tags: ['Chatbot'], summary: 'Clasificar solicitud del usuario', responses: { 200: { description: 'Clasificacion generada' }, 400: { description: 'Solicitud invalida' } } },
+      },
+      '/ai/ask': {
+        post: { tags: ['Chatbot'], summary: 'Alias AI para preguntar al asistente', responses: { 200: { description: 'Respuesta generada' }, 400: { description: 'Prompt invalido' } } },
+      },
+      '/ai/chat': {
+        post: { tags: ['Chatbot'], summary: 'Alias AI para chat', responses: { 200: { description: 'Respuesta generada' }, 400: { description: 'Prompt invalido' } } },
+      },
+      '/ai/classify-request': {
+        post: { tags: ['Chatbot'], summary: 'Alias AI para clasificar solicitud', responses: { 200: { description: 'Clasificacion generada' }, 400: { description: 'Solicitud invalida' } } },
+      },
+
+      // ─── Sesiones ────────────────────────────────────────────────────────────
+      '/sesiones': {
+        get: { tags: ['Sesiones'], summary: 'Listar sesiones', responses: { 200: { description: 'Sesiones' }, 401: { description: 'No autenticado' } } },
+        post: { tags: ['Sesiones'], summary: 'Crear sesion', responses: { 201: { description: 'Sesion creada' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' } } },
+      },
+      '/sesiones/{id}': {
+        put: { tags: ['Sesiones'], summary: 'Editar sesion', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Sesion actualizada' }, 400: { description: 'Body invalido' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
+        delete: { tags: ['Sesiones'], summary: 'Eliminar sesion', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Sesion eliminada' }, 401: { description: 'No autenticado' }, 404: { description: 'No encontrada' } } },
       },
 
       // ─── Notificaciones ────────────────────────────────────────────────────
@@ -414,3 +562,4 @@ Obtén el token mediante \`POST /auth/login\`.
 };
 
 module.exports = swaggerJsdoc(options);
+
