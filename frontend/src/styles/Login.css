@@ -49,13 +49,32 @@ html, body {
 .auth-form-panel {
   background: #0b1324;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 2rem 3rem;
   box-sizing: border-box;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
   height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(177, 245, 0, 0.35) rgba(255, 255, 255, 0.04);
+}
+
+.auth-form-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.auth-form-panel::-webkit-scrollbar-track {
+  background: #0b1324;
+}
+
+.auth-form-panel::-webkit-scrollbar-thumb {
+  background: rgba(177, 245, 0, 0.35);
+  border-radius: 4px;
+}
+
+.auth-form-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(177, 245, 0, 0.7);
 }
 
 .auth-form-panel::before {
@@ -76,6 +95,8 @@ html, body {
   max-width: 400px;
   position: relative;
   z-index: 1;
+  margin: auto 0; /* Centra verticalmente si cabe, desplaza de forma segura si desborda */
+  padding: 3rem 0; /* Espaciado interno seguro para el scroll */
 }
 
 /* ------- Typography ------- */
@@ -95,7 +116,7 @@ html, body {
 }
 
 .auth-link {
-  color: #00aaff;
+  color: #8b00dd;
   font-weight: 600;
   text-decoration: underline;
   transition: color 0.3s ease;
@@ -157,6 +178,42 @@ html, body {
   box-shadow: 0 0 18px rgba(0, 120, 255, 0.25);
 }
 
+.otp-channel-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.otp-channel-option {
+  border: 1px solid rgba(0, 120, 255, 0.28);
+  background: rgba(17, 29, 46, 0.7);
+  color: #9fb0c4;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.6rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.otp-channel-option:hover {
+  border-color: rgba(177, 245, 0, 0.55);
+  color: #d8e2ee;
+}
+
+.otp-channel-option.active {
+  border-color: rgba(177, 245, 0, 0.9);
+  color: #b1f500;
+  background: rgba(177, 245, 0, 0.08);
+  box-shadow: 0 0 16px rgba(177, 245, 0, 0.15);
+}
+
+.otp-help-text {
+  font-size: 0.72rem;
+  color: #6f8298;
+  line-height: 1.35;
+}
+
 /* ------- Password with toggle ------- */
 .input-icon-wrapper {
   position: relative;
@@ -184,14 +241,14 @@ html, body {
 }
 
 .toggle-password:hover {
-  color: #00aaff;
+  color: #8b00dd;
 }
 
 /* ------- Main Button ------- */
 .auth-btn {
   padding: 0.8rem;
   border-radius: 10px;
-  background: #0055ff;
+  background: #7900c2;
   color: #ffffff;
   font-size: 0.95rem;
   font-weight: 700;
@@ -218,9 +275,9 @@ html, body {
 }
 
 .auth-btn:hover {
-  background: #0066ff;
+  background: #7900c2;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 85, 255, 0.5);
+  box-shadow: 0 8px 25px rgba(121, 0, 194 , 0.5);
 }
 
 /* ------- Divider ------- */
@@ -263,7 +320,7 @@ html, body {
 
 .social-btn:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(0, 170, 255, 0.4);
+  border-color: rgba(139, 0, 221 , 0.4);
   transform: translateY(-2px);
 }
 
@@ -323,4 +380,25 @@ html, body {
   .input-row {
     grid-template-columns: 1fr;
   }
+  .otp-channel-row {
+    grid-template-columns: 1fr;
+  }
 }
+
+/* ------- Premium Role Badge ------- */
+.auth-role-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b1f500; /* lime green accent */
+  background: rgba(139, 0, 221, 0.1); /* light purple bg */
+  border: 1px solid rgba(139, 0, 221, 0.3);
+  border-radius: 50px;
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: fadeSlideUp 0.6s ease-out 0.05s both;
+}
+

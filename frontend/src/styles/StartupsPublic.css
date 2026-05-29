@@ -1,0 +1,540 @@
+/* ==========================================================================
+   STARTUPS PUBLIC VIEW STYLES
+   Paleta: Fondo oscuro (#040d18), Morado (#8b00dd), Verde Lima (#b1f500)
+   ========================================================================== */
+
+/* ------- Container Layout ------- */
+.public-startups-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #040d18;
+  background-image:
+    radial-gradient(ellipse at 70% 20%, rgba(139, 0, 221, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 10% 80%, rgba(177, 245, 0, 0.06) 0%, transparent 50%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #ffffff;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* ------- Main Section ------- */
+.public-startups-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ------- Header Panel ------- */
+.public-startups-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.8rem;
+  max-width: 700px;
+  margin: 0 auto;
+  overflow: visible;
+  animation: publicFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.public-badge {
+  display: inline-block;
+  padding: 0.35rem 1.1rem;
+  border-radius: 30px;
+  background: rgba(139, 0, 221, 0.1);
+  border: 1px solid rgba(139, 0, 221, 0.25);
+  color: #8b00dd;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  width: fit-content;
+}
+
+.public-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  margin: 0;
+  font-style: italic;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+}
+
+.public-title-inner {
+  display: inline;
+  padding-right: 0.4em;
+  background: linear-gradient(135deg, #ffffff 40%, #8b00dd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Forzamos el paint box a incluir el espacio de la cursiva */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.public-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ------- Filters Layout ------- */
+.public-filters-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  animation: publicFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.public-filter-field {
+  position: relative;
+  min-width: 240px;
+  flex: 1;
+  max-width: 320px;
+}
+
+.public-filter-label {
+  position: absolute;
+  top: -8px;
+  left: 14px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  background: #040d18;
+  padding: 0 6px;
+  z-index: 2;
+  pointer-events: none;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+  border-radius: 2px;
+}
+
+.public-filter-field:focus-within .public-filter-label {
+  color: #8b00dd;
+}
+
+.public-filter-input,
+.public-filter-select {
+  width: 100%;
+  padding: 0.8rem 1.1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.public-filter-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.public-filter-input:hover,
+.public-filter-select:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.public-filter-input:focus,
+.public-filter-select:focus {
+  border-color: #8b00dd;
+  background: rgba(139, 0, 221, 0.03);
+  box-shadow: 0 0 10px rgba(139, 0, 221, 0.2);
+}
+
+.public-filter-select option {
+  background: #080f1e;
+  color: #ffffff;
+}
+
+/* ------- Grid ------- */
+.public-startups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding-bottom: 3rem;
+  animation: publicFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+/* ------- Premium Card Design ------- */
+.public-startup-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: #ffffff;
+  position: relative;
+}
+
+.public-startup-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1.5px;
+  background: linear-gradient(135deg, transparent, transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.4s ease;
+}
+
+.public-startup-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.45),
+    0 0 30px rgba(139, 0, 221, 0.12);
+}
+
+.public-startup-card:hover::before {
+  background: linear-gradient(135deg, rgba(139, 0, 221, 0.45), rgba(177, 245, 0, 0.25));
+}
+
+/* Card Top Logo Panel */
+.public-startup-card-top {
+  height: 155px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem;
+  transition: background 0.3s ease;
+}
+
+.public-startup-card:hover .public-startup-card-top {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Card Body */
+.public-startup-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-grow: 1;
+}
+
+.public-startup-card-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.public-startup-card-desc {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  display: box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  box-orient: vertical;
+  overflow: hidden;
+  height: 4.8em;
+}
+
+/* Action button "Ver Startup" */
+.public-startup-card-action {
+  margin: 0.75rem auto 0.5rem;
+  width: fit-content;
+}
+
+.public-startup-btn-action {
+  padding: 0.65rem 2rem;
+  border-radius: 30px;
+  background: #b1f500;
+  color: #040d18;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(177, 245, 0, 0.3);
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transform: translateY(6px);
+  visibility: hidden;
+}
+
+.public-startup-card:hover .public-startup-btn-action {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  background: #c5ff1a;
+  box-shadow:
+    0 6px 18px rgba(177, 245, 0, 0.5),
+    0 0 10px rgba(177, 245, 0, 0.3);
+}
+
+/* Meta-tags details */
+.public-startup-card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: auto;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.public-startup-meta-left {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.public-startup-stage-badge {
+  background: rgba(139, 0, 221, 0.15);
+  color: #c78aff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* ------- Keyframe Animations ------- */
+@keyframes publicFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------- Responsive Layout ------- */
+@media (max-width: 768px) {
+  .public-startups-main {
+    padding: 3rem 1.5rem;
+  }
+}
+
+@media (max-width: 580px) {
+  .public-filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+  }
+
+  .public-filter-field {
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .public-title {
+    font-size: 2.2rem;
+  }
+
+  .public-title-inner {
+    padding-right: 0.15em;
+  }
+}
+
+.public-startup-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(4, 13, 24, 0.8);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.public-startup-modal {
+  width: min(920px, 100%);
+  max-height: min(calc(100vh - 3rem), 860px);
+  background: #081124;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.public-startup-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.public-startup-modal-close:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.public-startup-modal-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 2.2rem 2.4rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.public-startup-modal-logo {
+  width: 130px;
+  height: 130px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.public-startup-modal-badge {
+  display: inline-block;
+  margin-bottom: 0.85rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  background: rgba(177, 245, 0, 0.12);
+  color: #b1f500;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.public-startup-modal-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2rem, 2.5vw, 2.8rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+}
+
+.public-startup-modal-subtitle {
+  margin: 0.5rem 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+.public-startup-modal-body {
+  padding: 1.5rem 2.4rem 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.public-startup-modal-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 1.5rem 1.8rem;
+}
+
+.public-startup-modal-section h3 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.public-startup-modal-section p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.public-startup-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.public-startup-modal-grid div {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+.public-startup-modal-grid strong {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.public-startup-modal-grid p {
+  margin: 0;
+  color: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.public-startup-modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.public-startup-modal-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+.public-startup-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(177, 245, 0, 0.35);
+  border-radius: 999px;
+}
+
+.public-startup-modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(177, 245, 0, 0.35) rgba(255, 255, 255, 0.04);
+}
+
+@media (max-width: 760px) {
+  .public-startup-modal {
+    max-height: 95vh;
+  }
+
+  .public-startup-modal-header {
+    grid-template-columns: 1fr;
+    padding: 1.6rem 1.6rem 1rem;
+  }
+
+  .public-startup-modal-logo {
+    width: 100%;
+    height: 120px;
+  }

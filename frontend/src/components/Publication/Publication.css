@@ -1,0 +1,190 @@
+.publication-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 3.5rem auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ─── Cabecera superior con borde de color lima ─── */
+.pub-header-bar {
+  background-color: #f3f4f6;
+  border-top: 6px solid #b1f500;
+  padding: 1.2rem 2rem;
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.pub-header-bar h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #2d3748;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Grid de tarjetas de 3 columnas ─── */
+.pub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+}
+
+/* ─── Tarjeta individual ─── */
+.pub-card {
+  position: relative;
+  height: 520px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #1a202c;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.pub-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(139, 0, 221, 0.25);
+}
+
+/* Enfoque accesible */
+.pub-card:focus-visible {
+  outline: 3px solid #8b00dd;
+}
+
+/* ─── Contenedor de la Imagen ─── */
+.pub-card-img-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.pub-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Duotono púrpura por defecto */
+  filter: grayscale(100%) sepia(30%) hue-rotate(245deg) saturate(220%) contrast(1.15) brightness(0.85);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pub-card-overlay {
+  position: absolute;
+  inset: 0;
+  /* Capa de multiplicación púrpura para efecto duotono idéntico a la imagen */
+  background: rgba(139, 0, 221, 0.38);
+  mix-blend-mode: multiply;
+  opacity: 1;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+/* ─── Efecto Hover: Transición a Color Normal ─── */
+.pub-card:hover .pub-card-img {
+  filter: grayscale(0%) sepia(0%) hue-rotate(0deg) saturate(100%) contrast(1) brightness(1);
+  transform: scale(1.05);
+}
+
+.pub-card:hover .pub-card-overlay {
+  opacity: 0;
+}
+
+/* ─── Contenido y Texto de la tarjeta ─── */
+.pub-card-content {
+  position: relative;
+  z-index: 2;
+  padding: 2.5rem 1.8rem;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pub-card-title {
+  margin: 0;
+  font-size: 2.1rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.15;
+  text-transform: none;
+  letter-spacing: -0.5px;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+/* Estilo del Ribbon / Resaltador de Texto inclinado como la imagen */
+.pub-highlight {
+  display: inline-block;
+  background-color: #ffffff;
+  color: #8b00dd;
+  padding: 0.15rem 1.1rem;
+  margin-top: 0.6rem;
+  border-radius: 4px;
+  transform: rotate(-2.5deg);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pub-card:hover .pub-highlight {
+  background-color: #8b00dd;
+  color: #ffffff;
+}
+
+/* ─── Línea inferior púrpura ─── */
+.pub-card-bottom-line {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: 8px;
+  background-color: #8b00dd;
+  transition: background-color 0.3s;
+}
+
+.pub-card:hover .pub-card-bottom-line {
+  background-color: #b1f500; /* Se vuelve verde lima en hover */
+}
+
+/* ─── Responsividad ─── */
+@media (max-width: 950px) {
+  .pub-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .pub-card {
+    height: 480px;
+  }
+}
+
+@media (max-width: 650px) {
+  .pub-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .pub-card {
+    height: 450px;
+  }
+  .publication-section {
+    padding: 0 1rem;
+    margin: 2.5rem auto;
+  }
+  .pub-header-bar h2 {
+    font-size: 1.1rem;
+  }
+}

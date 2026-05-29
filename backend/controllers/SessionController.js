@@ -1,4 +1,5 @@
 const SessionService = require('../services/SessionService');
+const getSessionId = (params) => params.id || params.id_session;
 
 const crearSession = async (req, res) => {
     try {
@@ -20,7 +21,7 @@ const ObtenerSessions = async (req, res) => {
 
 const eliminarSession = async (req, res) => {
     try {
-        await SessionService.eliminarSession(req.params.id_session);
+        await SessionService.eliminarSession(getSessionId(req.params));
         res.status(200).json({ message: 'Session eliminada correctamente' });
     } catch (error) {
         if (error.message === 'Session no encontrada') {
@@ -32,7 +33,7 @@ const eliminarSession = async (req, res) => {
 
 const editarSession = async (req, res) => {
     try {
-        const sessionEditada = await SessionService.editarSession(req.params.id_session, req.body);
+        const sessionEditada = await SessionService.editarSession(getSessionId(req.params), req.body);
         res.status(200).json(sessionEditada);
     } catch (error) {
         if (error.message === 'Session no encontrada') {

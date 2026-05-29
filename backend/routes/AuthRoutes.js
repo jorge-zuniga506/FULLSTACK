@@ -12,11 +12,26 @@
  */
 const express  = require('express');
 const router   = express.Router();
-const { login, logout, getMe } = require('../controllers/AuthController');
+const { login, logout, getMe, verifyRoleCode, resetRoleCode, resendRoleCode, googleLogin, changeRole } = require('../controllers/AuthController');
 const { authRequired }         = require('../middlewares/authMiddleware');
 
 // Pública: genera JWT si las credenciales son correctas
 router.post('/login', login);
+
+// Pública: autenticación mediante Google OAuth
+router.post('/google', googleLogin);
+
+// Protegida: verifica código 2FA
+router.post('/verify-role-code', authRequired, verifyRoleCode);
+
+// Protegida: regenera y envía código 2FA por correo
+router.post('/reset-role-code', authRequired, resetRoleCode);
+
+// Protegida: reenvía código 2FA al correo del usuario autenticado
+router.post('/resend-role-code', authRequired, resendRoleCode);
+
+// Protegida: cambia el rol de un usuario en caliente
+router.post('/change-role', authRequired, changeRole);
 
 // Protegida: invalida la sesión activa (logout)
 router.post('/logout', authRequired, logout);

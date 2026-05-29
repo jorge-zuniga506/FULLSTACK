@@ -1,0 +1,530 @@
+/* ========================================================================
+   FOUNDERS PUBLIC VIEW STYLES
+   Paleta basada en Landpage: morado neon (#8b00dd), verde lima (#b1f500)
+   y blanco sobre el fondo ultra oscuro de la Landing (#040d18).
+   ======================================================================== */
+
+.public-founders-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ------- ENCABEZADO ------- */
+.public-founders-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.8rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.public-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 1.1rem;
+  border-radius: 30px;
+  background: rgba(139, 0, 221, 0.1);
+  border: 1px solid rgba(139, 0, 221, 0.25);
+  color: #8b00dd;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  width: fit-content;
+}
+
+.public-title {
+  margin: 0;
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.public-title-inner {
+  display: inline;
+  background: linear-gradient(135deg, #ffffff 40%, #8b00dd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.public-subtitle {
+  margin: 0.4rem 0 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+/* ------- CONTROLES DE FILTRO PREMIUM ------- */
+.public-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.public-filter-field {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+  max-width: 380px;
+  width: 100%;
+}
+
+.public-filter-field.search-field {
+  flex: 1.2;
+}
+
+.public-filter-label {
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  background: #040d18;
+  padding: 0 6px;
+  z-index: 2;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+.public-filter-input,
+.public-filter-select {
+  width: 100%;
+  padding: 0.95rem 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: #ffffff;
+  font-size: 0.92rem;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.public-filter-select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.45)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1.2rem center;
+  background-size: 1rem;
+  padding-right: 3rem;
+}
+
+.public-filter-select option {
+  background-color: #040d18;
+  color: #ffffff;
+  padding: 10px;
+}
+
+.public-filter-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.public-filter-input:focus,
+.public-filter-select:focus {
+  border-color: #8b00dd;
+  background: rgba(139, 0, 221, 0.04);
+  box-shadow: 0 0 16px rgba(139, 0, 221, 0.15);
+}
+
+/* ------- GRID DE TARJETAS DE FOUNDERS ------- */
+.public-founders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 2rem;
+}
+
+.public-founder-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  min-height: 380px;
+}
+
+.public-founder-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(139, 0, 221, 0.15);
+  border-color: rgba(139, 0, 221, 0.35);
+}
+
+/* Banner de la empresa */
+.public-founder-banner {
+  height: 120px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+}
+
+.public-founder-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 80%);
+}
+
+.public-founder-banner-text {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.22);
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+/* Avatar redondo con efecto cutout */
+.public-founder-avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-top: -50px; /* Desplazamiento hacia arriba para solaparse */
+  position: relative;
+  z-index: 5;
+}
+
+.public-founder-avatar-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #040d18; /* Efecto de recorte con el fondo de la página */
+  background: #040d18;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.public-founder-card:hover .public-founder-avatar-img {
+  transform: scale(1.05);
+}
+
+/* Cuerpo de la tarjeta */
+.public-founder-card-body {
+  padding: 1.6rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.public-founder-name {
+  margin: 0 0 0.4rem 0;
+  font-size: 1.25rem;
+  font-weight: 850;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.public-founder-role {
+  margin: 0 0 2rem 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Botón premium de perfil (Verde Lima) */
+.public-founder-profile-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  background: #b1f500; /* Color lima de Landpage */
+  color: #040d18;
+  border: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(15px);
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s ease,
+              box-shadow 0.3s ease;
+  box-shadow: 0 6px 15px rgba(177, 245, 0, 0.25);
+  letter-spacing: 0.02em;
+}
+
+/* Revelar botón en hover sobre la tarjeta */
+.public-founder-card:hover .public-founder-profile-btn {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Efecto hover directo en el botón una vez visible */
+.public-founder-profile-btn:hover {
+  background: #ffffff;
+  transform: translateY(-2px) !important; /* Asegura el desplazamiento correcto al pasar el cursor encima */
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+}
+
+/* Estado sin resultados */
+.public-founders-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+}
+
+/* ------- DETALLE MODAL PREMIUM ------- */
+.public-founder-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(4, 13, 24, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.public-founder-modal-card {
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 3rem);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 26px;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+  animation: scaleUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: #ffffff;
+}
+
+.public-founder-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 1.5rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.2s ease;
+}
+
+.public-founder-modal-close:hover {
+  background: #ffffff;
+  color: #040d18;
+}
+
+.public-founder-modal-banner {
+  height: 140px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.public-founder-modal-banner-text {
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.22);
+  text-transform: uppercase;
+}
+
+/* Modal Header & Avatar */
+.public-founder-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 2rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.public-founder-modal-avatar-wrap {
+  margin-top: -60px;
+  position: relative;
+  z-index: 5;
+  margin-bottom: 1rem;
+}
+
+.public-founder-modal-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 6px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.public-founder-modal-name {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.6rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.public-founder-modal-role {
+  margin: 0 0 1rem 0;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.public-founder-modal-role .highlight-text {
+  color: #8b00dd;
+  font-weight: 700;
+}
+
+.public-founder-modal-badges {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.modal-badge {
+  padding: 0.35rem 0.8rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Modal Body */
+.public-founder-modal-body {
+  padding: 1.8rem 2rem;
+}
+
+.public-founder-modal-body .section-title {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+}
+
+.public-founder-modal-desc {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Modal Actions */
+.public-founder-modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 0 2rem 2.2rem;
+}
+
+.modal-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.modal-action-btn.email-btn {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-action-btn.email-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.modal-action-btn.linkedin-btn {
+  background: #8b00dd; /* Morado de Landpage */
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(139, 0, 221, 0.3);
+}
+
+.modal-action-btn.linkedin-btn:hover {
+  background: #7900c2;
+  box-shadow: 0 6px 20px rgba(139, 0, 221, 0.55);
+  transform: translateY(-2px);
+}
+
+/* Keyframes de animación */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ------- RESPONSIVE ------- */
+@media (max-width: 768px) {
+  .public-founders-main {
+    padding: 3rem 1.5rem 4rem;
+    gap: 2rem;
+  }
+
+  .public-title {
+    font-size: 2.5rem;
+  }
+
+  .public-filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.2rem;
+  }
+
+  .public-filter-field {
+    width: 100%;
+  }
+
+  .public-founder-modal-actions {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+}

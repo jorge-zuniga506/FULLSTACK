@@ -28,6 +28,8 @@
  */
 const { User } = require('../models');
 const bcrypt   = require('bcrypt');
+const UploadService = require('./UploadService');
+const USER_SELECTABLE_ROLES = [2, 3, 4];
 
 class UserService {
 
@@ -38,17 +40,41 @@ class UserService {
    */
   static async crearUsuario(data) {
     const { cedula, nombre_hacienda, email, password_hash, role_id } = data;
+    const roleIdNum = parseInt(role_id, 10);
+
+    if (!USER_SELECTABLE_ROLES.includes(roleIdNum)) {
+      throw new Error('Rol invalido. Solo se permite registrar Startup, Aceleradora o Inversionista.');
+    }
 
     // Hashea la contraseña con bcrypt (salt rounds: 10)
     // El campo se llama password_hash en el modelo pero viene como texto plano desde el controller
     const clave_encriptada = await bcrypt.hash(password_hash, 10);
+
+    // Generar código de doble factor
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let prefix = 'DEMO';
+    if (roleIdNum === 1) prefix = 'ADMIN';
+    else if (roleIdNum === 2) prefix = 'STARTUP';
+    else if (roleIdNum === 3) prefix = 'ACELERADORA';
+    else if (roleIdNum === 4) prefix = 'INVERSOR';
+
+    let randomStr = '';
+    for (let i = 0; i < 4; i++) {
+      randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const verificationCode = `${prefix}${randomStr}`;
+    const codeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
 
     const usuario = await User.create({
       cedula,
       nombre_hacienda,
       email,
       password_hash: clave_encriptada, // Guarda el hash, nunca el texto plano
-      role_id
+      role_id: roleIdNum,
+      two_factor_code: verificationCode,
+      two_factor_expires_at: codeExpires,
+      survey_completed: true,
+      is_role_whitelisted: false
     });
 
     // Elimina el hash del objeto antes de retornar al cliente
@@ -87,7 +113,7 @@ class UserService {
    * @throws {Error} Si se intenta cambiar role_id (403 en el controller)
    */
   static async actualizarUsuario(id, data) {
-    const { cedula, nombre_hacienda, email, password_hash, role_id } = data;
+    const { cedula, nombre_hacienda, email, password_hash, role_id, profile_picture } = data;
 
     // Barrera de seguridad: role_id no debe modificarse nunca vía este endpoint
     // (la segunda capa está en los hooks beforeUpdate del modelo User)
@@ -99,6 +125,14 @@ class UserService {
 
     // Solo incluye los campos permitidos en la actualización
     let updateData = { cedula, nombre_hacienda, email };
+
+    if (profile_picture !== undefined) {
+      if (profile_picture && profile_picture.startsWith('data:image/')) {
+        updateData.profile_picture = await UploadService.uploadBase64(profile_picture);
+      } else {
+        updateData.profile_picture = profile_picture;
+      }
+    }
 
     // Si se envía una nueva contraseña, la hashea antes de actualizar
     if (password_hash) {
@@ -121,6 +155,14 @@ class UserService {
    */
   static async eliminarUsuario(id) {
     const usuario = await this.obtenerUsuarioPorId(id);
+
+    if (parseInt(usuario.role_id, 10) === 1) {
+      const totalAdmins = await User.count({ where: { role_id: 1 } });
+      if (totalAdmins <= 1) {
+        throw new Error('No se puede eliminar el unico administrador del sistema.');
+      }
+    }
+
     await usuario.destroy(); // El CASCADE en BD elimina sesiones, perfiles, etc.
     return true;
   }

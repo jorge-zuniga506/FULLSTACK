@@ -1,2 +1,10 @@
+import React from 'react';
 import LandpageView from '../../components/Landpage/LandpageView';
-export default LandpageView;
+
+
+const Landpage = () => {
+  return <LandpageView />;
+ 
+};
+
+export default Landpage;

@@ -27,88 +27,99 @@
  */
 require('dotenv').config();
 const express = require('express');
-const { sequelize, Role } = require('./models');
+const path = require('path');
+const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
-// ─── Importación de routers ────────────────────────────────────────────────────
-const UserRoutes          = require('./routes/UserRoutes');
-const AuthRoutes          = require('./routes/AuthRoutes');
-const AceleradoraRoutes   = require('./routes/AceleradoraRoutes');
-const StartupRoutes       = require('./routes/StartupRoutes');
-const SessionRoutes       = require('./routes/SessionRoutes');
-const SectorRoutes        = require('./routes/SectorRoutes');
-const RoleRoutes          = require('./routes/RoleRoutes');
-const InversorRoutes      = require('./routes/InversorRoutes');
-const EcosystemRoutes     = require('./routes/EcosystemRoutes');
+const UserRoutes = require('./routes/UserRoutes');
+const AuthRoutes = require('./routes/AuthRoutes');
+const AceleradoraRoutes = require('./routes/AceleradoraRoutes');
+const StartupRoutes = require('./routes/StartupRoutes');
+const SessionRoutes = require('./routes/SessionRoutes');
+const SectorRoutes = require('./routes/SectorRoutes');
+const RoleRoutes = require('./routes/RoleRoutes');
+const InversorRoutes = require('./routes/InversorRoutes');
+const EcosystemRoutes = require('./routes/EcosystemRoutes');
 const CommunicationRoutes = require('./routes/CommunicationRoutes');
+const NotificationRoutes = require('./routes/NotificationRoutes');
+const ChatbotRoutes = require('./routes/ChatbotRoutes');
+const IdentityRoutes = require('./routes/IdentityRoutes');
+const DashboardRoutes = require('./routes/DashboardRoutes');
+const ConvocatoriaRoutes = require('./routes/ConvocatoriaRoutes');
+const KpiRoutes = require('./routes/KpiRoutes');
+const DemodayRoutes = require('./routes/DemodayRoutes');
+const PerksRoutes = require('./routes/PerksRoutes');
+const StartupFeedRoutes = require('./routes/StartupFeedRoutes');
+const AceleradoraFeedRoutes = require('./routes/AceleradoraFeedRoutes');
+const InversorFeedRoutes = require('./routes/InversorFeedRoutes');
+const ExchangeRateRoutes = require('./routes/ExchangeRateRoutes');
+const SupportRoutes = require('./routes/SupportRoutes');
 
-// ─── Instancia de Express ──────────────────────────────────────────────────────
 const app = express();
 
-// Parsea el body de las peticiones como JSON
-app.use(express.json());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  credentials: true
+}));
+// Aumenta el límite de payload para permitir actualización de foto de perfil en Base64.
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// ─── Ruta raíz (health check) ──────────────────────────────────────────────────
+// Estandarización global de respuestas JSON { status, message, data, meta }
+const responseFormatter = require('./middlewares/responseFormatter');
+app.use(responseFormatter);
+
+// Sirve archivos estáticos subidos localmente (cuando no se usa Cloudinary)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Health check
 app.get('/', (req, res) => {
   res.send('Backend del Ecosistema de Startups listo.');
 });
 
-// ─── Registro de routers ───────────────────────────────────────────────────────
-app.use('/api/usuarios',      UserRoutes);
-app.use('/api/auth',          AuthRoutes);
-app.use('/api/aceleradoras',  AceleradoraRoutes);
-app.use('/api/startups',      StartupRoutes);
-app.use('/api/sesiones',      SessionRoutes);
-app.use('/api/sectores',      SectorRoutes);
-app.use('/api/roles',         RoleRoutes);
-app.use('/api/inversores',    InversorRoutes);
-app.use('/api/ecosistemas',   EcosystemRoutes);
-app.use('/api/communication', CommunicationRoutes);
+// ── Swagger / OpenAPI Docs ────────────────────────────────────────────────────
+app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+app.get('/api/v1/docs.json', (req, res) => res.json(swaggerSpec));
+// Compatibilidad con rutas legacy de documentación
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
 
-// ─── Middleware global de manejo de errores ────────────────────────────────────
-// Debe registrarse AL FINAL de las rutas para capturar errores propagados con next(err)
+// ── API Versioning ────────────────────────────────────────────────────────────
+// Canonical:  /api/v1/<recurso>
+// Legacy:     /api/<recurso>        (backward compatibility)
+
+const API_V1 = '/api/v1';
+const API_LEGACY = '/api';
+
+[API_V1, API_LEGACY].forEach(prefix => {
+  app.use(`${prefix}/usuarios`, UserRoutes);
+  app.use(`${prefix}/auth`, AuthRoutes);
+  app.use(`${prefix}/aceleradoras`, AceleradoraRoutes);
+  app.use(`${prefix}/startups`, StartupRoutes);
+  app.use(`${prefix}/sesiones`, SessionRoutes);
+  app.use(`${prefix}/sectores`, SectorRoutes);
+  app.use(`${prefix}/roles`, RoleRoutes);
+  app.use(`${prefix}/inversores`, InversorRoutes);
+  app.use(`${prefix}/ecosistemas`, EcosystemRoutes);
+  app.use(`${prefix}/communication`, CommunicationRoutes);
+  app.use(`${prefix}/notifications`, NotificationRoutes);
+  app.use(`${prefix}/chatbot`, ChatbotRoutes);
+  app.use(`${prefix}/ai`, ChatbotRoutes);
+  app.use(`${prefix}/identity`, IdentityRoutes);
+  app.use(`${prefix}/dashboard`, DashboardRoutes);
+  app.use(`${prefix}/convocatorias`, ConvocatoriaRoutes);
+  app.use(`${prefix}/kpis`, KpiRoutes);
+  app.use(`${prefix}/demoday`, DemodayRoutes);
+  app.use(`${prefix}/programas`, PerksRoutes);
+  app.use(`${prefix}/feed/aceleradora`, AceleradoraFeedRoutes);
+  app.use(`${prefix}/feed/inversor`, InversorFeedRoutes);
+  app.use(`${prefix}/feed`, StartupFeedRoutes);
+  app.use(`${prefix}/indicadores`, ExchangeRateRoutes);
+  app.use(`${prefix}/support`, SupportRoutes);
+});
+
 app.use(require('./middlewares/errorHandler'));
 
-// ─── Puerto de escucha ────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 3007;
-
-// Solo arranca el servidor real cuando NO estamos en modo test
-// Esto permite que Jest importe `app` sin colisiones de puertos
-if (process.env.NODE_ENV !== 'test') {
-  const server = app.listen(PORT, async () => {
-    console.log(`Servidor backend escuchando en http://localhost:${PORT}`);
-
-    // Sincronizar modelos Sequelize con la BD
-    // force: false → solo crea tablas faltantes, NO borra datos existentes
-    try {
-      await sequelize.sync({ force: false });
-
-      // Insertar roles predefinidos si no existen (ignoreDuplicates evita errores)
-      await Role.bulkCreate(
-        [
-          { nombre: 'admin'       },
-          { nombre: 'startup'     },
-          { nombre: 'aceleradora' },
-          { nombre: 'inversor'    },
-        ],
-        { ignoreDuplicates: true }
-      );
-      console.log('Tablas sincronizadas correctamente en MySQL.');
-    } catch (err) {
-      console.error('Error al sincronizar tablas:', err);
-    }
-  });
-
-  // Manejo de errores del servidor HTTP
-  server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      // El puerto ya está ocupado por otro proceso
-      console.error(`El puerto ${PORT} ya está en uso. Cierra el otro proceso o cambia PORT en tu .env.`);
-      process.exit(1);
-    }
-    console.error('Error del servidor:', err);
-    process.exit(1);
-  });
-}
-
-// Exporta `app` para que los tests de Jest puedan importarla
 module.exports = app;
+

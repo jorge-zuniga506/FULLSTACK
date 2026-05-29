@@ -22,11 +22,11 @@
  * editarConsultaIA(id, data)  → actualiza la respuesta o el modelo usado
  * eliminarConsultaIA(id)      → elimina una consulta del historial
  */
-const { Mensaje, ConsultaIA } = require('../models');
+const { sequelize, Mensaje, ConsultaIA, ContactoPublico } = require('../models');
 
 class CommunicationService {
 
-  // ── MENSAJES ───────────────────────────────────────────────────────────────
+  // ── CHAT / MENSAJES ─────────────────────────────────────────────────────────
 
   /**
    * Crea un nuevo mensaje en un chat
@@ -39,10 +39,96 @@ class CommunicationService {
 
   /**
    * Lista todos los mensajes del sistema
-   * TODO: agregar filtro por chat_id para obtener mensajes de una conversación específica
    */
-  static async obtenerMensajes() {
-    return await Mensaje.findAll();
+  static async obtenerMensajes(query = {}) {
+    const { page, limit } = query;
+    if (!page && !limit) {
+      return await Mensaje.findAll();
+    }
+    const p = parseInt(page, 10) || 1;
+    const l = parseInt(limit, 10) || 10;
+    const offset = (p - 1) * l;
+    const result = await Mensaje.findAndCountAll({ limit: l, offset });
+    return {
+      totalItems:  result.count,
+      totalPages:  Math.ceil(result.count / l),
+      currentPage: p,
+      mensajes:    result.rows
+    };
+  }
+
+  /**
+   * Crea un mensaje de contacto público desde el formulario de contacto.
+   * @param {object} data - { nombre, email, asunto, mensaje }
+   * @returns {ContactoPublico}
+   */
+  static async crearMensajeContactoPublico(data) {
+    return await ContactoPublico.create(data);
+  }
+
+  /**
+   * Lista todos los mensajes de contacto público recibidos.
+   */
+  static async obtenerMensajesContactoPublico(query = {}) {
+    const { page, limit } = query;
+    if (!page && !limit) {
+      return await ContactoPublico.findAll({ order: [['fecha_envio', 'DESC']] });
+    }
+    const p = parseInt(page, 10) || 1;
+    const l = parseInt(limit, 10) || 10;
+    const offset = (p - 1) * l;
+    const result = await ContactoPublico.findAndCountAll({
+      limit: l,
+      offset,
+      order: [['fecha_envio', 'DESC']]
+    });
+    return {
+      totalItems:   result.count,
+      totalPages:   Math.ceil(result.count / l),
+      currentPage:  p,
+      mensajes:     result.rows
+    };
+  }
+
+  /**
+   * Lista chats únicos existentes en base a mensajes enviados
+   */
+  static async listarChats() {
+    const chats = await Mensaje.findAll({
+      attributes: [
+        'chat_id',
+        [sequelize.fn('COUNT', sequelize.col('id')), 'totalMensajes'],
+        [sequelize.fn('MAX', sequelize.col('fecha_envio')), 'ultimoEnvio']
+      ],
+      group: ['chat_id'],
+      order: [[sequelize.fn('MAX', sequelize.col('fecha_envio')), 'DESC']]
+    });
+
+    return chats.map(chat => ({
+      chat_id: chat.chat_id,
+      totalMensajes: Number(chat.get('totalMensajes')),
+      ultimoEnvio: chat.get('ultimoEnvio')
+    }));
+  }
+
+  static async crearChat() {
+    const result = await Mensaje.findOne({
+      attributes: [[sequelize.fn('MAX', sequelize.col('chat_id')), 'maxChatId']]
+    });
+
+    const nextChatId = (result.get('maxChatId') || 0) + 1;
+    return { chat_id: nextChatId };
+  }
+
+  static async obtenerMensajesPorChat(chat_id) {
+    return await Mensaje.findAll({
+      where: { chat_id },
+      order: [['fecha_envio', 'ASC']]
+    });
+  }
+
+  static async enviarMensajeEnChat(chat_id, data) {
+    return await Mensaje.create({ ...data, chat_id });
   }
 
   /**
@@ -64,6 +150,28 @@ class CommunicationService {
   static async editarMensaje(id, data) {
     const mensaje = await this.obtenerMensajePorId(id);
     return await mensaje.update(data);
+  }
+
+  /**
+   * Marca un mensaje como leído
+   * @param {number} id - ID del mensaje
+   * @returns {Mensaje}
+   */
+  static async marcarMensajeComoLeido(id) {
+    const mensaje = await this.obtenerMensajePorId(id);
+    return await mensaje.update({ leido: true });
+  }
+
+  /**
+   * Marca todos los mensajes de un chat como leídos
+   * @param {number} chat_id - ID del chat
+   * @returns {{ message: string, count: number }}
+   */
+  static async marcarMensajesChatComoLeidos(chat_id) {
+    const [count] = await Mensaje.update({ leido: true }, {
+      where: { chat_id, leido: false }
+    });
+    return { message: `Mensajes del chat ${chat_id} marcados como leídos`, count };
   }
 
   /**
@@ -89,8 +197,21 @@ class CommunicationService {
   }
 
   /** Lista todo el historial de consultas IA */
-  static async obtenerConsultasIA() {
-    return await ConsultaIA.findAll();
+  static async obtenerConsultasIA(query = {}) {
+    const { page, limit } = query;
+    if (!page && !limit) {
+      return await ConsultaIA.findAll();
+    }
+    const p = parseInt(page, 10) || 1;
+    const l = parseInt(limit, 10) || 10;
+    const offset = (p - 1) * l;
+    const result = await ConsultaIA.findAndCountAll({ limit: l, offset });
+    return {
+      totalItems:   result.count,
+      totalPages:   Math.ceil(result.count / l),
+      currentPage:  p,
+      consultas:    result.rows
+    };
   }
 
   /**
