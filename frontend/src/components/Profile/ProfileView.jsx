@@ -384,11 +384,15 @@ const ProfileView = () => {
                 style={{ opacity: 0.6, cursor: 'not-allowed' }}
               />
             </div>
-            {/* Rol - No modificable */}
+            {/* Rol - Solo lectura */}
             <div className="pf-field">
               <label>Rol en el Ecosistema</label>
-              <select value={roleId} disabled style={{ opacity: 0.6, cursor: 'not-allowed' }}>
-                <option value={1}>Administrador</option>
+              <select 
+                value={roleId}
+                disabled
+                style={{ opacity: 0.7, cursor: 'not-allowed' }}
+              >
+                {user.role_id === 1 && <option value={1}>Administrador</option>}
                 <option value={2}>Emprendedor / Startup</option>
                 <option value={3}>Aceleradora</option>
                 <option value={4}>Inversionista</option>
@@ -606,3 +610,4 @@ const ProfileView = () => {
 };
 
 export default ProfileView;
+

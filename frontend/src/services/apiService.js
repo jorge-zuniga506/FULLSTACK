@@ -1,12 +1,28 @@
-﻿const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
 
 const AUTH_401_EVENT = 'auth:unauthorized';
 
+const unwrapNestedData = (value) => {
+  let current = value;
+
+  while (
+    current &&
+    typeof current === 'object' &&
+    !Array.isArray(current) &&
+    Object.prototype.hasOwnProperty.call(current, 'data') &&
+    Object.keys(current).length === 1
+  ) {
+    current = current.data;
+  }
+
+  return current;
+};
+
 const unpackResponse = (result) => {
   if (result && typeof result === 'object' && 'status' in result && 'data' in result) {
-    return result;
+    return { ...result, data: unwrapNestedData(result.data) };
   }
-  return { status: 'success', message: 'Operacion realizada con exito.', data: result, meta: {} };
+  return { status: 'success', message: 'Operacion realizada con exito.', data: unwrapNestedData(result), meta: {} };
 };
 
 const resolveToken = (token) => token || localStorage.getItem('token') || null;
@@ -77,6 +93,14 @@ export const apiService = {
   async update(endpoint, id, data, token) {
     return requestJson(`${API_BASE_URL}${endpoint}/${id}`, {
       method: 'PUT',
+      headers: buildHeaders(token),
+      body: JSON.stringify(data)
+    });
+  },
+
+  async patch(endpoint, id, data, token) {
+    return requestJson(`${API_BASE_URL}${endpoint}/${id}`, {
+      method: 'PATCH',
       headers: buildHeaders(token),
       body: JSON.stringify(data)
     });

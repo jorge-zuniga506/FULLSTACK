@@ -82,13 +82,13 @@ const JarvisChat = () => {
 
   // Función para reproducir el texto por voz (TTS)
   const speak = (text) => {
-    if (!synthRef.current || !soundEnabled) return;
+    if (!synthRef.current || !soundEnabled || !text) return;
 
     // Cancelar cualquier discurso previo
     synthRef.current.cancel();
 
     // Limpiar etiquetas HTML o Markdown simples del texto
-    const cleanText = text.replace(/[*#_`~]/g, '');
+    const cleanText = String(text).replace(/[*#_`~]/g, '');
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
@@ -175,14 +175,20 @@ const JarvisChat = () => {
       }
 
       const data = await response.json();
+      
+      // Desempaquetamos la respuesta en caso de que venga formateada por el middleware global { status, message, data }
+      const actualData = data.data !== undefined && data.data !== null && typeof data.data === 'object' && !Array.isArray(data.data)
+        ? data.data
+        : data;
+
       const jarvisText = activeSkill === 'classifier'
         ? [
-            `Clasificacion sugerida: ${data.tipo}`,
-            `Confianza: ${Math.round((data.confianza || 0) * 100)}%`,
-            data.razon,
-            data.requiere_revision ? 'Recomendacion: revisar manualmente antes de aprobar.' : 'Recomendacion: puede avanzar a revision del administrador.'
+            `Clasificación sugerida: ${actualData.tipo || data.tipo}`,
+            `Confianza: ${Math.round(((actualData.confianza || data.confianza) || 0) * 100)}%`,
+            actualData.razon || data.razon,
+            (actualData.requiere_revision || data.requiere_revision) ? 'Recomendación: revisar manualmente antes de aprobar.' : 'Recomendación: puede avanzar a revisión del administrador.'
           ].filter(Boolean).join('\n')
-        : data.response;
+        : (actualData.response || data.response || 'Disculpe, señor. No pude obtener una respuesta válida.');
 
       const jarvisMessage = {
         sender: 'jarvis',

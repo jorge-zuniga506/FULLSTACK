@@ -107,7 +107,7 @@ const validarUsuario = [
   body('password_hash').isLength({ min: 6 }).withMessage('La contraseña debe tener mínimo 6 caracteres'),
   body('role_id')
     .notEmpty().withMessage('El rol es requerido')
-    .isInt({ min: 1, max: 4 }).withMessage('Debe seleccionar un rol válido (1-4)'),
+    .isInt({ min: 2, max: 4 }).withMessage('Debe seleccionar un rol valido (2-4)'),
   handleValidationErrors
 ];
 
@@ -131,10 +131,40 @@ const validarActualizacionUsuario = [
   handleValidationErrors
 ];
 
+/**
+ * validarMensajeContactoPublico — Validación para POST /api/communication/contacto-publico
+ * Campos:
+ *   nombre   — requerido, texto entre 2 y 150 caracteres
+ *   email    — requerido, correo válido
+ *   asunto   — requerido, texto entre 3 y 200 caracteres
+ *   mensaje  — requerido, texto entre 10 y 5000 caracteres
+ */
+const validarMensajeContactoPublico = [
+  body('nombre')
+    .trim()
+    .notEmpty().withMessage('El nombre es requerido')
+    .isLength({ min: 2, max: 150 }).withMessage('El nombre debe tener entre 2 y 150 caracteres'),
+  body('email')
+    .trim()
+    .notEmpty().withMessage('El correo es requerido')
+    .isEmail().withMessage('Correo inválido')
+    .normalizeEmail(),
+  body('asunto')
+    .trim()
+    .notEmpty().withMessage('El asunto es requerido')
+    .isLength({ min: 3, max: 200 }).withMessage('El asunto debe tener entre 3 y 200 caracteres'),
+  body('mensaje')
+    .trim()
+    .notEmpty().withMessage('El mensaje es requerido')
+    .isLength({ min: 10, max: 5000 }).withMessage('El mensaje debe tener entre 10 y 5000 caracteres'),
+  handleValidationErrors
+];
+
 module.exports = {
   validarAceleradora,
   validarStartup,
   validarInversor,
   validarUsuario,
-  validarActualizacionUsuario
+  validarActualizacionUsuario,
+  validarMensajeContactoPublico
 };

@@ -3,6 +3,15 @@ import './AboutContact.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
 
+const extractErrorMessage = (payload) => {
+  if (!payload) return '';
+  if (typeof payload.message === 'string' && payload.message.trim()) return payload.message;
+  if (Array.isArray(payload.errors) && payload.errors.length > 0) {
+    return payload.errors[0].msg || payload.errors[0].message || '';
+  }
+  if (payload.data && typeof payload.data.message === 'string') return payload.data.message;
+  return '';
+};
 const AboutContact = () => {
   const [formData, setFormData] = useState({
     nombre: '',
@@ -68,23 +77,53 @@ const AboutContact = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/communication/contacto-publico`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const endpoints = [
+        `${API_BASE_URL}/api/communication/contacto-publico`,
+        `${API_BASE_URL}/api/v1/communication/contacto-publico`
+      ];
 
-      if (!response.ok) {
-        throw new Error('Error al enviar el mensaje. Intente de nuevo más tarde.');
+      let sent = false;
+      let lastError = null;
+
+      for (const endpoint of endpoints) {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const raw = await response.json().catch(() => ({}));
+        const payload = raw?.data || raw;
+
+        if (response.ok) {
+          sent = true;
+          break;
+        }
+
+        if (response.status === 404) {
+          continue;
+        }
+
+        lastError = new Error(
+          extractErrorMessage(payload) ||
+          extractErrorMessage(raw) ||
+          'Error al enviar el mensaje. Intente de nuevo mas tarde.'
+        );
+        break;
+      }
+
+      if (!sent) {
+        throw (lastError || new Error('No se encontro el endpoint del formulario de contacto en el backend.'));
       }
 
       setIsSuccess(true);
+      setErrors({});
       setFormData({ nombre: '', email: '', asunto: '', mensaje: '' });
     } catch (err) {
       console.error(err);
-      setSubmitError(err.message || 'No se pudo establecer conexión con el servidor.');
+      setSubmitError(err.message || 'No se pudo establecer conexion con el servidor.');
     } finally {
       setIsLoading(false);
     }

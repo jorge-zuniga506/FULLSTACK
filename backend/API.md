@@ -1328,3 +1328,517 @@ cp backend/.env.example backend/.env
 | 403 | No autorizado (rol sin permiso) |
 | 404 | Recurso no encontrado |
 | 500 | Error interno del servidor |
+
+---
+
+## Identity (`/api/identity`)
+
+### GET `/api/identity/hacienda/:cedula`
+
+Consulta pública de cédula en Hacienda.
+
+**Response 200:**
+```json
+{
+  "message": "Consulta realizada exitosamente",
+  "data": { "nombre": "Nombre Completo", "cedula": "12345678" }
+}
+```
+
+**Errors:** `404` (cédula no encontrada)
+
+---
+
+## Dashboard (`/api/dashboard`)
+
+Todos los endpoints requieren `authRequired` + el rol específico.
+
+### GET `/api/dashboard/startup`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Resumen del dashboard para startups (métricas, postulaciones, notificaciones).
+
+### GET `/api/dashboard/aceleradora`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Resumen del dashboard para aceleradoras (convocatorias, startups, solicitudes).
+
+### GET `/api/dashboard/inversor`
+
+**Auth:** `authRequired` + `requireRole(4)`
+
+Resumen del dashboard para inversores (oportunidades, reuniones, startups).
+
+### GET `/api/dashboard/admin`
+
+**Auth:** `authRequired` + `requireRole(1)`
+
+Panel de administración general (usuarios, reportes, actividad del sistema).
+
+---
+
+## Convocatorias (`/api/convocatorias`)
+
+### GET `/api/convocatorias/publicas`
+
+**Auth:** `authRequired`
+
+Lista las convocatorias abiertas de aceleradoras visibles para startups autenticadas.
+
+**Response 200:** Array de convocatorias activas.
+
+### POST `/api/convocatorias`
+
+**Auth:** `authRequired` + `requireRole(3)` (Aceleradora)
+
+Crea una nueva convocatoria.
+
+```json
+{
+  "titulo": "Programa de Aceleración 2026",
+  "descripcion": "...",
+  "fecha_inicio": "2026-06-01",
+  "fecha_fin": "2026-09-30",
+  "requisitos": "Tener MVP validado"
+}
+```
+
+**Response 201:** Convocatoria creada.
+
+### GET `/api/convocatorias/mis-convocatorias`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Lista las convocatorias creadas por la aceleradora autenticada.
+
+### PUT `/api/convocatorias/:id`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Actualiza una convocatoria existente.
+
+### POST `/api/convocatorias/postular`
+
+**Auth:** `authRequired` + `requireRole(2)` (Startup)
+
+Postula una startup a una convocatoria.
+
+```json
+{
+  "convocatoria_id": 1,
+  "mensaje": "Nos gustaría participar..."
+}
+```
+
+**Response 201:** Postulación creada.
+
+### GET `/api/convocatorias/mis-postulaciones`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Lista las postulaciones realizadas por la startup autenticada.
+
+### GET `/api/convocatorias/postulaciones`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Lista las postulaciones recibidas para las convocatorias de la aceleradora.
+
+### PATCH `/api/convocatorias/postulaciones/:id/estado`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Cambia el estado de una postulación.
+
+```json
+{ "estado": "Aprobada" }
+```
+
+---
+
+## KPIs (`/api/kpis`)
+
+### POST `/api/kpis`
+
+**Auth:** `authRequired` + `requireRole(2)` (Startup)
+
+Registra un KPI para la startup.
+
+```json
+{
+  "nombre": "MRR",
+  "valor": 15000,
+  "periodo": "2026-05"
+}
+```
+
+**Response 201:** KPI registrado.
+
+### GET `/api/kpis/mis-kpis`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Lista los KPIs registrados por la startup autenticada.
+
+### GET `/api/kpis/cohorte`
+
+**Auth:** `authRequired` + `requireRole(3)` (Aceleradora)
+
+Lista los KPIs agregados de las startups en el cohorte de la aceleradora.
+
+---
+
+## Demo Day (`/api/demoday`)
+
+### GET `/api/demoday/startups`
+
+**Auth:** `authRequired` + `requireRole(4)` (Inversor)
+
+Lista las startups graduadas disponibles para reuniones de Demo Day.
+
+### POST `/api/demoday/solicitar`
+
+**Auth:** `authRequired` + `requireRole(4)`
+
+Solicita una reunión con una startup graduada.
+
+```json
+{
+  "startup_id": 1,
+  "mensaje": "Nos interesa conocer más sobre su proyecto"
+}
+```
+
+**Response 201:** Solicitud de reunión creada.
+
+### GET `/api/demoday/mis-solicitudes`
+
+**Auth:** `authRequired` + `requireRole(4)`
+
+Lista las solicitudes de reunión realizadas por el inversor.
+
+### GET `/api/demoday/solicitudes-recibidas`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Lista las solicitudes de reunión recibidas por la startup.
+
+### PATCH `/api/demoday/solicitudes/:id`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Responde a una solicitud de reunión (Aceptar/Rechazar).
+
+```json
+{ "estado": "Aceptada" }
+```
+
+---
+
+## Programas / Perks (`/api/programas`)
+
+### Perks
+
+#### POST `/api/programas/perks`
+
+**Auth:** `authRequired` + `requireRole(3)` (Aceleradora)
+
+Crea un nuevo perk (beneficio) para startups.
+
+```json
+{
+  "nombre": "Crédito Cloud AWS",
+  "descripcion": "$1000 en créditos AWS",
+  "valor": 1000
+}
+```
+
+#### GET `/api/programas/perks/mis-perks`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Lista los perks creados por la aceleradora.
+
+#### GET `/api/programas/perks/disponibles`
+
+**Auth:** `authRequired` + `requireRole(2)` (Startup)
+
+Lista los perks disponibles para reclamar.
+
+#### POST `/api/programas/perks/reclamar`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Reclama un perk disponible.
+
+```json
+{ "perk_id": 1 }
+```
+
+#### GET `/api/programas/perks/reclamaciones`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Lista las reclamaciones de perks pendientes.
+
+#### PATCH `/api/programas/perks/reclamaciones/:id`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Gestiona una reclamación (aprobar/rechazar).
+
+```json
+{ "estado": "Aprobada" }
+```
+
+### Mentores
+
+#### POST `/api/programas/mentores`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Registra un mentor en la aceleradora.
+
+```json
+{
+  "nombre": "Carlos López",
+  "especialidad": "Fintech, Growth",
+  "email": "carlos@email.com"
+}
+```
+
+#### GET `/api/programas/mentores/mis-mentores`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Lista los mentores de la aceleradora.
+
+#### GET `/api/programas/mentores/disponibles`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Lista los mentores disponibles para reservar.
+
+#### POST `/api/programas/mentores/reservar`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Reserva una mentoría con un mentor.
+
+```json
+{
+  "mentor_id": 1,
+  "fecha": "2026-06-15",
+  "motivo": "Asesoría en fundraising"
+}
+```
+
+#### GET `/api/programas/mentores/mis-reservas`
+
+**Auth:** `authRequired` + `requireRole(2)`
+
+Lista las reservas de mentoría de la startup.
+
+#### GET `/api/programas/mentores/reservas`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Lista las reservas de mentoría de la aceleradora.
+
+#### PATCH `/api/programas/mentores/reservas/:id`
+
+**Auth:** `authRequired` + `requireRole(3)`
+
+Gestiona el estado de una reserva.
+
+```json
+{ "estado": "Confirmada" }
+```
+
+---
+
+## Feed / Red Social por Rol (`/api/feed`)
+
+Cada rol tiene su propia red social interna con posts, imágenes y comentarios.
+
+### Startup Feed (`/api/feed`)
+
+**Auth:** `authRequired` + `requireRole(2)` (Startup)
+
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| GET | `/api/feed` | Lista posts del feed de startups |
+| POST | `/api/feed` | Crea un post (`multipart/form-data`, campo `imagen` opcional) |
+| DELETE | `/api/feed/:id` | Elimina un post propio |
+| POST | `/api/feed/:postId/comentarios` | Comenta un post |
+| DELETE | `/api/feed/comentarios/:id` | Elimina un comentario propio |
+
+### Aceleradora Feed (`/api/feed/aceleradora`)
+
+**Auth:** `authRequired` + `requireRole(3)` (Aceleradora)
+
+Mismos endpoints que Startup Feed, pero exclusivo para aceleradoras.
+
+### Inversor Feed (`/api/feed/inversor`)
+
+**Auth:** `authRequired` + `requireRole(4)` (Inversor)
+
+Mismos endpoints que Startup Feed, pero exclusivo para inversores.
+
+---
+
+## Indicadores / Tipo de Cambio (`/api/indicadores`)
+
+### GET `/api/indicadores/tc`
+
+Público. Obtiene el tipo de cambio oficial (CRC/USD y CRC/EUR) del Banco Central de Costa Rica.
+
+**Response 200:**
+```json
+{
+  "message": "Tipo de cambio obtenido exitosamente",
+  "data": {
+    "usd_compra": 510.00,
+    "usd_venta": 520.00,
+    "eur_compra": 550.00,
+    "eur_venta": 560.00,
+    "fecha": "2026-05-28"
+  }
+}
+```
+
+**Errors:** `500` (servicio externo no disponible)
+
+---
+
+## Soporte (`/api/support`)
+
+### POST `/api/support/reportes`
+
+**Auth:** `authRequired`
+
+Crea un reporte de soporte técnico.
+
+```json
+{
+  "asunto": "Error al iniciar sesión",
+  "descripcion": "No puedo acceder a mi cuenta...",
+  "categoria": "bug"
+}
+```
+
+**Response 201:** Reporte creado.
+
+### GET `/api/support/mis-reportes`
+
+**Auth:** `authRequired`
+
+Lista los reportes de soporte del usuario autenticado.
+
+### GET `/api/support/reportes`
+
+**Auth:** `authRequired` + `requireRole(1)` (Admin)
+
+Lista todos los reportes de soporte del sistema.
+
+### PATCH `/api/support/reportes/:id/estado`
+
+**Auth:** `authRequired` + `requireRole(1)`
+
+Actualiza el estado de un reporte de soporte.
+
+```json
+{ "estado": "En progreso" }
+```
+
+---
+
+## Chatbot / Asistente IA (`/api/chatbot` y `/api/ai`)
+
+El asistente virtual **J.A.R.V.I.S.** es un chatbot inteligente potenciado por IA generativa (Google Gemini 2.5 Flash como motor principal, Anthropic Claude como respaldo secundario) con capacidad de llamar herramientas de base de datos y acceder a una base de conocimiento desde PDFs en Google Drive.
+
+Todos los endpoints están disponibles bajo ambos prefijos: `/api/chatbot` y `/api/ai`.
+
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| POST | `/api/chatbot/ask` | Pregunta general al asistente |
+| POST | `/api/chatbot/chat` | Alias de `/ask` |
+| POST | `/api/chatbot/classify-request` | Clasifica solicitudes de incorporación |
+
+### POST `/api/chatbot/ask` y `/api/chatbot/chat`
+
+Envía una consulta al asistente IA. No requiere autenticación (público).
+
+```json
+{
+  "message": "Recomiéndame startups fintech en etapa semilla"
+}
+```
+
+**Response 200:**
+```json
+{
+  "response": "He encontrado las siguientes startups fintech en etapa semilla en nuestro ecosistema...",
+  "data": [
+    { "id": 1, "nombre_comercial": "StartupX", "fase": "Semilla", "sector": "Fintech" }
+  ]
+}
+```
+
+### POST `/api/chatbot/classify-request`
+
+Clasifica automáticamente una solicitud de incorporación en `startup`, `aceleradora` o `inversor` usando IA.
+
+```json
+{
+  "text": "Somos un fondo de inversión con capital para startups tech"
+}
+```
+
+**Response 200:**
+```json
+{
+  "tipo": "inversor",
+  "confianza": 0.92,
+  "razon": "El texto menciona fondo de inversión y capital disponible.",
+  "requiere_revision": false,
+  "proveedor": "gemini"
+}
+```
+
+### Capacidades del Asistente
+
+| Capacidad | Descripción |
+|-----------|-------------|
+| **Búsqueda en BD** | Consulta startups, aceleradoras, inversores y solicitudes mediante tool calling |
+| **Base de conocimiento** | PDFs públicos cargados desde Google Drive inyectados en el prompt del sistema |
+| **Clasificación IA** | Clasifica solicitudes de registro automáticamente |
+| **Fallback local** | Si no hay API key de Gemini/Claude, usa reglas basadas en palabras clave |
+| **Recarga de documentos** | Comando especial: `/recargar-drive` o `/reload-drive` para refrescar PDFs |
+| **Gemini Tool Calling** | 5 herramientas: `buscar_startups`, `buscar_aceleradoras`, `buscar_inversores`, `buscar_solicitudes`, `crear_solicitud` |
+| **Modelos** | Gemini 2.5 Flash (principal) → Anthropic Claude (respaldo) → Reglas locales (fallback) |
+
+### Frontend
+
+El chatbot se integra en el frontend React como un widget flotante con:
+- Botón flotante con animación estilo "arc reactor" de Iron Man
+- Panel glassmórfico con historial de chat
+- Reconocimiento de voz (Speech-to-Text)
+- Síntesis de voz (Text-to-Speech) con selección de género
+- Indicador de escritura (typing animation)
+- Dos modos: "Chat Asesor" y "Clasificador"
+- Accesible desde landing page y todos los dashboards
+
+### Configuración
+
+```env
+# .env
+GEMINI_API_KEY=tu_api_key
+# Opcional: Google Drive para base de conocimiento
+GOOGLE_DRIVE_FOLDER_ID=tu_folder_id
+GOOGLE_DRIVE_FILE_IDS=file_id_1,file_id_2
+# Opcional: Anthropic Claude (respaldo)
+ANTHROPIC_API_KEY=tu_api_key
+```

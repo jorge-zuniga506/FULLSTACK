@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './EcosystemNews.css';
 import founderNewsImg from '../../assets/startup_founder_news.png';
 
@@ -58,40 +59,40 @@ const EcosystemNews = () => {
 
       <div className="initiatives-row">
         {/* Card 1: Informe */}
-        <div className="initiative-item-card">
+        <Link to="/informes" className="initiative-item-card">
           <div className="initiative-icon-circle">
             <span className="initiative-emoji-icon">📄</span>
           </div>
           <span className="initiative-name">Informe</span>
           <span className="initiative-arrow-right">→</span>
-        </div>
+        </Link>
 
         {/* Card 2: Latam Weeks */}
-        <div className="initiative-item-card">
+        <Link to="/latam-weeks" className="initiative-item-card">
           <div className="initiative-icon-circle">
             <span className="initiative-emoji-icon">📅</span>
           </div>
           <span className="initiative-name">Latam Weeks</span>
           <span className="initiative-arrow-right">→</span>
-        </div>
+        </Link>
 
         {/* Card 3: Cápsulas y RRSS */}
-        <div className="initiative-item-card">
+        <Link to="/capsulas" className="initiative-item-card">
           <div className="initiative-icon-circle">
             <span className="initiative-emoji-icon">🎙️</span>
           </div>
           <span className="initiative-name">Cápsulas y RRSS</span>
           <span className="initiative-arrow-right">→</span>
-        </div>
+        </Link>
 
         {/* Card 4: Newsletter */}
-        <div className="initiative-item-card">
+        <Link to="/newsletter" className="initiative-item-card">
           <div className="initiative-icon-circle">
             <span className="initiative-emoji-icon">📖</span>
           </div>
           <span className="initiative-name">Newsletter</span>
           <span className="initiative-arrow-right">→</span>
-        </div>
+        </Link>
       </div>
     </section>
   );

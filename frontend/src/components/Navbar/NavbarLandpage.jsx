@@ -5,6 +5,7 @@ import './NavbarLandpage.css'; // <-- Aquí está tu archivo CSS
 const NavbarLandpage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const [scrolled, setScrolled] = useState(false);
   const [showModal, setShowModal] = useState(false); // Estado para la ventana emergente
   const location = useLocation();
 
@@ -44,6 +45,12 @@ const NavbarLandpage = () => {
       }
 
       setActiveSection(currentSection);
+
+      if (window.scrollY > 20) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
     };
 
     updateSection();
@@ -64,7 +71,7 @@ const NavbarLandpage = () => {
 
   return (
     <>
-      <nav className="navbar">
+      <nav className={`navbar ${scrolled ? 'scrolled' : 'transparent'}`}>
         <div className="navbar-logo" onClick={closeMenu}>
           <Link to="/" className="navbar-logo-link">
             <span className="nexus">NEXUS</span>

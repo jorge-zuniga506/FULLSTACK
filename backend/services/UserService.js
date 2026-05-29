@@ -28,6 +28,8 @@
  */
 const { User } = require('../models');
 const bcrypt   = require('bcrypt');
+const UploadService = require('./UploadService');
+const USER_SELECTABLE_ROLES = [2, 3, 4];
 
 class UserService {
 
@@ -38,6 +40,11 @@ class UserService {
    */
   static async crearUsuario(data) {
     const { cedula, nombre_hacienda, email, password_hash, role_id } = data;
+    const roleIdNum = parseInt(role_id, 10);
+
+    if (!USER_SELECTABLE_ROLES.includes(roleIdNum)) {
+      throw new Error('Rol invalido. Solo se permite registrar Startup, Aceleradora o Inversionista.');
+    }
 
     // Hashea la contraseña con bcrypt (salt rounds: 10)
     // El campo se llama password_hash en el modelo pero viene como texto plano desde el controller
@@ -46,10 +53,10 @@ class UserService {
     // Generar código de doble factor
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let prefix = 'DEMO';
-    if (role_id === 1 || role_id === '1') prefix = 'ADMIN';
-    else if (role_id === 2 || role_id === '2') prefix = 'STARTUP';
-    else if (role_id === 3 || role_id === '3') prefix = 'ACELERADORA';
-    else if (role_id === 4 || role_id === '4') prefix = 'INVERSOR';
+    if (roleIdNum === 1) prefix = 'ADMIN';
+    else if (roleIdNum === 2) prefix = 'STARTUP';
+    else if (roleIdNum === 3) prefix = 'ACELERADORA';
+    else if (roleIdNum === 4) prefix = 'INVERSOR';
 
     let randomStr = '';
     for (let i = 0; i < 4; i++) {
@@ -63,7 +70,7 @@ class UserService {
       nombre_hacienda,
       email,
       password_hash: clave_encriptada, // Guarda el hash, nunca el texto plano
-      role_id,
+      role_id: roleIdNum,
       two_factor_code: verificationCode,
       two_factor_expires_at: codeExpires,
       survey_completed: true,
@@ -120,7 +127,11 @@ class UserService {
     let updateData = { cedula, nombre_hacienda, email };
 
     if (profile_picture !== undefined) {
-      updateData.profile_picture = profile_picture;
+      if (profile_picture && profile_picture.startsWith('data:image/')) {
+        updateData.profile_picture = await UploadService.uploadBase64(profile_picture);
+      } else {
+        updateData.profile_picture = profile_picture;
+      }
     }
 
     // Si se envía una nueva contraseña, la hashea antes de actualizar
@@ -144,6 +155,14 @@ class UserService {
    */
   static async eliminarUsuario(id) {
     const usuario = await this.obtenerUsuarioPorId(id);
+
+    if (parseInt(usuario.role_id, 10) === 1) {
+      const totalAdmins = await User.count({ where: { role_id: 1 } });
+      if (totalAdmins <= 1) {
+        throw new Error('No se puede eliminar el unico administrador del sistema.');
+      }
+    }
+
     await usuario.destroy(); // El CASCADE en BD elimina sesiones, perfiles, etc.
     return true;
   }

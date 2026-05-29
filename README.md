@@ -55,31 +55,33 @@ API RESTful para la gestión de un ecosistema de startups, aceleradoras, inverso
 | Envío de correos | ✅ Nodemailer en approve/reject | Ver API.md#3 |
 | Caché de respuestas | ❌ **No implementado** | — |
 
-### RF-06 | Frontend — ❌ **NO CUMPLE**
+### RF-06 | Frontend — ⚠️ **PARCIAL**
 
 | Aspecto | Estado |
 |---------|--------|
-| Paneles de administración con roles diferenciados | ❌ No implementado |
-| Estados de carga, errores, confirmaciones destructivas | ❌ No implementado |
-| Vista admin restringida (reportes, usuarios) | ❌ No implementado |
-| Validación de token/sesión en frontend | ❌ No implementado |
-| Validación cliente en formularios | ❌ No implementado |
-| Listados paginados en frontend | ❌ No implementado |
-| UI reactiva sin recarga manual | ❌ No implementado |
+| Paneles de administración con roles diferenciados | ✅ Admin, Startup, Aceleradora, Inversor dashboards implementados |
+| Estados de carga, errores, confirmaciones destructivas | ✅ SweetAlert2, error cards, loading states |
+| Vista admin restringida (reportes, usuarios) | ✅ AdminDashboard con CRUD de usuarios, reportes de soporte, tipo de cambio |
+| Validación de token/sesión en frontend | ✅ AuthContext con manejo de 401, redirección a login |
+| Validación cliente en formularios | ⚠️ Validación básica en algunos formularios |
+| Listados paginados en frontend | ✅ Componente Pagination reutilizable |
+| UI reactiva sin recarga manual | ✅ React 19 con estado reactivo |
 
-### RF-07 | Integración de IA — ❌ **NO CUMPLE**
+### RF-07 | Integración de IA — ✅ **CUMPLE**
 
 | Aspecto | Estado |
 |---------|--------|
 | Modelo `ConsultaIA` existe (tabla + endpoints CRUD) | ✅ |
-| Skill de IA implementada (LLM, agente, automatización, n8n, Make, Zapier) | ❌ **No implementada** |
-| Demostrable durante presentación | ❌ |
+| Skill de IA implementada (LLM, agente, automatización, n8n, Make, Zapier) | ✅ **J.A.R.V.I.S. Chatbot con Gemini 2.5 Flash + Claude + tool calling** |
+| Demostrable durante presentación | ✅ Widget flotante en frontend con chat, voz y clasificación |
 
-**Opciones para cumplir RF-07:**
-- **LLM**: Conectar a Gemini/OpenAI para responder consultas (`POST /api/communication/consultas-ia`)
-- **Agente**: Chatbot que clasifique startups por sector automáticamente
-- **n8n/Make/Zapier**: Workflow que envíe notificaciones al aprobar solicitudes
-- **Automatización**: Email + notificación in-app al cambiar estado de solicitud (backend ya soporta el email)
+**Implementación:**
+- **LLM**: Google Gemini 2.5 Flash como motor principal, Anthropic Claude como respaldo
+- **Agente**: J.A.R.V.I.S. — asistente virtual con capacidad de consultar BD mediante tool calling (5 herramientas: buscar startups, aceleradoras, inversores, solicitudes, crear solicitud)
+- **Clasificación IA**: Clasifica automáticamente solicitudes de incorporación como startup/aceleradora/inversor
+- **Base de conocimiento**: PDFs desde Google Drive inyectados en el prompt del sistema
+- **Frontend**: Widget flotante con chat, speech-to-text, text-to-speech, dos modos de uso
+- **Endpoints**: `POST /api/chatbot/ask`, `POST /api/chatbot/chat`, `POST /api/chatbot/classify-request`
 
 ---
 
@@ -143,8 +145,8 @@ API RESTful para la gestión de un ecosistema de startups, aceleradoras, inverso
 - [x] **RF-03**: Crear colección Postman o configurar Swagger (`swagger-jsdoc` + `swagger-ui-express`)
 - [x] **RF-04**: Agregar reintentos de conexión a BD con mensajes descriptivos
 - [x] **RF-04**: Usar transacciones Sequelize en operaciones multi-tabla (aprobación/rechazo de solicitudes)
-- [ ] **RF-06**: Rediseñar frontend con paneles por rol, estados de carga, validaciones, paginación
-- [ ] **RF-07**: Implementar skill de IA (LLM, n8n, agente, automatización con IA)
+- [x] **RF-06**: Rediseñar frontend con paneles por rol, estados de carga, validaciones, paginación
+- [x] **RF-07**: Implementar skill de IA (LLM, n8n, agente, automatización con IA) — **J.A.R.V.I.S. Chatbot**
 - [ ] **RNF-03**: Crear rama `develop`, adoptar Conventional Commits, usar Pull Requests
 - [x] **RNF-04**: Agregar diagrama ER, Swagger/Postman, ARCHITECTURE.md
 

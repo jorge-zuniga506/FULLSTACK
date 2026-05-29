@@ -13,15 +13,20 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import AppRoutes from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '953112545969536-mockclientid.apps.googleusercontent.com';
 
 // Monta la aplicación en el div#root del index.html
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* BrowserRouter habilita la navegación con URLs reales (sin hash) */}
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </GoogleOAuthProvider>
     </BrowserRouter>
   </StrictMode>,
 );

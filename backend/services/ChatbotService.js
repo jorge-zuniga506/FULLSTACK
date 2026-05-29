@@ -1,26 +1,116 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { Anthropic } = require('@anthropic-ai/sdk');
 const { Startup, Inversor, Aceleradora, Solicitud, Sector, User } = require('../models');
 const { Op } = require('sequelize');
+const GoogleDriveService = require('./GoogleDriveService');
 
 class ChatbotService {
 
   constructor() {
+    this.documents = [];
+    this.isDocsLoading = false;
+    this.lastDocsLoadTime = null;
+
+    // 1. Inicializar Google Gemini (Motor Principal)
     if (process.env.GEMINI_API_KEY) {
-      this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      this.model = this.genAI.getGenerativeModel({
+      this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
+      this.geminiModel = this.genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
-        tools: this.getToolDefinitions(),
-        systemInstruction: "Eres J.A.R.V.I.S., el asistente virtual de la plataforma del Ecosistema de Startups. Tu objetivo es ser extremadamente servicial, formal, analítico y profesional. Ayuda a los usuarios con consultas sobre startups, programas de aceleradoras, inversores en acciones/equity y solicitudes de registro. Utiliza las herramientas disponibles para consultar la base de datos cuando sea necesario. Explica los resultados en español de manera clara, educada y concisa."
+        tools: this.getGeminiToolDefinitions(),
+        systemInstruction: this.getBaseSystemInstruction()
       });
+      console.log("[ChatbotService] Gemini inicializado correctamente como Motor Principal.");
     } else {
-      console.warn("Falta la variable de entorno GEMINI_API_KEY para configurar el chatbot.");
+      console.warn("[ChatbotService] Falta la variable de entorno GEMINI_API_KEY.");
+    }
+
+    // 2. Inicializar Anthropic / Claude (Soporte Secundario)
+    if (process.env.ANTHROPIC_API_KEY) {
+      this.anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY.trim()
+      });
+      console.log(`[ChatbotService] Anthropic Claude inicializado como soporte secundario.`);
+    } else {
+      console.warn("[ChatbotService] Falta la variable de entorno ANTHROPIC_API_KEY.");
+    }
+
+    // 3. Pre-cargar los documentos en caliente de forma asíncrona al arrancar el servidor
+    this.ensureDocumentsLoaded(false).catch(err => {
+      console.error("[ChatbotService] Error al precargar documentos en inicio:", err.message);
+    });
+  }
+
+  /**
+   * Asegura que los documentos de Google Drive estén cargados en memoria.
+   * Si no se han cargado, o ha pasado más de 10 minutos, los recarga de forma asíncrona.
+   */
+  async ensureDocumentsLoaded(force = false) {
+    const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+    const rawFileIds = process.env.GOOGLE_DRIVE_FILE_IDS;
+    
+    if (!folderId && !rawFileIds) {
+      return;
+    }
+
+    const tenMinutes = 10 * 60 * 1000;
+    const now = Date.now();
+    const shouldReload = force || !this.lastDocsLoadTime || (now - this.lastDocsLoadTime > tenMinutes);
+
+    if (shouldReload && !this.isDocsLoading) {
+      this.isDocsLoading = true;
+      console.log("[ChatbotService] Iniciando carga de documentos desde Google Drive...");
+      
+      const directFileIds = rawFileIds 
+        ? rawFileIds.split(',').map(id => id.trim()).filter(id => id.length > 0)
+        : [];
+
+      try {
+        const loadedDocs = await GoogleDriveService.loadDocuments(folderId, directFileIds);
+        this.documents = loadedDocs;
+        this.lastDocsLoadTime = Date.now();
+        console.log(`[ChatbotService] Éxito al cargar ${this.documents.length} documentos de Google Drive.`);
+      } catch (err) {
+        console.error("[ChatbotService] Error al cargar base de conocimiento de Google Drive:", err.message);
+      } finally {
+        this.isDocsLoading = false;
+      }
     }
   }
 
   /**
-   * Retorna las definiciones de las herramientas (tools) para Gemini
+   * Retorna las instrucciones del sistema base para el asistente virtual JARVIS
    */
-  getToolDefinitions() {
+  getBaseSystemInstruction() {
+    return "Eres J.A.R.V.I.S., el asistente virtual de la plataforma del Ecosistema de Startups. Tu objetivo es ser extremadamente servicial, formal, analítico y profesional. Ayuda a los usuarios con consultas sobre startups, programas de aceleradoras, inversores en acciones/equity y solicitudes de registro. Utiliza las herramientas disponibles para consultar la base de datos cuando sea necesario. Explica los resultados en español de manera clara, educada y concisa.";
+  }
+
+  /**
+   * Construye el prompt del sistema combinado con los PDFs cargados de Google Drive
+   */
+  getSystemInstructionWithKnowledge() {
+    let instruction = this.getBaseSystemInstruction();
+
+    if (this.documents && this.documents.length > 0) {
+      instruction += "\n\n======================================================\n";
+      instruction += "BASE DE CONOCIMIENTO ADICIONAL (PDFs PÚBLICOS DE GOOGLE DRIVE):\n";
+      instruction += "Tienes acceso a los siguientes documentos que debes utilizar para responder preguntas de los usuarios. Si te preguntan sobre el contenido de estos PDFs, responde citando el nombre del documento.\n";
+      
+      this.documents.forEach(doc => {
+        instruction += `\n--- INICIO DOCUMENTO: ${doc.name} (ID: ${doc.id}) ---\n`;
+        instruction += doc.text;
+        instruction += `\n--- FIN DOCUMENTO: ${doc.name} ---\n`;
+      });
+      
+      instruction += "\n======================================================\n";
+    }
+
+    return instruction;
+  }
+
+  /**
+   * Retorna las definiciones de las herramientas para Gemini
+   */
+  getGeminiToolDefinitions() {
     return [
       {
         functionDeclarations: [
@@ -103,7 +193,88 @@ class ChatbotService {
   }
 
   /**
-   * Ejecuta la herramienta de base de datos solicitada por la IA
+   * Retorna las definiciones de las herramientas para Anthropic Claude
+   */
+  getAnthropicTools() {
+    return [
+      {
+        name: "buscar_startups",
+        description: "Busca o recomienda startups en el ecosistema por nombre, fase, sector o palabras clave en su descripción.",
+        input_schema: {
+          type: "object",
+          properties: {
+            nombre: { type: "string", description: "Nombre comercial de la startup a buscar." },
+            fase: {
+              type: "string",
+              description: "Fase de la startup ('Idea', 'Semilla', 'Serie A', 'Serie B', 'Escalamiento')."
+            },
+            sector: { type: "string", description: "Nombre del sector de actividad (ej: Fintech, Healthtech, Agritech, Edtech)." },
+            descripcion: { type: "string", description: "Palabras clave o temas de interés de la descripción de la startup." }
+          }
+        }
+      },
+      {
+        name: "buscar_aceleradoras",
+        description: "Busca o recomienda aceleradoras de startups en el ecosistema por nombre o palabras clave de sus programas.",
+        input_schema: {
+          type: "object",
+          properties: {
+            nombre: { type: "string", description: "Nombre de la aceleradora a buscar." },
+            programa: { type: "string", description: "Palabras clave en los programas activos de la aceleradora." }
+          }
+        }
+      },
+      {
+        name: "buscar_inversores",
+        description: "Busca o recomienda inversionistas en el ecosistema, especialmente inversores de acciones/equity, por nombre, presupuesto o sectores de interés.",
+        input_schema: {
+          type: "object",
+          properties: {
+            nombre: { type: "string", description: "Nombre del inversor a buscar." },
+            presupuesto: { type: "number", description: "Monto de presupuesto de inversión que se busca (debe estar entre el presupuesto mínimo y máximo del inversor)." },
+            sector: { type: "string", description: "Sector de interés del inversor para invertir (ej: Fintech, Healthtech, Logística)." }
+          }
+        }
+      },
+      {
+        name: "buscar_solicitudes",
+        description: "Busca solicitudes de incorporación al ecosistema realizadas por los usuarios, por ID de usuario, tipo de rol solicitado o estado actual.",
+        input_schema: {
+          type: "object",
+          properties: {
+            user_id: { type: "integer", description: "ID del usuario que creó la solicitud." },
+            tipo: {
+              type: "string",
+              description: "Tipo de incorporación solicitada ('startup', 'aceleradora', 'inversor')."
+            },
+            estado: {
+              type: "string",
+              description: "Estado de la solicitud ('Pendiente', 'Aprobada', 'Rechazada')."
+            }
+          }
+        }
+      },
+      {
+        name: "crear_solicitud",
+        description: "Crea una nueva solicitud de incorporación al ecosistema para un usuario.",
+        input_schema: {
+          type: "object",
+          properties: {
+            user_id: { type: "integer", description: "ID del usuario que realiza la solicitud." },
+            tipo: {
+              type: "string",
+              description: "Tipo de incorporación solicitada ('startup', 'aceleradora', 'inversor')."
+            },
+            comentarios_admin: { type: "string", description: "Comentarios o justificación del usuario para la solicitud." }
+          },
+          required: ["user_id", "tipo"]
+        }
+      }
+    ];
+  }
+
+  /**
+   * Ejecuta la herramienta de base de datos recomendada por la IA
    */
   async executeTool(name, args) {
     try {
@@ -338,7 +509,7 @@ class ChatbotService {
   async classifyRequest(text) {
     const localResult = this.classifyRequestLocally(text);
 
-    if (!this.model) {
+    if (!this.geminiModel) {
       return localResult;
     }
 
@@ -350,7 +521,7 @@ class ChatbotService {
         `Solicitud: ${text}`
       ].join('\n');
 
-      const result = await this.model.generateContent(prompt);
+      const result = await this.geminiModel.generateContent(prompt);
       const responseText = result.response.text();
       return this.parseClassificationResponse(responseText) || localResult;
     } catch (error) {
@@ -361,6 +532,30 @@ class ChatbotService {
 
   async processMessageLocally(message) {
     const normalized = message.toLowerCase();
+
+    // 1. Respuestas de navegación local (iniciar sesión / login)
+    if (normalized.includes('iniciar ses') || normalized.includes('iniciar sés') || normalized.includes('sesion') || normalized.includes('sesión') || normalized.includes('login') || normalized.includes('entrar') || normalized.includes('loguear')) {
+      return {
+        mensaje: "Saludos, señor. Es sumamente fácil. En la página principal, arriba a la derecha sale un botón de acceso. Al tocar ahí, se abrirá nuestro portal donde podrá iniciar sesión ingresando su Cédula y contraseña, o directamente con su cuenta de Google/Gmail en un solo clic.",
+        data: []
+      };
+    }
+
+    // 2. Respuestas de registro local
+    if (normalized.includes('registr') || normalized.includes('cuenta') || normalized.includes('crear usuario')) {
+      return {
+        mensaje: "Para registrarse en la plataforma, haga clic en 'Regístrate ahora' en la pantalla de inicio de sesión, ingrese su Cédula y pulse 'Validar Cédula' para autocompletar su nombre oficial desde el Ministerio de Hacienda, elija su rol, cree una contraseña y guarde su código 2FA. Si prefiere Google, elija su rol en el popup flotante para registrarse de inmediato omitiendo el 2FA.",
+        data: []
+      };
+    }
+
+    // 3. Respuestas de roles del ecosistema
+    if (normalized.includes('rol') || normalized.includes('roles')) {
+      return {
+        mensaje: "La plataforma cuenta con 4 roles principales:\n\n1. 🚀 Emprendedor / Startup: Para fundadores que publican su modelo de negocio y métricas de tracción.\n2. ⚡ Aceleradora: Para incubadoras que lanzan convocatorias y reclutan startups.\n3. 💼 Inversionista: Para mentores y Venture Capital que exploran startups y adquieren acciones/equity según su rango de presupuesto.\n4. 👑 Administrador: Control y moderación de solicitudes de incorporación.",
+        data: []
+      };
+    }
 
     if (normalized.includes('startup')) {
       const startups = await this.localBuscarStartups({});
@@ -403,32 +598,113 @@ class ChatbotService {
     }
 
     return {
-      mensaje: 'Estoy listo para ayudarle con startups, aceleradoras, inversores y solicitudes del ecosistema. Tambien puedo clasificar solicitudes desde el modo Clasificador.',
+      mensaje: 'Estoy listo para ayudarle con startups, aceleradoras, inversores y solicitudes del ecosistema. También puedo clasificar solicitudes desde el modo Clasificador y responder preguntas sobre la navegación.',
       data: []
     };
   }
 
   /**
-   * Procesa el mensaje del usuario y maneja el flujo de function calling
+   * Procesa el mensaje con Anthropic Claude
    */
-  async processMessage(message) {
+  async processMessageWithClaude(message) {
     try {
-      if (!this.model) {
-        return await this.processMessageLocally(message);
+      const systemInstruction = this.getSystemInstructionWithKnowledge();
+      const modelName = process.env.CLAUDE_MODEL || "claude-3-5-haiku-20241022";
+
+      console.log(`[ChatbotService] Procesando mensaje con Claude (${modelName})...`);
+
+      const response = await this.anthropic.messages.create({
+        model: modelName,
+        max_tokens: 4000,
+        system: systemInstruction,
+        messages: [{ role: "user", content: message }],
+        tools: this.getAnthropicTools()
+      });
+
+      // Si Claude decide invocar una herramienta
+      if (response.stop_reason === "tool_use") {
+        const toolUseBlock = response.content.find(block => block.type === "tool_use");
+        if (toolUseBlock) {
+          const toolName = toolUseBlock.name;
+          const toolInput = toolUseBlock.input;
+          const toolId = toolUseBlock.id;
+
+          console.log(`[ChatbotService] Claude invocó la tool "${toolName}" con argumentos:`, toolInput);
+          const toolResult = await this.executeTool(toolName, toolInput);
+
+          console.log(`[ChatbotService] Enviando respuesta de tool "${toolName}" de vuelta a Claude...`);
+          const secondResponse = await this.anthropic.messages.create({
+            model: modelName,
+            max_tokens: 4000,
+            system: systemInstruction,
+            messages: [
+              { role: "user", content: message },
+              { role: "assistant", content: response.content },
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "tool_result",
+                    tool_use_id: toolId,
+                    content: JSON.stringify(toolResult || { status: "no_data" })
+                  }
+                ]
+              }
+            ],
+            tools: this.getAnthropicTools()
+          });
+
+          const finalMessage = secondResponse.content.find(block => block.type === "text")?.text || "";
+          return {
+            mensaje: finalMessage,
+            data: Array.isArray(toolResult) ? toolResult : (toolResult ? [toolResult] : [])
+          };
+        }
       }
 
-      if (false && !this.model) {
-        return {
-          mensaje: "Lo lamento, el asistente virtual no está disponible porque falta la clave de API de Gemini.",
-          data: []
-        };
+      // Si no invocó herramientas, retornar el texto directamente
+      const textMessage = response.content.find(block => block.type === "text")?.text || "";
+      return {
+        mensaje: textMessage,
+        data: []
+      };
+
+    } catch (error) {
+      console.error("[ChatbotService] Error al llamar a Anthropic Claude:", error.message);
+      // Fallback a Gemini si Claude falla (ej: sin saldo o problemas de red)
+      if (this.geminiModel) {
+        console.log("[ChatbotService] Iniciando fallback a Gemini...");
+        return await this.processMessageWithGemini(message);
+      }
+      return await this.processMessageLocally(message);
+    }
+  }
+
+  async processMessageWithGemini(message) {
+    try {
+      // 1. Si hay documentos de la base de conocimiento cargados, configuramos el modelo con ellos antes de iniciar el chat
+      if (this.documents && this.documents.length > 0) {
+        const systemInstruction = this.getSystemInstructionWithKnowledge();
+        this.geminiModel = this.genAI.getGenerativeModel({
+          model: "gemini-2.5-flash",
+          tools: this.getGeminiToolDefinitions(),
+          systemInstruction: systemInstruction
+        });
+      } else {
+        // Aseguramos que al menos use la instrucción del sistema base
+        this.geminiModel = this.genAI.getGenerativeModel({
+          model: "gemini-2.5-flash",
+          tools: this.getGeminiToolDefinitions(),
+          systemInstruction: this.getBaseSystemInstruction()
+        });
       }
 
-      const chat = this.model.startChat();
+      // 2. Iniciamos el chat DESPUÉS de haber actualizado el modelo con el conocimiento de los PDFs
+      const chat = this.geminiModel.startChat();
+
       let result = await chat.sendMessage(message);
       let response = result.response;
 
-      // Soporta diferentes versiones del SDK para obtener las functionCalls
       let functionCalls = [];
       if (typeof response.functionCalls === 'function') {
         functionCalls = response.functionCalls() || [];
@@ -436,7 +712,6 @@ class ChatbotService {
         functionCalls = response.functionCalls;
       }
 
-      // Si no hay llamadas a funciones de base de datos, retornar el texto del modelo directamente
       if (functionCalls.length === 0) {
         return {
           mensaje: response.text(),
@@ -444,18 +719,17 @@ class ChatbotService {
         };
       }
 
-      // Ejecutar la primera llamada recomendada por el modelo
       const call = functionCalls[0];
+      console.log(`[ChatbotService] Gemini invocó la tool "${call.name}" con argumentos:`, call.args);
       const data = await this.executeTool(call.name, call.args);
 
       if (!data) {
         return {
-          mensaje: "Disculpe, señor. Ocurrió un problema al consultar la información de la base de datos.",
+          mensaje: "Disculpe. Ocurrió un problema al consultar la información en el sistema.",
           data: []
         };
       }
 
-      // Enviar el resultado de vuelta a la conversación
       const responseParts = [
         {
           functionResponse: {
@@ -472,14 +746,36 @@ class ChatbotService {
         mensaje: response.text(),
         data: Array.isArray(data) ? data : [data]
       };
-
     } catch (error) {
-      console.error("Error en ChatbotService:", error);
+      console.error("[ChatbotService] Error en Gemini:", error.message);
       return await this.processMessageLocally(message);
+    }
+  }
+
+  /**
+   * Procesa el mensaje del usuario y maneja el flujo de function calling
+   */
+  async processMessage(message) {
+    // 1. Comando especial para recargar documentos manualmente en caliente
+    const normalized = message.toLowerCase();
+    if (normalized.includes('/recargar-drive') || normalized.includes('/reload-drive') || normalized.includes('jarvis recarga documentos')) {
+      await this.ensureDocumentsLoaded(true);
       return {
-        mensaje: "Mis disculpas, señor. He experimentado una interrupción temporal en mis servidores de procesamiento. Por favor intente más tarde.",
-        data: []
+        mensaje: `¡A sus órdenes! He recargado la base de conocimiento desde Google Drive. Documentos cargados: ${this.documents.length}.`,
+        data: this.documents.map(d => ({ id: d.id, name: d.name }))
       };
+    }
+
+    // 2. Asegurar que los documentos estén cargados
+    await this.ensureDocumentsLoaded(false);
+
+    // 3. Decidir qué modelo utilizar: Priorizar Google Gemini como motor principal
+    if (this.geminiModel) {
+      return await this.processMessageWithGemini(message);
+    } else if (this.anthropic) {
+      return await this.processMessageWithClaude(message);
+    } else {
+      return await this.processMessageLocally(message);
     }
   }
 }

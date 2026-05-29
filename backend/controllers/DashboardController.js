@@ -1,5 +1,33 @@
 const { Startup, Aceleradora, Inversor, User, Sector, Session } = require('../models');
 
+const ensureAceleradoraProfile = async (userId) => {
+  const user = await User.findByPk(userId, { attributes: ['id', 'nombre_hacienda'] });
+  if (!user) return null;
+
+  const [aceleradora] = await Aceleradora.findOrCreate({
+    where: { user_id: userId },
+    defaults: {
+      nombre: user.nombre_hacienda || `Aceleradora ${userId}`
+    }
+  });
+
+  return aceleradora;
+};
+
+const ensureInversorProfile = async (userId) => {
+  const user = await User.findByPk(userId, { attributes: ['id', 'nombre_hacienda'] });
+  if (!user) return null;
+
+  const [inversor] = await Inversor.findOrCreate({
+    where: { user_id: userId },
+    defaults: {
+      nombre: user.nombre_hacienda || `Inversor ${userId}`
+    }
+  });
+
+  return inversor;
+};
+
 const getStartupDashboard = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -35,12 +63,12 @@ const getStartupDashboard = async (req, res) => {
 const getAceleradoraDashboard = async (req, res) => {
   try {
     const userId = req.user.id;
-    const aceleradora = await Aceleradora.findOne({ where: { user_id: userId } });
+    const aceleradora = await ensureAceleradoraProfile(userId);
 
     return res.status(200).json({
       role: 'aceleradora',
       title: 'Panel de Control de Aceleradora',
-      subtitle: aceleradora ? `Entidad: ${aceleradora.nombre_aceleradora}` : 'No tienes aceleradora registrada aún.',
+      subtitle: aceleradora ? `Entidad: ${aceleradora.nombre}` : 'No tienes aceleradora registrada aun.',
       aceleradoraInfo: aceleradora || null,
       stats: [
         { label: 'Startups Aceleradas', value: '18', change: '+3 activas', icon: '⚡' },
@@ -62,15 +90,15 @@ const getAceleradoraDashboard = async (req, res) => {
 const getInversorDashboard = async (req, res) => {
   try {
     const userId = req.user.id;
-    const inversor = await Inversor.findOne({ where: { user_id: userId } });
+    const inversor = await ensureInversorProfile(userId);
 
     return res.status(200).json({
       role: 'inversor',
       title: 'Panel de Inversionista',
-      subtitle: inversor ? `Portafolio de: ${inversor.nombre_institucion || 'Inversionista Independiente'}` : 'Perfil de inversionista no configurado.',
+      subtitle: inversor ? `Portafolio de: ${inversor.nombre || 'Inversionista Independiente'}` : 'Perfil de inversionista no configurado.',
       inversorInfo: inversor || null,
       stats: [
-        { label: 'Inversión en Portafolio', value: inversor && inversor.capital_disponible ? `$${Number(inversor.capital_disponible).toLocaleString()}` : '$750,000', change: 'Disponible', icon: '💼' },
+        { label: 'Inversion en Portafolio', value: inversor && inversor.presupuesto_max ? `$${Number(inversor.presupuesto_max).toLocaleString()}` : '$750,000', change: 'Disponible', icon: '💼' },
         { label: 'Startups Financiadas', value: '6', change: '+1 este mes', icon: '🤝' },
         { label: 'ROI Promedio', value: '24.8%', change: '+3.2%', icon: '📊' },
         { label: 'Decks Revisados', value: '112', change: '+14 hoy', icon: '📂' }
@@ -119,3 +147,4 @@ module.exports = {
   getInversorDashboard,
   getAdminDashboard
 };
+

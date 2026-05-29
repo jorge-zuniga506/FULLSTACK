@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
 
 const AuthContext = createContext(null);
@@ -18,6 +18,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     sessionStorage.removeItem('isRoleVerified');
+    sessionStorage.removeItem('twoFactorDelivery');
+    sessionStorage.removeItem('twoFactorDestination');
+    sessionStorage.removeItem('twoFactorWhatsappPhone');
+    sessionStorage.removeItem('twoFactorWhatsappApiKey');
   };
 
   useEffect(() => {
@@ -27,6 +31,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       sessionStorage.removeItem('isRoleVerified');
+      sessionStorage.removeItem('twoFactorDelivery');
+      sessionStorage.removeItem('twoFactorDestination');
+      sessionStorage.removeItem('twoFactorWhatsappPhone');
+      sessionStorage.removeItem('twoFactorWhatsappApiKey');
     }
   }, [token]);
 
@@ -78,16 +86,28 @@ export const AuthProvider = ({ children }) => {
     fetchMe();
   }, [token]);
 
-  const login = async (email, password) => {
+  const login = async (email, password, otpOptions = {}) => {
     setError(null);
     try {
+      const {
+        otpChannel = 'email',
+        whatsappPhone = '',
+        whatsappApiKey = ''
+      } = otpOptions;
+
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({
+          email,
+          password,
+          otp_channel: otpChannel,
+          whatsapp_phone: whatsappPhone,
+          whatsapp_api_key: whatsappApiKey
+        })
       });
 
       const rawData = await response.json();
@@ -101,11 +121,67 @@ export const AuthProvider = ({ children }) => {
       setIsRoleVerified(false);
       sessionStorage.setItem('isRoleVerified', 'false');
       localStorage.setItem('user', JSON.stringify(data.usuario));
+      sessionStorage.setItem('twoFactorDelivery', data.twoFactorDelivery || otpChannel || 'email');
+      sessionStorage.setItem('twoFactorDestination', data.twoFactorDestination || '');
+      sessionStorage.setItem('twoFactorWhatsappPhone', whatsappPhone || '');
+      sessionStorage.setItem('twoFactorWhatsappApiKey', whatsappApiKey || '');
 
       return {
         success: true,
         redirectPath: data.redirectPath,
-        verificationCode: data.verificationCode
+        twoFactorDelivery: data.twoFactorDelivery || otpChannel || 'email',
+        twoFactorDestination: data.twoFactorDestination || ''
+      };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    }
+  };
+
+  const loginWithGoogle = async (googleToken, roleId) => {
+    setError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: googleToken, role_id: roleId })
+      });
+
+      const rawData = await response.json();
+      if (!response.ok) {
+        throw new Error(rawData.message || 'Error al iniciar sesión con Google');
+      }
+
+      const data = rawData?.data || rawData;
+      
+      if (data.requiresRoleSelection) {
+        return {
+          success: true,
+          requiresRoleSelection: true,
+          googleToken: data.googleToken,
+          email: data.email,
+          name: data.name,
+          picture: data.picture
+        };
+      }
+
+      setToken(data.token);
+      setUser(data.usuario);
+      setIsRoleVerified(true);
+      sessionStorage.setItem('isRoleVerified', 'true');
+      sessionStorage.removeItem('twoFactorDelivery');
+      sessionStorage.removeItem('twoFactorDestination');
+      sessionStorage.removeItem('twoFactorWhatsappPhone');
+      sessionStorage.removeItem('twoFactorWhatsappApiKey');
+      localStorage.setItem('user', JSON.stringify(data.usuario));
+
+      return {
+        success: true,
+        requiresRoleSelection: false,
+        redirectPath: data.redirectPath
       };
     } catch (err) {
       setError(err.message);
@@ -139,10 +215,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       const loginResult = await login(email, password);
-      return {
-        ...loginResult,
-        verificationCode: loginResult.verificationCode || rawData?.data?.verificationCode
-      };
+      return loginResult;
     } catch (err) {
       setError(err.message);
       return { success: false, error: err.message };
@@ -176,26 +249,82 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const resetRoleCode = async (password) => {
+  const resendRoleCode = async () => {
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/reset-role-code`, {
+      const twoFactorDelivery = sessionStorage.getItem('twoFactorDelivery') || 'email';
+      const whatsappPhone = sessionStorage.getItem('twoFactorWhatsappPhone') || '';
+      const whatsappApiKey = sessionStorage.getItem('twoFactorWhatsappApiKey') || '';
+
+      const response = await fetch(`${API_BASE_URL}/api/auth/resend-role-code`, {
         method: 'POST',
         credentials: 'include',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({
+          otp_channel: twoFactorDelivery,
+          whatsapp_phone: whatsappPhone,
+          whatsapp_api_key: whatsappApiKey
+        })
       });
 
       const rawData = await response.json();
       if (!response.ok) {
-        throw new Error(rawData.message || 'Error al restablecer el codigo');
+        throw new Error(rawData.message || 'Error al reenviar el codigo');
       }
 
       const data = rawData?.data || rawData;
-      return { success: true, verificationCode: data.verificationCode };
+      if (data.twoFactorDelivery) {
+        sessionStorage.setItem('twoFactorDelivery', data.twoFactorDelivery);
+      }
+      if (data.twoFactorDestination) {
+        sessionStorage.setItem('twoFactorDestination', data.twoFactorDestination);
+      }
+
+      return {
+        success: true,
+        twoFactorDelivery: data.twoFactorDelivery || twoFactorDelivery,
+        twoFactorDestination: data.twoFactorDestination || sessionStorage.getItem('twoFactorDestination') || '',
+        twoFactorExpiresAt: data.twoFactorExpiresAt
+      };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    }
+  };
+
+  // Alias para no romper componentes antiguos
+  const resetRoleCode = resendRoleCode;
+
+  const changeUserRole = async (newRoleId) => {
+    setError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/change-role`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ role_id: parseInt(newRoleId, 10) })
+      });
+
+      const rawData = await response.json();
+      if (!response.ok) {
+        throw new Error(rawData.message || 'Error al cambiar de rol');
+      }
+
+      const data = rawData?.data || rawData;
+      setToken(data.token);
+      setUser(data.usuario);
+      localStorage.setItem('user', JSON.stringify(data.usuario));
+
+      return {
+        success: true,
+        redirectPath: data.redirectPath
+      };
     } catch (err) {
       setError(err.message);
       return { success: false, error: err.message };
@@ -227,9 +356,12 @@ export const AuthProvider = ({ children }) => {
         loading,
         error,
         login,
+        loginWithGoogle,
         register,
         verifyCode,
+        resendRoleCode,
         resetRoleCode,
+        changeUserRole,
         logout,
         setError
       }}

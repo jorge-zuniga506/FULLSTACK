@@ -46,8 +46,12 @@ const buildCookieOptions = () => ({
  */
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const authData = await AuthService.login(email, password);
+    const { email, password, otp_channel, whatsapp_phone, whatsapp_api_key } = req.body;
+    const authData = await AuthService.login(email, password, {
+      deliveryChannel: otp_channel,
+      whatsappPhone: whatsapp_phone,
+      whatsappApiKey: whatsapp_api_key
+    });
 
     res.cookie('access_token', authData.token, buildCookieOptions());
 
@@ -57,7 +61,9 @@ const login = async (req, res) => {
       usuario: authData.usuario,
       redirectPath: authData.redirectPath,
       requiresExtraVerification: authData.requiresExtraVerification,
-      verificationCode: authData.verificationCode
+      twoFactorDelivery: authData.twoFactorDelivery,
+      twoFactorDestination: authData.twoFactorDestination,
+      twoFactorExpiresAt: authData.twoFactorExpiresAt
     });
   } catch (error) {
     // Distingue entre errores de validación (400) y credenciales inválidas (401)
@@ -66,6 +72,16 @@ const login = async (req, res) => {
     }
     if (error.message && error.message.toLowerCase().includes('credenciales')) {
       return res.status(401).json({ message: error.message });
+    }
+    if (error.message && (
+      error.message.toLowerCase().includes('codigo') ||
+      error.message.toLowerCase().includes('whatsapp') ||
+      error.message.toLowerCase().includes('callmebot') ||
+      error.message.toLowerCase().includes('textmebot') ||
+      error.message.toLowerCase().includes('api key') ||
+      error.message.toLowerCase().includes('numero')
+    )) {
+      return res.status(400).json({ message: error.message });
     }
     res.status(500).json({
       message: 'Error en el servidor al intentar iniciar sesión',
@@ -145,27 +161,121 @@ const getMe = async (req, res) => {
 
 const resetRoleCode = async (req, res) => {
   try {
-    const { password } = req.body;
     const userId = req.user.id;
+    const { otp_channel, whatsapp_phone, whatsapp_api_key } = req.body || {};
 
-    const newCode = await AuthService.resetRoleCode(userId, password);
+    const codeDispatch = await AuthService.resetRoleCode(userId, {
+      deliveryChannel: otp_channel,
+      whatsappPhone: whatsapp_phone,
+      whatsappApiKey: whatsapp_api_key
+    });
 
     res.status(200).json({
-      message: 'Código de verificación restablecido con éxito.',
-      verificationCode: newCode
+      message: 'Codigo de verificacion enviado correctamente.',
+      twoFactorDelivery: codeDispatch.delivery,
+      twoFactorDestination: codeDispatch.destinationMasked,
+      twoFactorExpiresAt: codeDispatch.expiresAt
     });
   } catch (error) {
-    if (error.message === 'La contraseña es requerida.' ||
-        error.message === 'Contraseña incorrecta.') {
+    if (error.message && (
+      error.message.toLowerCase().includes('usuario no encontrado') ||
+      error.message.toLowerCase().includes('codigo') ||
+      error.message.toLowerCase().includes('whatsapp') ||
+      error.message.toLowerCase().includes('callmebot') ||
+      error.message.toLowerCase().includes('textmebot') ||
+      error.message.toLowerCase().includes('api key') ||
+      error.message.toLowerCase().includes('numero')
+    )) {
       return res.status(400).json({ message: error.message });
     }
     res.status(500).json({
-      message: 'Error al restablecer código de rol',
+      message: 'Error al restablecer codigo de rol',
       error: error.message
     });
   }
 };
 
-module.exports = { login, logout, getMe, verifyRoleCode, resetRoleCode };
+const resendRoleCode = resetRoleCode;
+
+const googleLogin = async (req, res) => {
+  try {
+    const { token, role_id } = req.body;
+    const authData = await AuthService.loginWithGoogle(token, role_id);
+
+    // Si requiere selección de rol (es un usuario nuevo y no se especificó rol)
+    if (authData.requiresRoleSelection) {
+      return res.status(200).json({
+        requiresRoleSelection: true,
+        googleToken: authData.googleToken,
+        email: authData.email,
+        name: authData.name,
+        picture: authData.picture
+      });
+    }
+
+    res.cookie('access_token', authData.token, buildCookieOptions());
+
+    res.status(200).json({
+      requiresRoleSelection: false,
+      message: 'Autenticación exitosa con Google',
+      token:   authData.token,
+      usuario: authData.usuario,
+      redirectPath: authData.redirectPath,
+      requiresExtraVerification: false // Bypasseamos 2FA para Google
+    });
+  } catch (error) {
+    if (error.message === 'Token de Google es requerido.') {
+      return res.status(400).json({ message: error.message });
+    }
+    if (error.message && error.message.toLowerCase().includes('rol invalido')) {
+      return res.status(400).json({ message: error.message });
+    }
+    if (error.message && error.message.includes('Token de Google')) {
+      return res.status(401).json({ message: error.message });
+    }
+    res.status(500).json({
+      message: 'Error al iniciar sesión con Google',
+      error:   error.message
+    });
+  }
+};
+
+const changeRole = async (req, res) => {
+  try {
+    const { role_id } = req.body;
+    const userId = req.user.id;
+
+    const result = await AuthService.changeUserRole(userId, role_id);
+
+    // Regeneramos el JWT con el nuevo rol para que su sesión tenga los permisos correctos
+    const jwt = require('jsonwebtoken');
+    const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_jwt_key_123';
+    const jwtToken = jwt.sign(
+      { id: result.usuario.id, email: result.usuario.email, role_id: result.usuario.role_id },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Actualizamos la cookie
+    res.cookie('access_token', jwtToken, buildCookieOptions());
+
+    res.status(200).json({
+      message: 'Rol actualizado exitosamente',
+      token: jwtToken,
+      usuario: result.usuario,
+      redirectPath: result.redirectPath
+    });
+  } catch (error) {
+    if (error.message && error.message.toLowerCase().includes('rol invalido')) {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({
+      message: 'Error al cambiar de rol',
+      error: error.message
+    });
+  }
+};
+
+module.exports = { login, logout, getMe, verifyRoleCode, resetRoleCode, resendRoleCode, googleLogin, changeRole };
 
 

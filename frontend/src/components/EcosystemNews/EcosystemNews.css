@@ -211,22 +211,23 @@
 }
 
 .initiative-item-card {
-  background-color: #ffffff;
-  border: 1px solid #eaeaea;
+  background: linear-gradient(135deg, #7900c2 0%, #8b00dd 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 8px 25px rgba(121, 0, 194, 0.25);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-decoration: none;
 }
 
 .initiative-item-card:hover {
-  border-color: #b1f500;
-  box-shadow: 0 10px 25px rgba(177, 245, 0, 0.12);
-  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 15px 35px rgba(121, 0, 194, 0.45);
+  transform: translateY(-3px);
 }
 
 .initiative-icon-circle {
@@ -238,10 +239,11 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(177, 245, 0, 0.25);
 }
 
 .initiative-item-card:hover .initiative-icon-circle {
-  transform: scale(1.05);
+  transform: scale(1.08) rotate(3deg);
 }
 
 .initiative-emoji-icon {
@@ -249,21 +251,22 @@
 }
 
 .initiative-name {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 700;
-  color: #0c0517;
+  color: #ffffff;
   flex-grow: 1;
   margin-left: 1rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .initiative-arrow-right {
   font-size: 1.1rem;
-  color: #a0a0a0;
+  color: rgba(255, 255, 255, 0.7);
   transition: all 0.3s ease;
 }
 
 .initiative-item-card:hover .initiative-arrow-right {
-  color: #b1f500;
+  color: #ffffff;
   transform: translateX(4px);
 }
 

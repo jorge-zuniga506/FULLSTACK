@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ADMIN_SECRET_DASHBOARD_PATH } from '../constants/adminRoute';
 
 /**
  * RoleRouteGuard — Enforces:
@@ -64,7 +65,7 @@ const getRoleName = (roleId) => {
 };
 
 const getRoleDashboard = (roleId) => {
-  if (roleId === 1) return '/dashboard/admin';
+  if (roleId === 1) return ADMIN_SECRET_DASHBOARD_PATH;
   if (roleId === 2) return '/dashboard/startup';
   if (roleId === 3) return '/dashboard/aceleradora';
   if (roleId === 4) return '/dashboard/inversor';

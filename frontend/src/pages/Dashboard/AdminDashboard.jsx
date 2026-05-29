@@ -2,39 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/apiService';
 import { userService } from '../../services/userService';
+import { supportService } from '../../services/supportService';
 import ReusableCRUD from '../../components/Common/ReusableCRUD';
+import ExchangeRatePanel from '../../components/Common/ExchangeRatePanel';
 import Swal from 'sweetalert2';
 import '../../styles/Dashboard.css';
 
-// Definición de las columnas del CRUD de Usuarios para el Administrador
+// Definicion de las columnas del CRUD de Usuarios para el Administrador
 const userColumns = [
-  { key: 'cedula', label: 'Cédula/ID', type: 'text', required: true },
+  { key: 'cedula', label: 'Cedula/ID', type: 'text', required: true },
   { key: 'nombre_hacienda', label: 'Nombre Completo', type: 'text', required: true },
-  { key: 'email', label: 'Correo Electrónico', type: 'text', required: true },
+  { key: 'email', label: 'Correo Electronico', type: 'text', required: true },
   { key: 'role_id', label: 'ID Rol (1:Admin, 2:Startup, 3:Acel, 4:Inv)', type: 'number', required: true },
   { key: 'is_role_whitelisted', label: 'Whitelisted', type: 'select', options: ['true', 'false'], defaultValue: 'false' }
 ];
 
 /**
- * DashboardErrorCard — Componente premium in-line para fallos de conexión o autenticación
+ * DashboardErrorCard  Componente premium in-line para fallos de conexion o autenticacion
  */
 const DashboardErrorCard = ({ message, onRetry }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', width: '100%' }}>
     <div className="db-error-card">
-      <span className="db-error-icon" style={{ animation: 'bounce 2s infinite' }}>🚨</span>
+      <span className="db-error-icon" style={{ animation: 'bounce 2s infinite' }}>[!]</span>
       <h3 className="db-error-title">Servidor Inalcanzable</h3>
       <p className="db-error-message">
-        {message || 'Hubo un problema al conectar con la consola de administración. Verifica tu conexión de red o si el servidor está activo.'}
+        {message || 'Hubo un problema al conectar con la consola de administracion. Verifica tu conexion de red o si el servidor esta activo.'}
       </p>
       <button className="db-error-retry-btn" onClick={onRetry}>
-        🔄 Reintentar Conexión
+        Reintentar Conexion
       </button>
     </div>
   </div>
 );
 
 /**
- * AdminDashboardSkeleton — Layout shimmer glassmorphic para carga fluida
+ * AdminDashboardSkeleton  Layout shimmer glassmorphic para carga fluida
  */
 const AdminDashboardSkeleton = () => (
   <div style={styles.container}>
@@ -96,28 +98,44 @@ const AdminDashboardSkeleton = () => (
 );
 
 /**
- * AdminDashboard — Vista de panel premium para Administradores de la Plataforma (role_id=1)
+ * AdminDashboard  Vista de panel premium para Administradores de la Plataforma (role_id=1)
  */
 const AdminDashboard = () => {
   const { token } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [dashboardData, setDashboardData] = useState(null);
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [supportReports, setSupportReports] = useState([]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await apiService.getOne('/api/dashboard/admin', token);
-      const data = response?.data || {};
+      const [dashboardResponse, auditResponse] = await Promise.all([
+        apiService.getOne('/api/dashboard/admin', token),
+        apiService.getAll('/api/usuarios/admin-audit', { limit: 20 }, token)
+      ]);
+
+      const data = dashboardResponse?.data || {};
+      const logs = auditResponse?.data || [];
       setDashboardData(data);
+      setAuditLogs(Array.isArray(logs) ? logs : []);
+
+      try {
+        const supportResponse = await supportService.getAdminReports({ limit: 6, estado: 'nuevo' }, token);
+        const supportData = supportResponse?.data?.reportes || [];
+        setSupportReports(Array.isArray(supportData) ? supportData : []);
+      } catch {
+        setSupportReports([]);
+      }
     } catch (err) {
       console.error('Error al obtener datos del panel administrativo:', err);
-      setError(err.message || 'Error al conectar con la consola de administración.');
+      setError(err.message || 'Error al conectar con la consola de administracion.');
       Swal.fire({
         icon: 'error',
-        title: 'Error de Sincronización',
-        text: 'No se pudieron recuperar las métricas operativas del servidor.',
+        title: 'Error de Sincronizacion',
+        text: 'No se pudieron recuperar las metricas operativas del servidor.',
         background: '#080f1e',
         color: '#ffffff',
         confirmButtonColor: '#7c3aed'
@@ -141,36 +159,36 @@ const AdminDashboard = () => {
     return <DashboardErrorCard message={error} onRetry={fetchDashboardData} />;
   }
 
-  // Paleta de colores neón adaptativa para las métricas administrativas
+  // Paleta de colores neon adaptativa para las metricas administrativas
   const accentColors = ['#7c3aed', '#059669', '#b1f500', '#00aaff'];
 
-  // Mapeamos dinámicamente el array stats del backend con colores locales
+  // Mapeamos dinamicamente el array stats del backend con colores locales
   const stats = (dashboardData.stats || []).map((s, index) => ({
     ...s,
     id: index + 1,
     color: accentColors[index % accentColors.length]
   }));
 
-  // Extraemos las métricas de rendimiento del sistema
+  // Extraemos las metricas de rendimiento del sistema
   const metrics = dashboardData.metricsList || [];
 
   return (
     <div style={styles.container}>
       <div className="db-header">
         <div>
-          <h1 className="db-title" style={styles.neonTitle}>{dashboardData.title || 'Panel de Administración'}</h1>
+          <h1 className="db-title" style={styles.neonTitle}>{dashboardData.title || 'Panel de Administracion'}</h1>
           <p className="db-subtitle">{dashboardData.subtitle || 'Supervisa la salud del sistema y configuraciones globales.'}</p>
         </div>
         <button style={styles.premiumBtn} onClick={() => {
           Swal.fire({
             title: 'Configuraciones de Infraestructura',
-            text: 'Módulos operativos en estado óptimo. No se requieren acciones manuales en este momento.',
+            text: 'Modulos operativos en estado optimo. No se requieren acciones manuales en este momento.',
             icon: 'info',
             background: '#080f1e',
             color: '#ffffff',
             confirmButtonColor: '#7c3aed'
           });
-        }}>⚙️ Configuraciones</button>
+        }}>Configuraciones</button>
       </div>
 
       {/* KPI Cards Reales del Backend */}
@@ -178,7 +196,7 @@ const AdminDashboard = () => {
         {stats.map(s => (
           <div className="db-stat-card" key={s.id} style={{ '--accent': s.color, ...styles.statCard }}>
             <div className="db-stat-top">
-              <span className="db-stat-icon" style={{ fontSize: '28px' }}>{s.icon || '🛡️'}</span>
+              <span className="db-stat-icon" style={{ fontSize: '28px' }}>{s.icon || 'ADM'}</span>
               <span className="db-stat-change">{s.change}</span>
             </div>
             <p className="db-stat-value" style={styles.statValue}>{s.value}</p>
@@ -193,7 +211,7 @@ const AdminDashboard = () => {
       {/* Grid 2 Columnas de Rendimiento en Tiempo Real */}
       <div style={styles.grid2Col}>
         <div className="db-card" style={styles.card}>
-          <h3 style={styles.cardTitle}>📈 Crecimiento y Rendimiento API</h3>
+          <h3 style={styles.cardTitle}>Crecimiento y Rendimiento API</h3>
           <div style={styles.chartMock}>
             {metrics.map((m, i) => (
               <div key={i} style={styles.chartCol}>
@@ -201,7 +219,7 @@ const AdminDashboard = () => {
                 <span style={styles.chartLabel}>{m.label.split(' ')[0]}</span>
               </div>
             ))}
-            {/* Relleno estético para completar 6 barras si es necesario */}
+            {/* Relleno estetico para completar 6 barras si es necesario */}
             {metrics.length < 6 && [30, 45, 60].slice(0, 6 - metrics.length).map((h, i) => (
               <div key={`fill-${i}`} style={styles.chartCol}>
                 <div style={{ ...styles.chartBar, height: `${h}%`, background: 'linear-gradient(to top, rgba(255,255,255,0.02), rgba(255,255,255,0.1))' }}></div>
@@ -212,11 +230,11 @@ const AdminDashboard = () => {
         </div>
 
         <div className="db-card" style={styles.card}>
-          <h3 style={styles.cardTitle}>🔑 Infraestructura Global & Logs Activos</h3>
+          <h3 style={styles.cardTitle}>Infraestructura Global y Logs Activos</h3>
           <div style={styles.list}>
             <div style={styles.listItem}>
               <div>
-                <p style={styles.itemMain}>Autenticación 2FA Global</p>
+                <p style={styles.itemMain}>Autenticacion 2FA Global</p>
                 <p style={styles.itemSub}>Sistema automatizado de token seguro activo</p>
               </div>
               <span style={{ ...styles.badge, background: 'rgba(5,150,105,0.1)', color: '#059669' }}>Activo</span>
@@ -224,14 +242,14 @@ const AdminDashboard = () => {
             <div style={styles.listItem}>
               <div>
                 <p style={styles.itemMain}>Base de Datos Principal</p>
-                <p style={styles.itemSub}>Conexión establecida exitosamente vía MySQL2</p>
+                <p style={styles.itemSub}>Conexion establecida exitosamente via MySQL2</p>
               </div>
               <span style={{ ...styles.badge, background: 'rgba(0,170,255,0.1)', color: '#00aaff' }}>Conectada</span>
             </div>
             <div style={styles.listItem}>
               <div>
                 <p style={styles.itemMain}>Servidor de Aplicaciones</p>
-                <p style={styles.itemSub}>Escuchando peticiones HTTPS en puerto de producción</p>
+                <p style={styles.itemSub}>Escuchando peticiones HTTPS en puerto de produccion</p>
               </div>
               <span style={{ ...styles.badge, background: 'rgba(177,245,0,0.1)', color: '#b1f500' }}>ONLINE</span>
             </div>
@@ -239,14 +257,88 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* ── SECCIÓN DE GESTIÓN DE USUARIOS (CRUD CON REFRESCO AUTOMÁTICO) ── */}
+      <ExchangeRatePanel accent="#7c3aed" secondary="#00aaff" showApiDetails />
+
+      {/*  SECCIN DE GESTIN DE USUARIOS (CRUD CON REFRESCO AUTOMATICO)  */}
       <div style={{ marginTop: '40px' }}>
         <ReusableCRUD
           service={userService}
           columns={userColumns}
           title="Control Maestro de Usuarios"
-          onActionSuccess={fetchDashboardData} // <--- ESTO IMPLEMENTA EL REFRESCO AUTOMÁTICO DE LA UI
+          onActionSuccess={fetchDashboardData} // <--- ESTO IMPLEMENTA EL REFRESCO AUTOMATICO DE LA UI
         />
+      </div>
+
+      <div className="db-card" style={{ ...styles.card, marginTop: '24px' }}>
+        <h3 style={styles.cardTitle}>Bitacora de seguridad administrativa</h3>
+        {auditLogs.length === 0 ? (
+          <p style={{ color: '#8899aa', margin: 0 }}>
+            Aun no hay eventos registrados.
+          </p>
+        ) : (
+          <div style={styles.list}>
+            {auditLogs.map((log) => (
+              <div key={log.id} style={styles.listItem}>
+                <div>
+                  <p style={styles.itemMain}>
+                    {log.action} {String(log.entity || '').toUpperCase()} #{log.entity_id || '-'}
+                  </p>
+                  <p style={styles.itemSub}>
+                    {log.admin?.email || 'admin'} - {new Date(log.created_at).toLocaleString('es-CR')}
+                  </p>
+                </div>
+                <span style={{ ...styles.badge, background: 'rgba(124,58,237,0.12)', color: '#c4b5fd' }}>
+                  LOG
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="db-card" style={{ ...styles.card, marginTop: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <h3 style={styles.cardTitle}>Reportes de soporte nuevos</h3>
+          <a
+            href="/dashboard/soporte"
+            style={{
+              display: 'inline-block',
+              padding: '8px 12px',
+              borderRadius: '10px',
+              border: '1px solid rgba(124,58,237,0.35)',
+              background: 'rgba(124,58,237,0.15)',
+              color: '#fff',
+              textDecoration: 'none',
+              fontWeight: '700',
+              fontSize: '12px'
+            }}
+          >
+            Abrir bandeja de soporte
+          </a>
+        </div>
+        {supportReports.length === 0 ? (
+          <p style={{ color: '#8899aa', margin: 0 }}>
+            No hay reportes nuevos pendientes.
+          </p>
+        ) : (
+          <div style={styles.list}>
+            {supportReports.map((report) => (
+              <div key={report.id} style={styles.listItem}>
+                <div>
+                  <p style={styles.itemMain}>
+                    #{report.id} {report.asunto}
+                  </p>
+                  <p style={styles.itemSub}>
+                    {report.categoria} | prioridad {report.prioridad} | {new Date(report.created_at).toLocaleString('es-CR')}
+                  </p>
+                </div>
+                <span style={{ ...styles.badge, background: 'rgba(245,158,11,0.16)', color: '#fbbf24' }}>
+                  NUEVO
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -363,3 +455,6 @@ const styles = {
 };
 
 export default AdminDashboard;
+
+
+

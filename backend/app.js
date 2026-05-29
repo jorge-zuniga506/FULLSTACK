@@ -46,6 +46,15 @@ const NotificationRoutes = require('./routes/NotificationRoutes');
 const ChatbotRoutes = require('./routes/ChatbotRoutes');
 const IdentityRoutes = require('./routes/IdentityRoutes');
 const DashboardRoutes = require('./routes/DashboardRoutes');
+const ConvocatoriaRoutes = require('./routes/ConvocatoriaRoutes');
+const KpiRoutes = require('./routes/KpiRoutes');
+const DemodayRoutes = require('./routes/DemodayRoutes');
+const PerksRoutes = require('./routes/PerksRoutes');
+const StartupFeedRoutes = require('./routes/StartupFeedRoutes');
+const AceleradoraFeedRoutes = require('./routes/AceleradoraFeedRoutes');
+const InversorFeedRoutes = require('./routes/InversorFeedRoutes');
+const ExchangeRateRoutes = require('./routes/ExchangeRateRoutes');
+const SupportRoutes = require('./routes/SupportRoutes');
 
 const app = express();
 
@@ -99,6 +108,15 @@ const API_LEGACY = '/api';
   app.use(`${prefix}/ai`, ChatbotRoutes);
   app.use(`${prefix}/identity`, IdentityRoutes);
   app.use(`${prefix}/dashboard`, DashboardRoutes);
+  app.use(`${prefix}/convocatorias`, ConvocatoriaRoutes);
+  app.use(`${prefix}/kpis`, KpiRoutes);
+  app.use(`${prefix}/demoday`, DemodayRoutes);
+  app.use(`${prefix}/programas`, PerksRoutes);
+  app.use(`${prefix}/feed/aceleradora`, AceleradoraFeedRoutes);
+  app.use(`${prefix}/feed/inversor`, InversorFeedRoutes);
+  app.use(`${prefix}/feed`, StartupFeedRoutes);
+  app.use(`${prefix}/indicadores`, ExchangeRateRoutes);
+  app.use(`${prefix}/support`, SupportRoutes);
 });
 
 app.use(require('./middlewares/errorHandler'));

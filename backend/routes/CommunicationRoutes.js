@@ -19,9 +19,10 @@ const {
   eliminarConsultaIA
 } = require("../controllers/CommunicationController")
 const { authRequired, requireRole } = require("../middlewares/authMiddleware")
+const { validarMensajeContactoPublico } = require('../middlewares/validators');
 
 // Public: contact form submission
-router.post('/contacto-publico', crearMensajeContactoPublico)
+router.post('/contacto-publico', validarMensajeContactoPublico, crearMensajeContactoPublico)
 
 // Protected: everything else requires auth
 // Contact messages list requires admin (role_id = 1)

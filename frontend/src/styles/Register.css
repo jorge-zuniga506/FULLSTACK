@@ -49,13 +49,32 @@ html, body {
 .auth-form-panel {
   background: #0b1324;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 2rem 3rem;
   box-sizing: border-box;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
   height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(177, 245, 0, 0.35) rgba(255, 255, 255, 0.04);
+}
+
+.auth-form-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.auth-form-panel::-webkit-scrollbar-track {
+  background: #0b1324;
+}
+
+.auth-form-panel::-webkit-scrollbar-thumb {
+  background: rgba(177, 245, 0, 0.35);
+  border-radius: 4px;
+}
+
+.auth-form-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(177, 245, 0, 0.7);
 }
 
 .auth-form-panel::before {
@@ -76,7 +95,8 @@ html, body {
   max-width: 400px;
   position: relative;
   z-index: 1;
-  margin-top: 3.5rem; /* Evita solapar con la barra superior */
+  margin: auto 0; /* Centra verticalmente si cabe, desplaza de forma segura si desborda */
+  padding: 3rem 0; /* Espaciado interno seguro para el scroll */
 }
 
 /* ------- Typography ------- */

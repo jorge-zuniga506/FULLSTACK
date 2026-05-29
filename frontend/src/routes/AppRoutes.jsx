@@ -1,6 +1,9 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import CookieConsent from '../components/Common/CookieConsent';
+import GlobalUtilityMenu from '../components/Common/GlobalUtilityMenu';
+import { ADMIN_SECRET_DASHBOARD_PATH } from '../constants/adminRoute';
 
 // ─── Layouts ──────────────────────────────────────────────────────────────────
 // DashboardLayout: envuelve las páginas del ecosistema con el sidebar lateral
@@ -16,6 +19,10 @@ import AboutPage          from '../pages/About/AboutPage';
 import StartupsPublicPage from '../pages/StartupsPublic/StartupsPublicPage';
 import FoundersPublicPage from '../pages/Founders/FoundersPublicPage';
 import InversionistasPublicPage from '../pages/Inversionistas/InversionistasPublicPage';
+import InformesView       from '../pages/Informes/InformesView';
+import LatamWeeksView     from '../pages/LatamWeeks/LatamWeeksView';
+import CapsulasView       from '../pages/Capsulas/CapsulasView';
+import NewsletterView     from '../pages/Newsletter/NewsletterView';
 
 // ─── Páginas del Ecosistema (con sidebar via DashboardLayout) ─────────────────
 // Todas estas rutas comparten el sidebar de navegación
@@ -29,9 +36,14 @@ import Profile            from '../pages/Profile/Profile';
 // 2FA y Dashboards por Rol
 import VerifyRoleCode      from '../pages/Auth/VerifyRoleCode';
 import StartupDashboard    from '../pages/Dashboard/StartupDashboard';
+import StartupFeed          from '../pages/Dashboard/StartupFeed';
 import AceleradoraDashboard from '../pages/Dashboard/AceleradoraDashboard';
+import AceleradoraFeed      from '../pages/Dashboard/AceleradoraFeed';
 import InversorDashboard    from '../pages/Dashboard/InversorDashboard';
+import InversorFeed         from '../pages/Dashboard/InversorFeed';
 import AdminDashboard       from '../pages/Dashboard/AdminDashboard';
+import AdminManageSection   from '../pages/Dashboard/AdminManageSection';
+import SupportCenter        from '../pages/Dashboard/SupportCenter';
 import RoleRouteGuard       from './RoleRouteGuard';
 
 // Componente para proteger rutas privadas
@@ -92,7 +104,7 @@ const PublicRoute = ({ children }) => {
 const RoleDashboardRedirect = () => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role_id === 1) return <Navigate to="/dashboard/admin" replace />;
+  if (user.role_id === 1) return <Navigate to={ADMIN_SECRET_DASHBOARD_PATH} replace />;
   if (user.role_id === 2) return <Navigate to="/dashboard/startup" replace />;
   if (user.role_id === 3) return <Navigate to="/dashboard/aceleradora" replace />;
   if (user.role_id === 4) return <Navigate to="/dashboard/inversor" replace />;
@@ -104,12 +116,25 @@ const RoleDashboardRedirect = () => {
  */
 const AppRoutes = () => {
   return (
+    <>
     <Routes>
 
       {/* ── 1. PÁGINAS STANDALONE (SIN SIDEBAR) ─────────────────────────── */}
 
       {/* Landing page pública */}
       <Route path="/"        element={<Landpage />} />
+
+      {/* Vista de Informes de Ecosistema */}
+      <Route path="/informes" element={<InformesView />} />
+
+      {/* Vista de Latam Weeks de Ecosistema */}
+      <Route path="/latam-weeks" element={<LatamWeeksView />} />
+
+      {/* Vista de Cápsulas y RRSS de Ecosistema */}
+      <Route path="/capsulas" element={<CapsulasView />} />
+
+      {/* Vista de Newsletter de Ecosistema */}
+      <Route path="/newsletter" element={<NewsletterView />} />
 
       {/* Autenticación */}
       <Route path="/login"   element={<PublicRoute><Login /></PublicRoute>} />
@@ -140,9 +165,21 @@ const AppRoutes = () => {
         </RoleRouteGuard>
       } />
 
+      <Route path="/dashboard/startup/busqueda" element={
+        <RoleRouteGuard allowedRoles={[2]}>
+          <DashboardLayout><StartupFeed /></DashboardLayout>
+        </RoleRouteGuard>
+      } />
+
       <Route path="/dashboard/aceleradora" element={
         <RoleRouteGuard allowedRoles={[3]}>
           <DashboardLayout><AceleradoraDashboard /></DashboardLayout>
+        </RoleRouteGuard>
+      } />
+
+      <Route path="/dashboard/aceleradora/red" element={
+        <RoleRouteGuard allowedRoles={[3]}>
+          <DashboardLayout><AceleradoraFeed /></DashboardLayout>
         </RoleRouteGuard>
       } />
 
@@ -152,9 +189,39 @@ const AppRoutes = () => {
         </RoleRouteGuard>
       } />
 
-      <Route path="/dashboard/admin" element={
+      <Route path="/dashboard/inversor/red" element={
+        <RoleRouteGuard allowedRoles={[4]}>
+          <DashboardLayout><InversorFeed /></DashboardLayout>
+        </RoleRouteGuard>
+      } />
+
+      <Route path={ADMIN_SECRET_DASHBOARD_PATH} element={
         <RoleRouteGuard allowedRoles={[1]}>
           <DashboardLayout><AdminDashboard /></DashboardLayout>
+        </RoleRouteGuard>
+      } />
+
+      <Route path={`${ADMIN_SECRET_DASHBOARD_PATH}/startups`} element={
+        <RoleRouteGuard allowedRoles={[1]}>
+          <DashboardLayout><AdminManageSection section="startups" /></DashboardLayout>
+        </RoleRouteGuard>
+      } />
+
+      <Route path={`${ADMIN_SECRET_DASHBOARD_PATH}/inversores`} element={
+        <RoleRouteGuard allowedRoles={[1]}>
+          <DashboardLayout><AdminManageSection section="inversores" /></DashboardLayout>
+        </RoleRouteGuard>
+      } />
+
+      <Route path={`${ADMIN_SECRET_DASHBOARD_PATH}/aceleradoras`} element={
+        <RoleRouteGuard allowedRoles={[1]}>
+          <DashboardLayout><AdminManageSection section="aceleradoras" /></DashboardLayout>
+        </RoleRouteGuard>
+      } />
+
+      <Route path="/dashboard/soporte" element={
+        <RoleRouteGuard allowedRoles={[1, 2, 3, 4]}>
+          <DashboardLayout><SupportCenter /></DashboardLayout>
         </RoleRouteGuard>
       } />
 
@@ -196,6 +263,9 @@ const AppRoutes = () => {
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
 
     </Routes>
+    <CookieConsent />
+    <GlobalUtilityMenu />
+    </>
   );
 };
 

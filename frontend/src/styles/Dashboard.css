@@ -157,10 +157,14 @@ html, body {
   overflow-x: hidden;
   padding: 2rem 2.5rem;
   gap: 1.5rem;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 0, 221, 0.35) transparent;
 }
 
-.db-main::-webkit-scrollbar { display: none; }
+.db-main::-webkit-scrollbar { width: 5px; }
+.db-main::-webkit-scrollbar-track { background: transparent; }
+.db-main::-webkit-scrollbar-thumb { background: rgba(139, 0, 221, 0.35); border-radius: 10px; }
+.db-main::-webkit-scrollbar-thumb:hover { background: rgba(139, 0, 221, 0.6); }
 
 /* ------- Header ------- */
 .db-header {

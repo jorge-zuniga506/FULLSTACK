@@ -17,10 +17,15 @@ jest.mock('jsonwebtoken', () => ({
   sign: jest.fn()
 }));
 
+jest.mock('../../services/EmailService', () => ({
+  notificarCodigoInicioSesion: jest.fn().mockResolvedValue(true)
+}));
+
 const AuthService = require('../../services/AuthService');
 const { User, Session } = require('../../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { notificarCodigoInicioSesion } = require('../../services/EmailService');
 
 describe('AuthService unit', () => {
   beforeEach(() => {
@@ -56,8 +61,6 @@ describe('AuthService unit', () => {
     bcrypt.compare.mockResolvedValue(true);
     jwt.sign.mockReturnValue('jwt-token');
     Session.create.mockResolvedValue({ id: 1 });
-    jest.spyOn(AuthService, 'generarCodigoRol').mockReturnValue('STARTUPA1B2');
-
     const result = await AuthService.login('demo@test.com', '123456');
 
     expect(jwt.sign).toHaveBeenCalled();
@@ -70,8 +73,14 @@ describe('AuthService unit', () => {
     );
     expect(mockUser.update).toHaveBeenCalledWith(
       expect.objectContaining({
-        two_factor_code: 'STARTUPA1B2',
+        two_factor_code: expect.stringMatching(/^\d{6}$/),
+        two_factor_expires_at: expect.any(Date),
         is_role_whitelisted: false
+      })
+    );
+    expect(notificarCodigoInicioSesion).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'demo@test.com'
       })
     );
     expect(result.token).toBe('jwt-token');

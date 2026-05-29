@@ -32,6 +32,9 @@ const crearMensajeContactoPublico = async (req, res) => {
         const mensaje = await CommunicationService.crearMensajeContactoPublico(req.body);
         res.status(201).json({ message: 'Mensaje de contacto público creado exitosamente', mensaje });
     } catch (error) {
+        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({ message: 'Datos de contacto inválidos.', error: error.message });
+        }
         res.status(500).json({ message: 'Error al crear el mensaje de contacto público', error: error.message });
     }
 }

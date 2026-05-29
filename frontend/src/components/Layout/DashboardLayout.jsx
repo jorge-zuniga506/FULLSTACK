@@ -1,18 +1,48 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/EntityList.css'; // Contiene estilos de .el-container, .el-sidebar, .el-main
 import JarvisChat from '../Chatbot/JarvisChat';
+import { ADMIN_SECRET_DASHBOARD_PATH } from '../../constants/adminRoute';
+import { supportService } from '../../services/supportService';
 
 /**
  * DashboardLayout — Layout principal con sidebar para páginas del ecosistema
  */
 const DashboardLayout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, token, logout } = useAuth();
   const location = useLocation();
 
   // Estado para controlar la apertura del sidebar en pantallas móviles
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [supportNewCount, setSupportNewCount] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadSupportBadge = async () => {
+      if (!token || Number(user?.role_id) !== 1) {
+        if (isMounted) setSupportNewCount(0);
+        return;
+      }
+
+      try {
+        const response = await supportService.getAdminReports({ estado: 'nuevo', limit: 1 }, token);
+        const total = Number(response?.meta?.totalItems || 0);
+        if (isMounted) setSupportNewCount(total);
+      } catch {
+        if (isMounted) setSupportNewCount(0);
+      }
+    };
+
+    loadSupportBadge();
+    const interval = setInterval(loadSupportBadge, 20000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [token, user?.role_id, location.pathname]);
 
   // Mapeador de roles
   const getRoleName = (roleId) => {
@@ -31,35 +61,38 @@ const DashboardLayout = ({ children }) => {
   const getNavItems = (roleId) => {
     if (roleId === 1) { // Administrador
       return [
-        { path: '/dashboard/admin', label: '⚙️ Control de Misión', id: 'dash' },
+        { path: ADMIN_SECRET_DASHBOARD_PATH, label: 'Control Central', id: 'dash' },
         { path: '/explorer', label: '🗺️ Explorador Global', id: 'expl' },
-        { path: '/startups', label: '🚀 Gestionar Startups', id: 'start' },
-        { path: '/investors', label: '💼 Gestionar Inversores', id: 'inv' },
-        { path: '/accelerators', label: '⚡ Gestionar Aceleradoras', id: 'accel' },
+        { path: `${ADMIN_SECRET_DASHBOARD_PATH}/startups`, label: '🚀 Gestionar Startups', id: 'start' },
+        { path: `${ADMIN_SECRET_DASHBOARD_PATH}/inversores`, label: '💼 Gestionar Inversores', id: 'inv' },
+        { path: `${ADMIN_SECRET_DASHBOARD_PATH}/aceleradoras`, label: '⚡ Gestionar Aceleradoras', id: 'accel' },
+        { path: '/dashboard/soporte', label: '🛟 Soporte', id: 'support', badge: supportNewCount },
         { path: '/profile', label: '👤 Perfil del Sistema', id: 'prof' },
       ];
     } else if (roleId === 2) { // Emprendedor / Startup
       return [
         { path: '/dashboard/startup', label: '🚀 Panel de Mi Startup', id: 'dash' },
-        { path: '/investors', label: '💼 Buscar Inversionistas', id: 'inv' },
-        { path: '/accelerators', label: '⚡ Encontrar Aceleración', id: 'accel' },
-        { path: '/explorer', label: '🔍 Explorar Ecosistema', id: 'expl' },
+        { path: '/dashboard/startup/busqueda', label: '🔎 Búsqueda', id: 'feed' },
+        { path: '/explorer', label: '🌐 Explorar Ecosistema', id: 'expl' },
+        { path: '/dashboard/soporte', label: '🛟 Soporte', id: 'support' },
         { path: '/profile', label: '👤 Perfil de Startup', id: 'prof' },
       ];
     } else if (roleId === 3) { // Aceleradora
       return [
         { path: '/dashboard/aceleradora', label: '⚡ Panel de Aceleradora', id: 'dash' },
-        { path: '/startups', label: '🚀 Buscar Startups', id: 'start' },
-        { path: '/investors', label: '💼 Red de Inversores', id: 'inv' },
+        { path: '/dashboard/aceleradora/red', label: '🔎 Red de Aceleradoras', id: 'feed-acel' },
         { path: '/explorer', label: '🔍 Explorador de Red', id: 'expl' },
+        { path: '/dashboard/soporte', label: '🛟 Soporte', id: 'support' },
         { path: '/profile', label: '👤 Perfil Institucional', id: 'prof' },
       ];
     } else if (roleId === 4) { // Inversionista
       return [
         { path: '/dashboard/inversor', label: '💼 Panel de Inversor', id: 'dash' },
+        { path: '/dashboard/inversor/red', label: '🔎 Red de Inversores', id: 'feed-inv' },
         { path: '/startups', label: '🚀 Buscar Oportunidades', id: 'start' },
         { path: '/accelerators', label: '⚡ Red de Aceleradoras', id: 'accel' },
         { path: '/explorer', label: '🔍 Radar de Mercado', id: 'expl' },
+        { path: '/dashboard/soporte', label: '🛟 Soporte', id: 'support' },
         { path: '/profile', label: '👤 Perfil Inversionista', id: 'prof' },
       ];
     }
@@ -68,6 +101,7 @@ const DashboardLayout = ({ children }) => {
     return [
       { path: '/dashboard', label: '📊 Dashboard General', id: 'dash' },
       { path: '/explorer', label: '🗺️ Explorador', id: 'expl' },
+      { path: '/dashboard/soporte', label: '🛟 Soporte', id: 'support' },
       { path: '/profile', label: '👤 Mi Perfil', id: 'prof' },
     ];
   };
@@ -167,7 +201,29 @@ const DashboardLayout = ({ children }) => {
               className={`db-nav-item ${location.pathname === item.path ? 'active' : ''}`}
               onClick={() => setIsSidebarOpen(false)}
             >
-              {item.label}
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between' }}>
+                <span>{item.label}</span>
+                {Number(item.badge) > 0 && (
+                  <span
+                    style={{
+                      minWidth: '22px',
+                      height: '22px',
+                      padding: '0 7px',
+                      borderRadius: '999px',
+                      background: 'rgba(239,68,68,0.2)',
+                      border: '1px solid rgba(239,68,68,0.45)',
+                      color: '#fecaca',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {item.badge > 99 ? '99+' : item.badge}
+                  </span>
+                )}
+              </span>
             </Link>
           ))}
         </nav>
@@ -215,4 +271,5 @@ const DashboardLayout = ({ children }) => {
 };
 
 export default DashboardLayout;
+
 
