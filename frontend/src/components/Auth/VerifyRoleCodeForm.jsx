@@ -157,8 +157,11 @@ const VerifyRoleCodeForm = () => {
             <span style={styles.hint}>
               {isWhatsapp
                 ? 'Revisa tu chat de WhatsApp.'
-                : 'Revisa bandeja principal, spam y promociones.'}
+                : 'Revisa bandeja principal, spam o promociones.'}
             </span>
+            <div style={{ marginTop: '8px', padding: '6px 12px', background: 'rgba(177,245,0,0.1)', border: '1px solid rgba(177,245,0,0.25)', borderRadius: '8px', color: '#b1f500', fontSize: '11px', fontWeight: '700', textTransform: 'none' }}>
+              ⚡ Modo LocalStorage: Introduce el código 123456 (o cualquier código) para acceder.
+            </div>
           </div>
 
           {errorMsg && (

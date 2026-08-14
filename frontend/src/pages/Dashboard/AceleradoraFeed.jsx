@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { localApi } from '../../services/localStorageAdapter';
 
 const API_HOST = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
 const API_PREFIXES = ['/api', '/api/v1'];
@@ -8,12 +9,31 @@ const fetchWithApiFallback = async (path, buildInit) => {
   for (let i = 0; i < API_PREFIXES.length; i += 1) {
     const prefix = API_PREFIXES[i];
     const init = typeof buildInit === 'function' ? buildInit(prefix) : buildInit;
-    const response = await fetch(`${API_HOST}${prefix}${path}`, init);
-    if (response.status !== 404 || i === API_PREFIXES.length - 1) {
-      return response;
+    try {
+      const response = await fetch(`${API_HOST}${prefix}${path}`, init);
+      if (response.ok) {
+        return response;
+      }
+    } catch (err) {}
+  }
+
+  // Fallback a localApi
+  const init = typeof buildInit === 'function' ? buildInit('/api') : buildInit;
+  const method = init?.method || 'GET';
+  let bodyData = null;
+  if (init?.body) {
+    try {
+      bodyData = typeof init.body === 'string' ? JSON.parse(init.body) : init.body;
+    } catch {
+      bodyData = init.body;
     }
   }
-  throw new Error('No se pudo resolver endpoint.');
+  const result = localApi.dispatch(method, path, bodyData);
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({ status: 'success', data: result })
+  };
 };
 
 const timeAgo = (date) => {

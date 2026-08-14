@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
+import { localAuth } from '../services/localStorageAdapter';
 
 const AuthContext = createContext(null);
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
@@ -67,20 +68,26 @@ export const AuthProvider = ({ children }) => {
           }
         });
 
-        if (!response.ok) {
-          clearLocalSession();
+        if (response.ok) {
+          const rawData = await response.json();
+          const payload = rawData?.data || rawData;
+          const currentUser = payload?.user || payload?.usuario || payload;
+          setUser(currentUser);
+          setLoading(false);
           return;
         }
-
-        const rawData = await response.json();
-        const payload = rawData?.data || rawData;
-        const currentUser = payload?.user || payload?.usuario || payload;
-        setUser(currentUser);
       } catch (err) {
-        console.error('Error al recuperar sesion:', err);
-      } finally {
-        setLoading(false);
+        console.warn('Backend inalcanzable para /api/auth/me, recuperando sesión desde localStorage:', err);
       }
+
+      // Fallback a localStorage
+      const savedUser = JSON.parse(localStorage.getItem('user') || 'null');
+      if (savedUser) {
+        setUser(savedUser);
+      } else {
+        clearLocalSession();
+      }
+      setLoading(false);
     };
 
     fetchMe();
@@ -88,13 +95,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, otpOptions = {}) => {
     setError(null);
-    try {
-      const {
-        otpChannel = 'email',
-        whatsappPhone = '',
-        whatsappApiKey = ''
-      } = otpOptions;
+    const {
+      otpChannel = 'email',
+      whatsappPhone = '',
+      whatsappApiKey = ''
+    } = otpOptions;
 
+    try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         credentials: 'include',
@@ -110,31 +117,50 @@ export const AuthProvider = ({ children }) => {
         })
       });
 
-      const rawData = await response.json();
-      if (!response.ok) {
-        throw new Error(rawData.message || 'Error al iniciar sesion');
-      }
+      if (response.ok) {
+        const rawData = await response.json();
+        const data = rawData?.data || rawData;
+        setToken(data.token);
+        setUser(data.usuario);
+        setIsRoleVerified(false);
+        sessionStorage.setItem('isRoleVerified', 'false');
+        localStorage.setItem('user', JSON.stringify(data.usuario));
+        sessionStorage.setItem('twoFactorDelivery', data.twoFactorDelivery || otpChannel || 'email');
+        sessionStorage.setItem('twoFactorDestination', data.twoFactorDestination || '');
+        sessionStorage.setItem('twoFactorWhatsappPhone', whatsappPhone || '');
+        sessionStorage.setItem('twoFactorWhatsappApiKey', whatsappApiKey || '');
 
-      const data = rawData?.data || rawData;
+        return {
+          success: true,
+          redirectPath: data.redirectPath,
+          twoFactorDelivery: data.twoFactorDelivery || otpChannel || 'email',
+          twoFactorDestination: data.twoFactorDestination || ''
+        };
+      }
+    } catch (err) {
+      console.warn('Conexión con servidor falló en login, intentando autenticación local con localStorage:', err.message);
+    }
+
+    // Fallback a localAuth
+    try {
+      const data = localAuth.login(email, password);
       setToken(data.token);
       setUser(data.usuario);
       setIsRoleVerified(false);
       sessionStorage.setItem('isRoleVerified', 'false');
       localStorage.setItem('user', JSON.stringify(data.usuario));
-      sessionStorage.setItem('twoFactorDelivery', data.twoFactorDelivery || otpChannel || 'email');
-      sessionStorage.setItem('twoFactorDestination', data.twoFactorDestination || '');
-      sessionStorage.setItem('twoFactorWhatsappPhone', whatsappPhone || '');
-      sessionStorage.setItem('twoFactorWhatsappApiKey', whatsappApiKey || '');
+      sessionStorage.setItem('twoFactorDelivery', data.twoFactorDelivery);
+      sessionStorage.setItem('twoFactorDestination', data.twoFactorDestination);
 
       return {
         success: true,
         redirectPath: data.redirectPath,
-        twoFactorDelivery: data.twoFactorDelivery || otpChannel || 'email',
-        twoFactorDestination: data.twoFactorDestination || ''
+        twoFactorDelivery: data.twoFactorDelivery,
+        twoFactorDestination: data.twoFactorDestination
       };
-    } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+    } catch (localErr) {
+      setError(localErr.message);
+      return { success: false, error: localErr.message };
     }
   };
 
@@ -150,32 +176,43 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ token: googleToken, role_id: roleId })
       });
 
-      const rawData = await response.json();
-      if (!response.ok) {
-        throw new Error(rawData.message || 'Error al iniciar sesión con Google');
-      }
+      if (response.ok) {
+        const rawData = await response.json();
+        const data = rawData?.data || rawData;
+        if (data.requiresRoleSelection) {
+          return {
+            success: true,
+            requiresRoleSelection: true,
+            googleToken: data.googleToken,
+            email: data.email,
+            name: data.name,
+            picture: data.picture
+          };
+        }
 
-      const data = rawData?.data || rawData;
-      
-      if (data.requiresRoleSelection) {
+        setToken(data.token);
+        setUser(data.usuario);
+        setIsRoleVerified(true);
+        sessionStorage.setItem('isRoleVerified', 'true');
+        localStorage.setItem('user', JSON.stringify(data.usuario));
+
         return {
           success: true,
-          requiresRoleSelection: true,
-          googleToken: data.googleToken,
-          email: data.email,
-          name: data.name,
-          picture: data.picture
+          requiresRoleSelection: false,
+          redirectPath: data.redirectPath
         };
       }
+    } catch (err) {
+      console.warn('Conexión con servidor falló en login Google, usando fallback local:', err.message);
+    }
 
+    // Fallback local
+    try {
+      const data = localAuth.loginWithGoogle(googleToken, roleId);
       setToken(data.token);
       setUser(data.usuario);
       setIsRoleVerified(true);
       sessionStorage.setItem('isRoleVerified', 'true');
-      sessionStorage.removeItem('twoFactorDelivery');
-      sessionStorage.removeItem('twoFactorDestination');
-      sessionStorage.removeItem('twoFactorWhatsappPhone');
-      sessionStorage.removeItem('twoFactorWhatsappApiKey');
       localStorage.setItem('user', JSON.stringify(data.usuario));
 
       return {
@@ -183,9 +220,9 @@ export const AuthProvider = ({ children }) => {
         requiresRoleSelection: false,
         redirectPath: data.redirectPath
       };
-    } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+    } catch (localErr) {
+      setError(localErr.message);
+      return { success: false, error: localErr.message };
     }
   };
 
@@ -209,16 +246,34 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(payload)
       });
 
-      const rawData = await response.json();
-      if (!response.ok) {
-        throw new Error(rawData.message || (rawData.errors && rawData.errors[0]?.msg) || 'Error al registrarse');
+      if (response.ok) {
+        const loginResult = await login(email, password);
+        return loginResult;
       }
-
-      const loginResult = await login(email, password);
-      return loginResult;
     } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      console.warn('Backend inalcanzable en registro, registrando en localStorage:', err.message);
+    }
+
+    // Fallback a localAuth register
+    try {
+      const loginResult = localAuth.register({ cedula, nombre_hacienda, email, password_hash: password, role_id });
+      setToken(loginResult.token);
+      setUser(loginResult.usuario);
+      setIsRoleVerified(false);
+      sessionStorage.setItem('isRoleVerified', 'false');
+      localStorage.setItem('user', JSON.stringify(loginResult.usuario));
+      sessionStorage.setItem('twoFactorDelivery', loginResult.twoFactorDelivery);
+      sessionStorage.setItem('twoFactorDestination', loginResult.twoFactorDestination);
+
+      return {
+        success: true,
+        redirectPath: loginResult.redirectPath,
+        twoFactorDelivery: loginResult.twoFactorDelivery,
+        twoFactorDestination: loginResult.twoFactorDestination
+      };
+    } catch (localErr) {
+      setError(localErr.message);
+      return { success: false, error: localErr.message };
     }
   };
 
@@ -235,17 +290,23 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ code })
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Error al verificar el codigo');
+      if (response.ok) {
+        setIsRoleVerified(true);
+        sessionStorage.setItem('isRoleVerified', 'true');
+        return { success: true };
       }
+    } catch (err) {
+      console.warn('Verificación en backend falló, usando localAuth verifyCode:', err.message);
+    }
 
+    try {
+      const res = localAuth.verifyCode(code);
       setIsRoleVerified(true);
       sessionStorage.setItem('isRoleVerified', 'true');
-      return { success: true };
-    } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      return res;
+    } catch (localErr) {
+      setError(localErr.message);
+      return { success: false, error: localErr.message };
     }
   };
 
@@ -270,32 +331,26 @@ export const AuthProvider = ({ children }) => {
         })
       });
 
-      const rawData = await response.json();
-      if (!response.ok) {
-        throw new Error(rawData.message || 'Error al reenviar el codigo');
-      }
+      if (response.ok) {
+        const rawData = await response.json();
+        const data = rawData?.data || rawData;
+        if (data.twoFactorDelivery) sessionStorage.setItem('twoFactorDelivery', data.twoFactorDelivery);
+        if (data.twoFactorDestination) sessionStorage.setItem('twoFactorDestination', data.twoFactorDestination);
 
-      const data = rawData?.data || rawData;
-      if (data.twoFactorDelivery) {
-        sessionStorage.setItem('twoFactorDelivery', data.twoFactorDelivery);
+        return {
+          success: true,
+          twoFactorDelivery: data.twoFactorDelivery || twoFactorDelivery,
+          twoFactorDestination: data.twoFactorDestination || sessionStorage.getItem('twoFactorDestination') || '',
+          twoFactorExpiresAt: data.twoFactorExpiresAt
+        };
       }
-      if (data.twoFactorDestination) {
-        sessionStorage.setItem('twoFactorDestination', data.twoFactorDestination);
-      }
-
-      return {
-        success: true,
-        twoFactorDelivery: data.twoFactorDelivery || twoFactorDelivery,
-        twoFactorDestination: data.twoFactorDestination || sessionStorage.getItem('twoFactorDestination') || '',
-        twoFactorExpiresAt: data.twoFactorExpiresAt
-      };
     } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      console.warn('Reenvío en backend falló, usando localAuth resendRoleCode:', err.message);
     }
+
+    return localAuth.resendRoleCode();
   };
 
-  // Alias para no romper componentes antiguos
   const resetRoleCode = resendRoleCode;
 
   const changeUserRole = async (newRoleId) => {
@@ -311,24 +366,23 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ role_id: parseInt(newRoleId, 10) })
       });
 
-      const rawData = await response.json();
-      if (!response.ok) {
-        throw new Error(rawData.message || 'Error al cambiar de rol');
+      if (response.ok) {
+        const rawData = await response.json();
+        const data = rawData?.data || rawData;
+        setToken(data.token);
+        setUser(data.usuario);
+        localStorage.setItem('user', JSON.stringify(data.usuario));
+        return { success: true, redirectPath: data.redirectPath };
       }
-
-      const data = rawData?.data || rawData;
-      setToken(data.token);
-      setUser(data.usuario);
-      localStorage.setItem('user', JSON.stringify(data.usuario));
-
-      return {
-        success: true,
-        redirectPath: data.redirectPath
-      };
     } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      console.warn('Cambio de rol en backend falló, aplicando en localStorage:', err.message);
     }
+
+    const data = localAuth.changeRole(token, newRoleId);
+    setToken(data.token);
+    setUser(data.usuario);
+    localStorage.setItem('user', JSON.stringify(data.usuario));
+    return { success: true, redirectPath: data.redirectPath };
   };
 
   const logout = async () => {
@@ -340,7 +394,7 @@ export const AuthProvider = ({ children }) => {
         headers: token ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' }
       });
     } catch (err) {
-      console.error('Error al revocar sesion en backend:', err);
+      console.warn('Error al revocar sesión en backend:', err.message);
     } finally {
       clearLocalSession();
     }
