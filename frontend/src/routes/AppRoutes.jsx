@@ -1,4 +1,5 @@
 import React from 'react';
+// Vercel deployment trigger
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import CookieConsent from '../components/Common/CookieConsent';
