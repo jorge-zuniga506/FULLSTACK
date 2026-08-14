@@ -1,3 +1,5 @@
+import { localApi } from './localStorageAdapter';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
 
 const AUTH_401_EVENT = 'auth:unauthorized';
@@ -22,7 +24,7 @@ const unpackResponse = (result) => {
   if (result && typeof result === 'object' && 'status' in result && 'data' in result) {
     return { ...result, data: unwrapNestedData(result.data) };
   }
-  return { status: 'success', message: 'Operacion realizada con exito.', data: unwrapNestedData(result), meta: {} };
+  return { status: 'success', message: 'Operación realizada con éxito.', data: unwrapNestedData(result), meta: {} };
 };
 
 const resolveToken = (token) => token || localStorage.getItem('token') || null;
@@ -42,74 +44,75 @@ const handleUnauthorized = () => {
   window.dispatchEvent(new Event(AUTH_401_EVENT));
 };
 
-const requestJson = async (url, options = {}) => {
-  const response = await fetch(url, { ...options, credentials: 'include' });
-  const raw = await response.json().catch(() => ({}));
-  const result = unpackResponse(raw);
+const requestJson = async (endpoint, method = 'GET', data = null, params = {}, options = {}) => {
+  try {
+    const url = new URL(`${API_BASE_URL}${endpoint}`);
+    if (params && typeof params === 'object') {
+      Object.keys(params).forEach((key) => {
+        if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+          url.searchParams.append(key, params[key]);
+        }
+      });
+    }
 
-  if (response.status === 401) {
-    handleUnauthorized();
+    const init = {
+      ...options,
+      method,
+      credentials: 'include',
+      headers: buildHeaders(options.token, method !== 'GET' && !(data instanceof FormData))
+    };
+
+    if (data && method !== 'GET') {
+      init.body = data instanceof FormData ? data : JSON.stringify(data);
+    }
+
+    const response = await fetch(url.toString(), init);
+    const raw = await response.json().catch(() => ({}));
+    const result = unpackResponse(raw);
+
+    if (response.status === 401) {
+      handleUnauthorized();
+    }
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Error en la solicitud.');
+    }
+
+    return result;
+  } catch (err) {
+    console.warn(`Petición API a ${endpoint} falló (${err.message}). Ejecutando consulta en localStorageAdapter:`);
+    const localResult = localApi.dispatch(method, endpoint, data, params);
+    return unpackResponse(localResult);
   }
-
-  if (!response.ok) {
-    throw new Error(result.message || 'Error en la solicitud.');
-  }
-
-  return result;
 };
 
 export const apiService = {
   AUTH_401_EVENT,
 
   async getAll(endpoint, params = {}, token) {
-    const url = new URL(`${API_BASE_URL}${endpoint}`);
-    Object.keys(params).forEach((key) => {
-      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
-        url.searchParams.append(key, params[key]);
-      }
-    });
-
-    return requestJson(url.toString(), {
-      method: 'GET',
-      headers: buildHeaders(token)
-    });
+    return requestJson(endpoint, 'GET', null, params, { token });
   },
 
   async getOne(endpoint, token) {
-    return requestJson(`${API_BASE_URL}${endpoint}`, {
-      method: 'GET',
-      headers: buildHeaders(token)
-    });
+    return requestJson(endpoint, 'GET', null, {}, { token });
   },
 
   async create(endpoint, data, token) {
-    return requestJson(`${API_BASE_URL}${endpoint}`, {
-      method: 'POST',
-      headers: buildHeaders(token),
-      body: JSON.stringify(data)
-    });
+    return requestJson(endpoint, 'POST', data, {}, { token });
   },
 
   async update(endpoint, id, data, token) {
-    return requestJson(`${API_BASE_URL}${endpoint}/${id}`, {
-      method: 'PUT',
-      headers: buildHeaders(token),
-      body: JSON.stringify(data)
-    });
+    const fullEndpoint = id ? `${endpoint}/${id}` : endpoint;
+    return requestJson(fullEndpoint, 'PUT', data, {}, { token });
   },
 
   async patch(endpoint, id, data, token) {
-    return requestJson(`${API_BASE_URL}${endpoint}/${id}`, {
-      method: 'PATCH',
-      headers: buildHeaders(token),
-      body: JSON.stringify(data)
-    });
+    const fullEndpoint = id ? `${endpoint}/${id}` : endpoint;
+    return requestJson(fullEndpoint, 'PATCH', data, {}, { token });
   },
 
   async delete(endpoint, id, token) {
-    return requestJson(`${API_BASE_URL}${endpoint}/${id}`, {
-      method: 'DELETE',
-      headers: buildHeaders(token, false)
-    });
+    const fullEndpoint = id ? `${endpoint}/${id}` : endpoint;
+    return requestJson(fullEndpoint, 'DELETE', null, {}, { token });
   }
 };

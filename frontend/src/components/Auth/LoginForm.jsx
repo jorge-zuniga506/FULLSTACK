@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import authBg from '../../assets/auth_bg.png';
@@ -106,6 +106,70 @@ const LoginForm = () => {
               <div>{formError}</div>
             </div>
           )}
+
+          {/* ── PANEL INTERACTIVO DE CREDENCIALES DE PRUEBA ─────────────────── */}
+          <div style={{
+            background: 'rgba(11, 19, 36, 0.85)',
+            border: '1px solid rgba(139, 0, 221, 0.35)',
+            borderRadius: '16px',
+            padding: '14px 16px',
+            marginBottom: '22px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 0 20px rgba(139, 0, 221, 0.12)',
+            textAlign: 'left'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <span style={{ fontSize: '13px', fontWeight: '800', color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                ⚡ Credenciales de Prueba (Clic para rellenar)
+              </span>
+              <span style={{ fontSize: '10px', background: 'rgba(177,245,0,0.15)', color: '#b1f500', padding: '2px 8px', borderRadius: '50px', fontWeight: '700' }}>
+                100% LocalStorage
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+              {[
+                { role: 'Admin', email: 'admin@nexuscobalt.com', pass: 'admin123', icon: '👑', color: '#c084fc' },
+                { role: 'Startup', email: 'startup@nexuscobalt.com', pass: 'startup123', icon: '🚀', color: '#00aaff' },
+                { role: 'Aceleradora', email: 'aceleradora@nexuscobalt.com', pass: 'aceleradora123', icon: '⚡', color: '#b1f500' },
+                { role: 'Inversor', email: 'inversor@nexuscobalt.com', pass: 'inversor123', icon: '💼', color: '#eab308' }
+              ].map(acc => (
+                <button
+                  key={acc.role}
+                  type="button"
+                  onClick={() => {
+                    setEmail(acc.email);
+                    setPassword(acc.pass);
+                  }}
+                  style={{
+                    padding: '8px 10px',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${acc.color}40`,
+                    borderRadius: '10px',
+                    color: '#fff',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '2px'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = `${acc.color}15`}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                >
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: acc.color }}>
+                    {acc.icon} {acc.role}
+                  </span>
+                  <span style={{ fontSize: '10px', color: '#cbd5e1', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {acc.email}
+                  </span>
+                  <span style={{ fontSize: '9px', color: '#8899aa', fontFamily: 'monospace' }}>
+                    Clave: {acc.pass}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
             <input type="hidden" id="role" name="role" value="emprendedor" />

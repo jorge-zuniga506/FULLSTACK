@@ -12,8 +12,8 @@ import DashboardLayout from '../components/Layout/DashboardLayout';
 // ─── Páginas Standalone (sin sidebar) ─────────────────────────────────────────
 // Estas páginas tienen su propio layout completo (navbar propia o auth)
 import Landpage           from '../pages/Landpage/Landpage';
-import Login              from '../pages/Auth/Login';
-import Register           from '../pages/Auth/Register';
+import Login              from '../components/Auth/LoginForm';
+import Register           from '../components/Auth/RegisterForm';
 import PublishGeneral     from '../pages/PublishGeneral/PublishGeneral';
 import AboutPage          from '../pages/About/AboutPage';
 import StartupsPublicPage from '../pages/StartupsPublic/StartupsPublicPage';
@@ -26,12 +26,12 @@ import NewsletterView     from '../pages/Newsletter/NewsletterView';
 
 // ─── Páginas del Ecosistema (con sidebar via DashboardLayout) ─────────────────
 // Todas estas rutas comparten el sidebar de navegación
-import Dashboard          from '../pages/Dashboard/Dashboard';
-import Explorer           from '../pages/Explorer/Explorer';
-import Startups           from '../pages/Startups/Startups';
-import Investors          from '../pages/Investors/Investors';
-import Accelerators       from '../pages/Accelerators/Accelerators';
-import Profile            from '../pages/Profile/Profile';
+import Dashboard          from '../components/Dashboard/DashboardView';
+import Explorer           from '../components/Startups/StartupsView';
+import Startups           from '../components/Startups/StartupsView';
+import Investors          from '../components/Investors/InvestorsView';
+import Accelerators       from '../components/Accelerators/AcceleratorsView';
+import Profile            from '../components/Profile/ProfileView';
 
 // 2FA y Dashboards por Rol
 import VerifyRoleCode      from '../pages/Auth/VerifyRoleCode';

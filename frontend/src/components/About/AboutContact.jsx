@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { localApi } from '../../services/localStorageAdapter';
 import './AboutContact.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
@@ -83,39 +84,27 @@ const AboutContact = () => {
       ];
 
       let sent = false;
-      let lastError = null;
 
       for (const endpoint of endpoints) {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
 
-        const raw = await response.json().catch(() => ({}));
-        const payload = raw?.data || raw;
-
-        if (response.ok) {
-          sent = true;
-          break;
-        }
-
-        if (response.status === 404) {
-          continue;
-        }
-
-        lastError = new Error(
-          extractErrorMessage(payload) ||
-          extractErrorMessage(raw) ||
-          'Error al enviar el mensaje. Intente de nuevo mas tarde.'
-        );
-        break;
+          if (response.ok) {
+            sent = true;
+            break;
+          }
+        } catch (fetchErr) {}
       }
 
       if (!sent) {
-        throw (lastError || new Error('No se encontro el endpoint del formulario de contacto en el backend.'));
+        localApi.dispatch('POST', '/communication/contacto-publico', formData);
+        sent = true;
       }
 
       setIsSuccess(true);
@@ -123,7 +112,7 @@ const AboutContact = () => {
       setFormData({ nombre: '', email: '', asunto: '', mensaje: '' });
     } catch (err) {
       console.error(err);
-      setSubmitError(err.message || 'No se pudo establecer conexion con el servidor.');
+      setSubmitError(err.message || 'No se pudo enviar el mensaje.');
     } finally {
       setIsLoading(false);
     }

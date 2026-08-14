@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { localApi } from '../../services/localStorageAdapter';
 import './JarvisChat.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007';
@@ -16,10 +17,10 @@ const JarvisChat = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  
+
   // Configuración de Voz
   const [voices, setVoices] = useState([]);
-  const [selectedVoiceGender, setSelectedVoiceGender] = useState('female'); // 'female' o 'male'
+  const [selectedVoiceGender, setSelectedVoiceGender] = useState('female');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -27,7 +28,6 @@ const JarvisChat = () => {
   const recognitionRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
 
-  // Cargar voces disponibles en el navegador
   useEffect(() => {
     const updateVoices = () => {
       if (synthRef.current) {
@@ -40,7 +40,6 @@ const JarvisChat = () => {
       synthRef.current.onvoiceschanged = updateVoices;
     }
 
-    // Configurar reconocimiento de voz (Speech Recognition)
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const rec = new SpeechRecognition();
@@ -64,14 +63,12 @@ const JarvisChat = () => {
     }
   }, []);
 
-  // Hacer Scroll al final del chat cuando hay mensajes nuevos
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isLoading]);
 
-  // Detener la síntesis de voz si se cierra el componente o cambia de estado
   useEffect(() => {
     return () => {
       if (synthRef.current) {
@@ -80,25 +77,19 @@ const JarvisChat = () => {
     };
   }, []);
 
-  // Función para reproducir el texto por voz (TTS)
   const speak = (text) => {
     if (!synthRef.current || !soundEnabled || !text) return;
 
-    // Cancelar cualquier discurso previo
     synthRef.current.cancel();
 
-    // Limpiar etiquetas HTML o Markdown simples del texto
     const cleanText = String(text).replace(/[*#_`~]/g, '');
-
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
-    // Intentar buscar una voz adecuada en Español según el género
     const spanishVoices = voices.filter(v => v.lang.startsWith('es'));
     let selectedVoice = null;
 
     if (spanishVoices.length > 0) {
       if (selectedVoiceGender === 'female') {
-        // Buscar voces con nombres femeninos comunes o usar la primera por descarte
         selectedVoice = spanishVoices.find(v => 
           v.name.toLowerCase().includes('sandra') || 
           v.name.toLowerCase().includes('sabina') || 
@@ -109,7 +100,6 @@ const JarvisChat = () => {
           v.name.toLowerCase().includes('female')
         ) || spanishVoices[0];
       } else {
-        // Buscar voces con nombres masculinos comunes
         selectedVoice = spanishVoices.find(v => 
           v.name.toLowerCase().includes('pablo') || 
           v.name.toLowerCase().includes('miguel') || 
@@ -124,9 +114,8 @@ const JarvisChat = () => {
       utterance.voice = selectedVoice;
     }
 
-    // Configuración para que suene J.A.R.V.I.S. (Suave y con buen ritmo)
     utterance.pitch = selectedVoiceGender === 'female' ? 1.05 : 0.95;
-    utterance.rate = 0.92; // Ligeramente pausado para confort
+    utterance.rate = 0.92;
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
@@ -135,7 +124,6 @@ const JarvisChat = () => {
     synthRef.current.speak(utterance);
   };
 
-  // Enviar mensaje al backend
   const handleSend = async (e) => {
     if (e) e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -143,7 +131,6 @@ const JarvisChat = () => {
     const userText = input;
     setInput('');
     
-    // Detener audio previo si el usuario habla o escribe
     if (synthRef.current) {
       synthRef.current.cancel();
       setIsSpeaking(false);
@@ -162,21 +149,25 @@ const JarvisChat = () => {
       const endpoint = activeSkill === 'classifier' ? '/api/ai/classify-request' : '/api/ai/chat';
       const payload = activeSkill === 'classifier' ? { text: userText } : { message: userText };
 
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
+      let data;
+      try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
 
-      if (!response.ok) {
-        throw new Error('No se pudo obtener respuesta del backend.');
+        if (response.ok) {
+          data = await response.json();
+        }
+      } catch (err) {}
+
+      if (!data) {
+        data = localApi.dispatch('POST', endpoint, payload);
       }
 
-      const data = await response.json();
-      
-      // Desempaquetamos la respuesta en caso de que venga formateada por el middleware global { status, message, data }
       const actualData = data.data !== undefined && data.data !== null && typeof data.data === 'object' && !Array.isArray(data.data)
         ? data.data
         : data;
@@ -202,7 +193,7 @@ const JarvisChat = () => {
       console.error(error);
       setMessages(prev => [...prev, {
         sender: 'jarvis',
-        text: 'Mis disculpas, señor. He experimentado una interrupción temporal en mis servidores de enlace. Verifique que el backend este activo y que la URL de API este configurada correctamente.',
+        text: 'Mis disculpas, señor. He experimentado una interrupción temporal en mis servidores de enlace. Verifique que el backend esté activo.',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }]);
     } finally {
